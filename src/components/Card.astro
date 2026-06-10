@@ -118,6 +118,10 @@ if (SITE.showCoverImages) {
       "hover:shadow-gallery/20 focus-within:shadow-gallery/20",
     ],
   ]}
+  style={loading === "lazy" ? {
+    contentVisibility: "auto",
+    containIntrinsicSize: coverSrc ? "auto 320px" : "auto 180px",
+  } : undefined}
 >
   <!-- Cursor-following glow -->
   <div

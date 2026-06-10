@@ -9,9 +9,10 @@ type Props = {
   slug: string;
   fallbackImage?: ImageMetadata;
   imageCount?: number;
+  loading?: "lazy" | "eager";
 };
 
-const { gallery, slug, fallbackImage, imageCount } = Astro.props;
+const { gallery, slug, fallbackImage, imageCount, loading = "lazy" } = Astro.props;
 const { title, description, pubDatetime, coverImage } = gallery.data;
 const coverSrc = coverImage ?? fallbackImage;
 ---
@@ -27,6 +28,10 @@ const coverSrc = coverImage ?? fallbackImage;
     "hover:-translate-y-0.5",
     "hover:shadow-lg hover:shadow-accent/10",
   ]}
+  style={loading === "lazy" ? {
+    contentVisibility: "auto",
+    containIntrinsicSize: "auto 340px",
+  } : undefined}
 >
   <!-- Cursor-following glow -->
   <div

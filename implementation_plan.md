@@ -41,17 +41,6 @@ El directorio `.github/` tiene templates de issues y PR pero **ningún workflow*
 
 ### 🟡 P2 — Impacto Medio / Mejora de Pulido
 
-#### 15. 📋 Copy URL Button — En cada post
-
-El componente [ShareLinks.astro](file:///Users/andres/dev/blog/src/components/ShareLinks.astro) tiene share a redes sociales pero **no tiene "Copy link"**.
-
-**Feature propuesta:**
-- Añadir botón "Copy URL" al inicio de ShareLinks
-- Feedback visual con animación (check icon + tooltip "Copied!")
-- Usar `navigator.clipboard.writeText()`
-
----
-
 #### 16. 📐 Content-Visibility — Lazy Rendering de secciones largas
 
 Las páginas de listado ([...page].astro, archives, tags) renderizan **todos los cards del viewport** inmediatamente. Para feeds con muchos posts:
@@ -67,35 +56,6 @@ Las páginas de listado ([...page].astro, archives, tags) renderizan **todos los
   contain-intrinsic-size: 0 280px; /* estimated card height */
 }
 ```
-
----
-
-#### 17. 🌊 Scroll-Driven Animations — Modernizar efectos
-
-Varios efectos usan JavaScript para detectar scroll (progress bar, header border, back-to-top). CSS Scroll-Driven Animations pueden reemplazar mucho de esto:
-
-**Feature propuesta:**
-- Reading progress bar via `animation-timeline: scroll()`
-- Header fade-in border via scroll timeline
-- Reveal animations en cards al entrar al viewport via `view()`
-
-> [!NOTE]
-> Scroll-Driven Animations tienen soporte amplio en 2026 (Chrome, Edge, Firefox, Safari 18+)
-
----
-
-#### 18. 🔧 Docker Nginx Config — Sin headers de cache ni compresión
-
-El [Dockerfile](file:///Users/andres/dev/blog/Dockerfile) usa `nginx:mainline-alpine-slim` pero **sin config custom**. No hay:
-- Cache headers para assets estáticos
-- Gzip/Brotli compression
-- Security headers (CSP, X-Frame-Options)
-
-**Feature propuesta:**
-- Crear `nginx.conf` custom con cache immutable para `/_astro/`, gzip on, security headers
-- Copiar en el Dockerfile stage 2
-
----
 
 #### 19. 🖋️ Estimated Reading Position — "Continue where you left off"
 

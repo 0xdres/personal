@@ -42,6 +42,8 @@ const totalPosts = posts.length;
 const yearGroups = Object.entries(
   getPostsByGroupCondition(posts, post => post.data.pubDatetime.getFullYear())
 ).sort(([a], [b]) => Number(b) - Number(a));
+
+let postIndex = 0;
 ---
 
 <Layout title={`Archives | ${SITE.title}`}>
@@ -108,11 +110,17 @@ const yearGroups = Object.entries(
                       )
                       .map(post => {
                         const day = new Date(post.data.pubDatetime).getDate();
+                        const isLazy = postIndex >= 6;
+                        postIndex++;
                         return (
                           <a
                             href={getEntryPath(post)}
                             class="post-card group"
                             data-archive-card
+                            style={isLazy ? {
+                              contentVisibility: "auto",
+                              containIntrinsicSize: "auto 110px",
+                            } : undefined}
                           >
                             <div class="post-aurora" data-card-aurora />
                             <div class="post-border-glow" data-card-border />
