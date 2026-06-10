@@ -41,21 +41,6 @@ El directorio `.github/` tiene templates de issues y PR pero **ningún workflow*
 
 ### 🟡 P2 — Impacto Medio / Mejora de Pulido
 
----
-
-#### 14. ⌨️ Keyboard Shortcuts — Expandir más allá de ⌘K
-
-Solo existe ⌘K para búsqueda. Un blog con tantas secciones se beneficia de más shortcuts.
-
-**Feature propuesta:**
-- `?` → Mostrar panel de keyboard shortcuts
-- `j/k` → Navegar entre posts (como Vim)
-- `t` → Toggle tema
-- `g h` → Go Home, `g p` → Go Posts, `g t` → Go Tags
-- Mostrar un pequeño `?` button en el footer que abre el panel de shortcuts
-
----
-
 #### 15. 📋 Copy URL Button — En cada post
 
 El componente [ShareLinks.astro](file:///Users/andres/dev/blog/src/components/ShareLinks.astro) tiene share a redes sociales pero **no tiene "Copy link"**.

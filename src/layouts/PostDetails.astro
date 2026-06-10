@@ -227,6 +227,9 @@ const nextPost =
           </article>
           <aside class="sidebar-toc sticky top-24 hidden max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 lg:block">
             <TableOfContents headings={headings} />
+            <div class="mt-8 border-t border-border/15 pt-6">
+              <ShareLinks isSidebar={true} />
+            </div>
           </aside>
         </div>
       ) : (
@@ -272,30 +275,13 @@ const nextPost =
       </div>
     </div>
 
-    <!-- Tags & Share row -->
+    <!-- Share links (visible on mobile, or on desktop when there is no TOC) -->
     <div
-      class="mt-6 mb-8 flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-between"
+      class:list={[
+        "mt-6 mb-8 flex justify-center",
+        { "lg:hidden": hasToc },
+      ]}
     >
-      <!-- Tags (duplicated from header — aria-hidden to avoid double indexing) -->
-      <div
-        class="flex flex-wrap justify-center gap-2 sm:justify-start"
-        aria-hidden="true"
-      >
-        {
-          tags.map((tag: string) => (
-            <a
-              href={`/tags/${slugifyStr(tag)}/`}
-              tabindex="-1"
-              class="inline-flex items-center gap-1 rounded-full border border-border/25 bg-muted/10 px-2.5 py-1 font-firacode text-xs transition-all duration-200 hover:border-accent/40 hover:bg-accent/5 hover:text-accent"
-            >
-              <span class="opacity-40">#</span>
-              {tag}
-            </a>
-          ))
-        }
-      </div>
-
-      <!-- Share links -->
       <ShareLinks />
     </div>
 
