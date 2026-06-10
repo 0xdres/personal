@@ -169,6 +169,39 @@ const isActive = (path: string) => {
                 <kbd class="nav-kbd">⌘K</kbd>
               </button>
             </li>
+            <li class="flex items-center relative accent-picker-container">
+              <button
+                id="accent-btn"
+                class="nav-icon-btn relative"
+                title="Change accent color"
+                aria-label="Change accent color"
+                aria-haspopup="true"
+                aria-expanded="false"
+              >
+                <!-- Color Swatch Icon -->
+                <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                </svg>
+              </button>
+              
+              <div id="accent-popover" class="absolute right-0 top-10 hidden rounded-xl border border-border/20 bg-background/95 backdrop-blur-md p-2.5 shadow-xl min-w-[150px] flex flex-col gap-1.5 z-50">
+                <div class="text-[10px] font-firacode font-bold tracking-wider text-foreground/45 px-1 uppercase select-none">
+                  Accent Color
+                </div>
+                <div class="flex items-center justify-between gap-1 mt-1">
+                  <!-- Blue -->
+                  <button data-accent-color="blue" class="size-5 rounded-full bg-[#008fec] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Blue"></button>
+                  <!-- Green -->
+                  <button data-accent-color="green" class="size-5 rounded-full bg-[#10b981] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Green"></button>
+                  <!-- Purple -->
+                  <button data-accent-color="purple" class="size-5 rounded-full bg-[#a855f7] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Purple"></button>
+                  <!-- Amber -->
+                  <button data-accent-color="amber" class="size-5 rounded-full bg-[#f59e0b] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Amber"></button>
+                  <!-- Rose -->
+                  <button data-accent-color="rose" class="size-5 rounded-full bg-[#f43f5e] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Rose"></button>
+                </div>
+              </div>
+            </li>
             {
               SITE.lightAndDarkMode && (
                 <li class="flex items-center">
@@ -543,13 +576,60 @@ const isActive = (path: string) => {
     });
   }
 
+  let accentCleanup: AbortController | null = null;
+
+  function setupAccentPicker() {
+    if (accentCleanup) accentCleanup.abort();
+    accentCleanup = new AbortController();
+    const { signal } = accentCleanup;
+
+    const accentBtn = document.getElementById("accent-btn");
+    const accentPopover = document.getElementById("accent-popover");
+
+    if (!accentBtn || !accentPopover) return;
+
+    // Toggle popover
+    accentBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const isExpanded = accentBtn.getAttribute("aria-expanded") === "true";
+      accentBtn.setAttribute("aria-expanded", !isExpanded ? "true" : "false");
+      accentPopover.classList.toggle("hidden", isExpanded);
+    }, { signal });
+
+    // Close when clicking outside
+    document.addEventListener("click", (e) => {
+      const target = e.target as HTMLElement;
+      if (!accentPopover.classList.contains("hidden") && !accentPopover.contains(target) && target !== accentBtn) {
+        accentBtn.setAttribute("aria-expanded", "false");
+        accentPopover.classList.add("hidden");
+      }
+    }, { signal });
+
+    // Accent selection logic (desktop and mobile picker buttons)
+    document.querySelectorAll("[data-accent-color]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const color = btn.getAttribute("data-accent-color");
+        if (color) {
+          document.documentElement.setAttribute("data-accent", color);
+          localStorage.setItem("theme-accent", color);
+          
+          // Also close popover if desktop button clicked
+          accentBtn.setAttribute("aria-expanded", "false");
+          accentPopover.classList.add("hidden");
+        }
+      }, { signal });
+    });
+  }
+
   // Initial load
   setupScrollPhysics();
   setupMobileNav();
+  setupAccentPicker();
 
   // Runs on view transitions navigation
   document.addEventListener("astro:after-swap", () => {
     setupScrollPhysics();
     setupMobileNav();
+    setupAccentPicker();
   });
 </script>

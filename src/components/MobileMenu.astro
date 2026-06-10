@@ -115,6 +115,20 @@ const isActive = (path: string) => {
             )
           }
         </div>
+
+        <!-- Mobile Accent Color Swatch Row -->
+        <div class="mobile-accent-picker mt-4 px-1 flex flex-col gap-1.5 select-none">
+          <div class="text-[10px] font-firacode font-bold tracking-wider text-foreground/45 uppercase">
+            Accent Color
+          </div>
+          <div class="flex items-center justify-between gap-1 mt-1 bg-muted/5 border border-border/10 rounded-xl p-2.5">
+            <button data-accent-color="blue" class="size-6 rounded-full bg-[#008fec] border border-border/25 relative focus:outline-none" title="Blue"></button>
+            <button data-accent-color="green" class="size-6 rounded-full bg-[#10b981] border border-border/25 relative focus:outline-none" title="Green"></button>
+            <button data-accent-color="purple" class="size-6 rounded-full bg-[#a855f7] border border-border/25 relative focus:outline-none" title="Purple"></button>
+            <button data-accent-color="amber" class="size-6 rounded-full bg-[#f59e0b] border border-border/25 relative focus:outline-none" title="Amber"></button>
+            <button data-accent-color="rose" class="size-6 rounded-full bg-[#f43f5e] border border-border/25 relative focus:outline-none" title="Rose"></button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

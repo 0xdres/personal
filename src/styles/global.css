@@ -10,6 +10,8 @@ html[data-theme="light"] {
   --accent: #1158d1;
   --muted: #bbc789;
   --border: #7cadff;
+  --featured-color: #b56007;
+  --gallery-color: #6d28d9;
 }
 
 html[data-theme="dark"] {
@@ -18,7 +20,88 @@ html[data-theme="dark"] {
   --accent: #008fec;
   --muted: #212f3f;
   --border: #2264e3;
+  --featured-color: #f59e0b;
+  --gallery-color: #a855f7;
 }
+
+/* Accent presets — Light mode & fallback */
+html[data-accent="blue"] {
+  --accent: #1158d1;
+  --border: #7cadff;
+  --featured-color: #b56007; /* Amber */
+  --gallery-color: #6d28d9;  /* Purple */
+}
+html[data-accent="green"] {
+  --accent: #0d7a5f;
+  --border: #52d2a4;
+  --featured-color: #be185d; /* Rose */
+  --gallery-color: #1158d1;  /* Blue */
+}
+html[data-accent="purple"] {
+  --accent: #6d28d9;
+  --border: #c084fc;
+  --featured-color: #0d7a5f; /* Green */
+  --gallery-color: #b56007;  /* Amber */
+}
+html[data-accent="amber"] {
+  --accent: #b56007;
+  --border: #fcd34d;
+  --featured-color: #6d28d9; /* Purple */
+  --gallery-color: #be185d;  /* Rose */
+}
+html[data-accent="rose"] {
+  --accent: #be185d;
+  --border: #fda4af;
+  --featured-color: #1158d1; /* Blue */
+  --gallery-color: #0d7a5f;  /* Green */
+}
+
+/* Accent presets — Dark mode */
+html[data-accent="blue"][data-theme="dark"] {
+  --accent: #008fec;
+  --border: #2264e3;
+  --featured-color: #f59e0b; /* Amber */
+  --gallery-color: #a855f7;  /* Purple */
+}
+html[data-accent="green"][data-theme="dark"] {
+  --accent: #10b981;
+  --border: #065f46;
+  --featured-color: #f43f5e; /* Rose */
+  --gallery-color: #008fec;  /* Blue */
+}
+html[data-accent="purple"][data-theme="dark"] {
+  --accent: #a855f7;
+  --border: #581c87;
+  --featured-color: #10b981; /* Green */
+  --gallery-color: #f59e0b;  /* Amber */
+}
+html[data-accent="amber"][data-theme="dark"] {
+  --accent: #f59e0b;
+  --border: #78350f;
+  --featured-color: #a855f7; /* Purple */
+  --gallery-color: #f43f5e;  /* Rose */
+}
+html[data-accent="rose"][data-theme="dark"] {
+  --accent: #f43f5e;
+  --border: #881337;
+  --featured-color: #008fec; /* Blue */
+  --gallery-color: #10b981;  /* Green */
+}
+
+/* Active indicator for accent picker buttons */
+html[data-accent="blue"] [data-accent-color="blue"]::after,
+html[data-accent="green"] [data-accent-color="green"]::after,
+html[data-accent="purple"] [data-accent-color="purple"]::after,
+html[data-accent="amber"] [data-accent-color="amber"]::after,
+html[data-accent="rose"] [data-accent-color="rose"]::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border: 1.5px solid var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 4px var(--accent);
+}
+
 
 @theme inline {
   --font-app: var(--font-wotfard);
@@ -29,6 +112,8 @@ html[data-theme="dark"] {
   --color-accent: var(--accent);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-featured: var(--featured-color);
+  --color-gallery: var(--gallery-color);
 }
 
 .italic,

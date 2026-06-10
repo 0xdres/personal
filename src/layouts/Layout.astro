@@ -244,6 +244,10 @@ const showGrain = SITE.backdropEffects.grain;
         // Set theme immediately to prevent flash
         document.firstElementChild?.setAttribute("data-theme", themeValue);
 
+        // Set accent immediately to prevent FOUC
+        const currentAccent = localStorage.getItem("theme-accent") || "blue";
+        document.firstElementChild?.setAttribute("data-accent", currentAccent);
+
         // Export minimal API for external script
         window.theme = {
           themeValue: themeValue,
