@@ -411,8 +411,11 @@ import "@pagefind/default-ui/css/ui.css";
     position: absolute;
     border-radius: 50%;
     filter: blur(70px);
-    will-change: transform;
     opacity: 0.6;
+  }
+
+  .search-modal-overlay.active .modal-aurora-orb {
+    will-change: transform;
   }
 
   .modal-aurora-orb-1 {
@@ -499,8 +502,11 @@ import "@pagefind/default-ui/css/ui.css";
       calc(var(--gx, 0px) - 175px),
       calc(var(--gy, 0px) - 175px)
     );
-    will-change: transform;
     z-index: 0;
+  }
+
+  .search-modal-overlay.active .modal-cursor-glow {
+    will-change: transform;
   }
 
   /* ===== Sparkles ===== */

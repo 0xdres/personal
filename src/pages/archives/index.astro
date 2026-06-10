@@ -337,8 +337,11 @@ const yearGroups = Object.entries(
       calc(var(--mx, 0px) - 175px),
       calc(var(--my, 0px) - 175px)
     );
-    will-change: transform;
     z-index: 1;
+  }
+
+  .archive-hero:hover .aurora-mouse {
+    will-change: transform;
   }
 
   .glow-text {
@@ -565,8 +568,12 @@ const yearGroups = Object.entries(
       calc(var(--mx, 0px) - 100px),
       calc(var(--my, 0px) - 100px)
     );
-    will-change: transform;
     z-index: -1;
+  }
+
+  .post-card:hover .post-aurora,
+  .post-card:focus-within .post-aurora {
+    will-change: transform;
   }
 
   .post-border-glow {
@@ -587,9 +594,13 @@ const yearGroups = Object.entries(
       calc(var(--mx, 0px) - 60px),
       calc(var(--my, 0px) - 60px)
     );
-    will-change: transform;
     z-index: -1;
     mix-blend-mode: screen;
+  }
+
+  .post-card:hover .post-border-glow,
+  .post-card:focus-within .post-border-glow {
+    will-change: transform;
   }
 
   /* Timeline dot */

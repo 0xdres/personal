@@ -129,7 +129,6 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
 
   .footer-social-btn {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    will-change: transform, box-shadow;
   }
 
   .footer-social-btn:hover {
@@ -139,7 +138,6 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
   @media (prefers-reduced-motion: reduce) {
     .footer-social-btn {
       transition: none !important;
-      will-change: auto;
     }
 
     .footer-social-btn:hover {

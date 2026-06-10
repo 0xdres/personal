@@ -333,8 +333,11 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
       calc(var(--mx, 0px) - 175px),
       calc(var(--my, 0px) - 175px)
     );
-    will-change: transform;
     z-index: 1;
+  }
+
+  .posts-hero:hover .aurora-mouse {
+    will-change: transform;
   }
 
   .glow-text {

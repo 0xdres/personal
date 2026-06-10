@@ -287,8 +287,11 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : "/";
       calc(var(--mx, 0px) - 175px),
       calc(var(--my, 0px) - 175px)
     );
-    will-change: transform;
     z-index: 1;
+  }
+
+  .search-hero:hover .aurora-mouse {
+    will-change: transform;
   }
 
   .glow-text {
@@ -349,8 +352,12 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : "/";
       calc(var(--mx, 0px) - 150px),
       calc(var(--my, 0px) - 150px)
     );
-    will-change: transform;
     z-index: 0;
+  }
+
+  .search-container:hover .search-aurora,
+  .search-container:focus-within .search-aurora {
+    will-change: transform;
   }
 
   .search-border-glow {
@@ -371,9 +378,13 @@ const backUrl = SITE.showBackButton ? `${Astro.url.pathname}` : "/";
       calc(var(--mx, 0px) - 75px),
       calc(var(--my, 0px) - 75px)
     );
-    will-change: transform;
     z-index: 0;
     mix-blend-mode: screen;
+  }
+
+  .search-container:hover .search-border-glow,
+  .search-container:focus-within .search-border-glow {
+    will-change: transform;
   }
 
   .search-inner {

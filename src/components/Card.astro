@@ -247,6 +247,10 @@ if (SITE.showCoverImages) {
       color-mix(in oklab, var(--accent) 0.8%, transparent) 60%,
       transparent 80%
     );
+  }
+
+  :global(.group\/card:hover) .card-glow-effect,
+  :global(.group\/card:focus-within) .card-glow-effect {
     will-change: opacity;
   }
 

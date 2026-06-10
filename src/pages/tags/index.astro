@@ -286,8 +286,11 @@ const maxCount = Math.max(...tagsWithCount.map(t => t.count));
       calc(var(--mx, 0px) - 175px),
       calc(var(--my, 0px) - 175px)
     );
-    will-change: transform;
     z-index: 1;
+  }
+
+  .tags-hero:hover .aurora-mouse-follow {
+    will-change: transform;
   }
 
   .glow-text {
@@ -379,8 +382,12 @@ const maxCount = Math.max(...tagsWithCount.map(t => t.count));
       calc(var(--mx, 0px) - 100px),
       calc(var(--my, 0px) - 100px)
     );
-    will-change: transform;
     z-index: -1;
+  }
+
+  .tag-card:hover .tag-aurora,
+  .tag-card:focus-within .tag-aurora {
+    will-change: transform;
   }
 
   /* Mouse-follow border glow */
@@ -402,9 +409,13 @@ const maxCount = Math.max(...tagsWithCount.map(t => t.count));
       calc(var(--mx, 0px) - 60px),
       calc(var(--my, 0px) - 60px)
     );
-    will-change: transform;
     z-index: -1;
     mix-blend-mode: screen;
+  }
+
+  .tag-card:hover .tag-border-glow,
+  .tag-card:focus-within .tag-border-glow {
+    will-change: transform;
   }
 
   .tag-content {

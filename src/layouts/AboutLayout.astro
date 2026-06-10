@@ -220,8 +220,11 @@ const { frontmatter } = Astro.props;
       calc(var(--mx, 0px) - 200px),
       calc(var(--my, 0px) - 200px)
     );
-    will-change: transform;
     z-index: 1;
+  }
+
+  .about-hero:hover .aurora-mouse {
+    will-change: transform;
   }
 
   .hero-content {
