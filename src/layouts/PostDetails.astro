@@ -11,6 +11,7 @@ import BackToTopButton from "@/components/BackToTopButton.astro";
 import GalleryEmbed from "@/components/GalleryEmbed.astro";
 import TableOfContents from "@/components/TableOfContents.astro";
 import Comments from "@/components/Comments.astro";
+import RelatedPosts from "@/components/RelatedPosts.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import { getReadingTime } from "@/utils/readingTime";
@@ -269,6 +270,9 @@ const nextPost =
       <!-- Share links -->
       <ShareLinks />
     </div>
+
+    <!-- Related Posts Section -->
+    <RelatedPosts currentPostId={post.id} currentPostTags={tags} />
 
     <!-- Comments Section -->
     <Comments />

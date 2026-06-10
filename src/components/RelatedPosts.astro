@@ -1,0 +1,86 @@
+---
+import { getCollection } from "astro:content";
+import Card from "./Card.astro";
+
+type Props = {
+  currentPostId: string;
+  currentPostTags: string[];
+};
+
+const { currentPostId, currentPostTags } = Astro.props;
+
+// Fetch all non-draft blog posts
+const allPosts = await getCollection("blog", ({ data }) => !data.draft);
+
+// Calculate score for each post based on matching tags
+const scoredPosts = allPosts
+  .filter(post => post.id !== currentPostId)
+  .map(post => {
+    const matchingTags = post.data.tags.filter(t => currentPostTags.includes(t)).length;
+    return { post, score: matchingTags };
+  });
+
+// Sort: posts with matching tags first (descending), then by date (descending)
+let related = scoredPosts
+  .filter(p => p.score > 0)
+  .sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return b.post.data.pubDatetime.getTime() - a.post.data.pubDatetime.getTime();
+  })
+  .map(p => p.post);
+
+// If less than 3 related posts, backfill with the most recent posts (excluding current and already selected)
+if (related.length < 3) {
+  const selectedIds = new Set(related.map(p => p.id));
+  const recentFallback = allPosts
+    .filter(post => post.id !== currentPostId && !selectedIds.has(post.id))
+    .sort((a, b) => b.data.pubDatetime.getTime() - a.data.pubDatetime.getTime());
+
+  related = [...related, ...recentFallback].slice(0, 3);
+} else {
+  related = related.slice(0, 3);
+}
+---
+
+{
+  related.length > 0 && (
+    <section class="related-posts-section mt-12 pt-8 border-t border-border/10" data-pagefind-ignore>
+      <div class="mb-6 flex items-center gap-3">
+        <h2 class="text-sm font-bold tracking-widest text-accent uppercase flex items-center gap-2">
+          <svg
+            class="size-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2.5"
+            aria-hidden="true"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+          </svg>
+          Recommended Reads
+        </h2>
+        <div class="h-px flex-1 bg-border/20" />
+      </div>
+
+      <ul class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 [&>li]:my-0">
+        {related.map(post => (
+          <Card variant="h3" {...post} />
+        ))}
+      </ul>
+    </section>
+  )
+}
+
+<script>
+  function initRelatedCardsGlow() {
+    document.querySelectorAll<HTMLElement>(".related-posts-section .card-glow").forEach(card => {
+      card.addEventListener("mousemove", (e: MouseEvent) => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+        card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+      });
+    });
+  }
+
+  document.addEventListener("astro:page-load", initRelatedCardsGlow);
+</script>
