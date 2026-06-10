@@ -7,4 +7,6 @@ interface Window {
     setTheme: (val: string) => void;
   };
   cleanupReadingPosition?: () => void;
+  cleanupReadingMode?: () => void;
+  cleanupProgressBar?: () => void;
 }

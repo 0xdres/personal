@@ -247,6 +247,29 @@ const recommendedPost = rawRecommendedPost
             )
           }
 
+          <!-- Read Mode Button -->
+          <button
+            id="read-mode-btn"
+            class="inline-flex items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 opacity-70 backdrop-blur-sm transition-all duration-200 hover:border-accent/30 hover:opacity-100 cursor-pointer"
+            title="Toggle Reading Mode (Shortcut: r)"
+            aria-label="Toggle Reading Mode"
+          >
+            <svg
+              class="size-3.5 text-accent/70"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+              <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+            </svg>
+            <span class="text-sm">Read Mode</span>
+          </button>
+
           <!-- Edit post -->
           <EditPost
             {hideEditPost}
@@ -446,11 +469,81 @@ const recommendedPost = rawRecommendedPost
       }
     </div>
   </main>
+
+  <!-- Reading Mode Floating Controls -->
+  <div
+    id="reading-controls-pill"
+    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-100 flex items-center gap-4 rounded-full border border-accent/20 bg-background/85 px-6 py-3 shadow-2xl backdrop-blur-md transition-all duration-300 opacity-0 translate-y-10 scale-95 pointer-events-none hover:border-accent/40"
+  >
+    <!-- Accent Halo / Glow behind the pill -->
+    <div class="absolute -inset-1.5 -z-10 rounded-full bg-accent/20 blur-md pointer-events-none animate-reading-halo"></div>
+
+    <!-- Font style toggle (Sans / Serif) -->
+    <div class="flex items-center gap-1.5">
+      <button
+        id="reading-font-sans"
+        class="px-2.5 py-1 rounded-full text-xs font-medium bg-accent text-background transition-colors hover:bg-accent/80 cursor-pointer"
+        title="Sans Serif Font"
+      >
+        Sans
+      </button>
+      <button
+        id="reading-font-serif"
+        class="px-2.5 py-1 rounded-full text-xs font-medium text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
+        title="Serif Font"
+      >
+        Serif
+      </button>
+    </div>
+
+    <div class="h-4 w-px bg-border/40"></div>
+
+    <!-- Font size controls -->
+    <div class="flex items-center gap-2">
+      <button
+        id="reading-size-dec"
+        class="p-1 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
+        title="Decrease Font Size"
+        aria-label="Decrease Font Size"
+      >
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+      
+      <span id="reading-size-display" class="text-xs font-mono font-medium min-w-[3ch] text-center">100%</span>
+
+      <button
+        id="reading-size-inc"
+        class="p-1 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
+        title="Increase Font Size"
+        aria-label="Increase Font Size"
+      >
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </button>
+    </div>
+
+    <div class="h-4 w-px bg-border/40"></div>
+
+    <!-- Exit reading mode button -->
+    <button
+      id="reading-exit-btn"
+      class="flex items-center gap-1.5 px-3 py-1 bg-foreground/10 text-foreground rounded-full text-xs font-semibold hover:bg-foreground/15 transition-colors cursor-pointer"
+      title="Exit Reading Mode (Shortcut: r)"
+    >
+      <span>Exit</span>
+      <kbd class="hidden sm:inline-block text-[9px] px-1.5 py-0.5 rounded border border-foreground/20 bg-foreground/5 opacity-60">R</kbd>
+    </button>
+  </div>
+
   <BackToTopButton />
   <Footer />
 </Layout>
 
-<script is:inline data-astro-rerun>
+<script>
   /** Fallback reading progress bar for browsers without scroll-driven animations support */
   function initProgressBarFallback() {
     // Check if scroll-driven animations are supported natively (both timeline and range)
@@ -461,6 +554,14 @@ const recommendedPost = rawRecommendedPost
       )
     ) {
       return; // Handled natively by CSS
+    }
+
+    if (typeof window.cleanupProgressBar === "function") {
+      try {
+        window.cleanupProgressBar();
+      } catch {
+        // Ignore errors
+      }
     }
 
     const progressBar = document.getElementById("reading-progress-bar");
@@ -481,21 +582,22 @@ const recommendedPost = rawRecommendedPost
     // Initialize position
     updateProgress();
 
-    document.addEventListener(
-      "scroll",
-      () => {
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            updateProgress();
-            ticking = false;
-          });
-          ticking = true;
-        }
-      },
-      { passive: true }
-    );
+    const handleScroll = () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          updateProgress();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    document.addEventListener("scroll", handleScroll, { passive: true });
+
+    window.cleanupProgressBar = () => {
+      document.removeEventListener("scroll", handleScroll);
+    };
   }
-  initProgressBarFallback();
 
   /** Attaches links to headings in the document,
    *  allowing sharing of sections easily */
@@ -504,6 +606,8 @@ const recommendedPost = rawRecommendedPost
       document.querySelectorAll("h2, h3, h4, h5, h6")
     );
     for (const heading of headings) {
+      if (heading.querySelector(".heading-link")) continue; // Idempotent check
+      
       heading.classList.add("group");
       const link = document.createElement("a");
       link.className =
@@ -518,24 +622,24 @@ const recommendedPost = rawRecommendedPost
       heading.appendChild(link);
     }
   }
-  addHeadingLinks();
 
   /** Attaches copy buttons to code blocks in the document,
    * allowing users to copy code easily. */
   function attachCopyButtons() {
     const copyButtonLabel = "Copy";
     const codeBlocks = Array.from(document.querySelectorAll("pre"));
+    const unattachedCodeBlocks = codeBlocks.filter(cb => !cb.querySelector(".copy-code"));
+    if (unattachedCodeBlocks.length === 0) return;
 
     // Pass 1: read all computed styles before touching the DOM
-    // (avoids a forced reflow on every iteration of the loop)
-    const topClasses = codeBlocks.map(cb =>
+    const topClasses = unattachedCodeBlocks.map(cb =>
       getComputedStyle(cb).getPropertyValue("--file-name-offset").trim() !== ""
         ? "top-(--file-name-offset)"
         : "-top-3"
     );
 
     // Pass 2: mutate DOM
-    codeBlocks.forEach((codeBlock, i) => {
+    unattachedCodeBlocks.forEach((codeBlock, i) => {
       const wrapper = document.createElement("div");
       wrapper.style.position = "relative";
 
@@ -554,7 +658,7 @@ const recommendedPost = rawRecommendedPost
       });
     });
 
-    async function copyCode(block, button) {
+    async function copyCode(block: HTMLPreElement, button: HTMLButtonElement) {
       const code = block.querySelector("code");
       const text = code?.innerText;
 
@@ -568,7 +672,6 @@ const recommendedPost = rawRecommendedPost
       }, 700);
     }
   }
-  attachCopyButtons();
 
   /** Estimated Reading Position — "Continue where you left off" */
   function initReadingPosition() {
@@ -586,15 +689,15 @@ const recommendedPost = rawRecommendedPost
 
     // 1. Check for saved position on load
     const savedData = localStorage.getItem(storageKey);
-    let saved = null;
+    let saved: { scrollY: number } | null = null;
     try {
       if (savedData) saved = JSON.parse(savedData);
     } catch {
       // Ignore parsing errors
     }
 
-    let toast = null;
-    let autoDismissTimer = null;
+    let toast: HTMLElement | null = null;
+    let autoDismissTimer: ReturnType<typeof setTimeout> | null = null;
     let isProgrammaticScroll = false;
 
     function dismissToast(clearStorage = false) {
@@ -622,7 +725,7 @@ const recommendedPost = rawRecommendedPost
     let performResume = () => {};
 
     // Keyboard handler for accepting/dismissing
-    function handleKeyDown(e) {
+    function handleKeyDown(e: KeyboardEvent) {
       const activeEl = document.activeElement;
       if (
         activeEl &&
@@ -733,7 +836,7 @@ const recommendedPost = rawRecommendedPost
     }
 
     // 2. Track scroll to save position
-    let saveTimeout = null;
+    let saveTimeout: ReturnType<typeof setTimeout> | null = null;
     function handleScrollSave() {
       if (isProgrammaticScroll) return;
 
@@ -778,12 +881,173 @@ const recommendedPost = rawRecommendedPost
       if (autoDismissTimer) clearTimeout(autoDismissTimer);
     };
   }
-  initReadingPosition();
 
-  /* Go to page start after page swap */
-  document.addEventListener("astro:after-swap", () =>
-    window.scrollTo({ left: 0, top: 0, behavior: "instant" })
-  );
+  /** Reading Mode (Punto 21) */
+  function initReadingMode() {
+    // Clean up previous page load listeners if they exist to prevent leaks under View Transitions
+    if (typeof window.cleanupReadingMode === "function") {
+      try {
+        window.cleanupReadingMode();
+      } catch {
+        // Ignore errors
+      }
+    }
+
+    const readModeBtn = document.getElementById("read-mode-btn");
+    const controlsPill = document.getElementById("reading-controls-pill");
+    const fontSansBtn = document.getElementById("reading-font-sans");
+    const fontSerifBtn = document.getElementById("reading-font-serif");
+    const sizeDecBtn = document.getElementById("reading-size-dec");
+    const sizeIncBtn = document.getElementById("reading-size-inc");
+    const sizeDisplay = document.getElementById("reading-size-display");
+    const exitBtn = document.getElementById("reading-exit-btn");
+
+    if (!readModeBtn || !controlsPill) return;
+
+    // Scale mappings
+    const SCALE_CLASSES = [
+      'font-scale-1',
+      'font-scale-2',
+      'font-scale-3',
+      'font-scale-4',
+      'font-scale-5',
+      'font-scale-6',
+      'font-scale-7',
+      'font-scale-8'
+    ];
+    const SCALE_LABELS = [
+      '80%',
+      '90%',
+      '100%',
+      '110%',
+      '120%',
+      '130%',
+      '140%',
+      '150%'
+    ];
+
+    // Load initial settings from localStorage
+    let activeFont = localStorage.getItem("reading-mode-font") || "sans"; // "sans" or "serif"
+    let activeScaleIndex = parseInt(localStorage.getItem("reading-mode-scale") || "2", 10); // default: 2 (100% in 0-indexed SCALE_CLASSES)
+    if (isNaN(activeScaleIndex) || activeScaleIndex < 0 || activeScaleIndex >= SCALE_CLASSES.length) {
+      activeScaleIndex = 2;
+    }
+
+    // Apply saved preferences to body/display (so they are ready if reading mode gets activated)
+    applyFontPreferences();
+    applyScalePreferences();
+
+    function applyFontPreferences() {
+      if (activeFont === "serif") {
+        document.body.classList.add("font-serif-active");
+        fontSerifBtn?.classList.remove("text-foreground/60", "hover:bg-foreground/5");
+        fontSerifBtn?.classList.add("bg-accent", "text-background");
+        fontSansBtn?.classList.remove("bg-accent", "text-background");
+        fontSansBtn?.classList.add("text-foreground/60", "hover:bg-foreground/5");
+      } else {
+        document.body.classList.remove("font-serif-active");
+        fontSansBtn?.classList.remove("text-foreground/60", "hover:bg-foreground/5");
+        fontSansBtn?.classList.add("bg-accent", "text-background");
+        fontSerifBtn?.classList.remove("bg-accent", "text-background");
+        fontSerifBtn?.classList.add("text-foreground/60", "hover:bg-foreground/5");
+      }
+    }
+
+    function applyScalePreferences() {
+      // Remove all scale classes first
+      SCALE_CLASSES.forEach(cls => document.body.classList.remove(cls));
+      // Add active scale class
+      document.body.classList.add(SCALE_CLASSES[activeScaleIndex]);
+      // Update display text
+      if (sizeDisplay) {
+        sizeDisplay.textContent = SCALE_LABELS[activeScaleIndex];
+      }
+    }
+
+    function toggleReadingMode() {
+      if (!controlsPill) return;
+      const isActive = document.body.classList.toggle("reading-mode-active");
+      
+      if (isActive) {
+        // Show pill
+        controlsPill.classList.remove("opacity-0", "translate-y-10", "scale-95", "pointer-events-none");
+        controlsPill.classList.add("opacity-100", "translate-y-0", "scale-100");
+      } else {
+        // Hide pill
+        controlsPill.classList.remove("opacity-100", "translate-y-0", "scale-100");
+        controlsPill.classList.add("opacity-0", "translate-y-10", "scale-95", "pointer-events-none");
+      }
+    }
+
+    // Event Listeners
+    readModeBtn.addEventListener("click", toggleReadingMode);
+    exitBtn?.addEventListener("click", toggleReadingMode);
+
+    fontSansBtn?.addEventListener("click", () => {
+      activeFont = "sans";
+      localStorage.setItem("reading-mode-font", activeFont);
+      applyFontPreferences();
+    });
+
+    fontSerifBtn?.addEventListener("click", () => {
+      activeFont = "serif";
+      localStorage.setItem("reading-mode-font", activeFont);
+      applyFontPreferences();
+    });
+
+    sizeDecBtn?.addEventListener("click", () => {
+      if (activeScaleIndex > 0) {
+        activeScaleIndex--;
+        localStorage.setItem("reading-mode-scale", activeScaleIndex.toString());
+        applyScalePreferences();
+      }
+    });
+
+    sizeIncBtn?.addEventListener("click", () => {
+      if (activeScaleIndex < SCALE_CLASSES.length - 1) {
+        activeScaleIndex++;
+        localStorage.setItem("reading-mode-scale", activeScaleIndex.toString());
+        applyScalePreferences();
+      }
+    });
+
+    // Keyboard Shortcuts Listener
+    function handleKeyDown(e: KeyboardEvent) {
+      const activeEl = document.activeElement;
+      if (
+        activeEl &&
+        (activeEl.tagName === "INPUT" ||
+          activeEl.tagName === "TEXTAREA" ||
+          (activeEl instanceof HTMLElement && activeEl.isContentEditable))
+      ) {
+        return;
+      }
+
+      if (e.key.toLowerCase() === "r") {
+        e.preventDefault();
+        toggleReadingMode();
+      } else if (e.key === "Escape" && document.body.classList.contains("reading-mode-active")) {
+        e.preventDefault();
+        toggleReadingMode();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    // Save cleanup references
+    window.cleanupReadingMode = () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }
+
+  // Hook all setups to page-load event
+  document.addEventListener("astro:page-load", () => {
+    try { initProgressBarFallback(); } catch {}
+    try { addHeadingLinks(); } catch {}
+    try { attachCopyButtons(); } catch {}
+    try { initReadingPosition(); } catch {}
+    try { initReadingMode(); } catch {}
+  });
 </script>
 
 <style>
@@ -998,6 +1262,99 @@ const recommendedPost = rawRecommendedPost
   }
 
   :global(#reading-resume-modal) {
+    animation: reading-border-pulse 3.5s ease-in-out infinite;
+    will-change: border-color, box-shadow;
+  }
+
+  /* Reading Mode Active Styles */
+  :global(body.reading-mode-active #main-header),
+  :global(body.reading-mode-active footer),
+  :global(body.reading-mode-active nav[aria-label="breadcrumb"]),
+  :global(body.reading-mode-active nav.app-layout),
+  :global(body.reading-mode-active .sidebar-toc),
+  :global(body.reading-mode-active #back-to-top),
+  :global(body.reading-mode-active .post-hero-bg),
+  :global(body.reading-mode-active .giscus-wrapper),
+  :global(body.reading-mode-active [data-pagefind-ignore]),
+  :global(body.reading-mode-active .progress-container),
+  :global(body.reading-mode-active div.relative.mt-12.mb-8.flex.items-center.justify-center.gap-4),
+  :global(body.reading-mode-active div.my-6.flex.items-center.gap-3),
+  :global(body.reading-mode-active .site-cursor-glow) {
+    display: none !important;
+  }
+
+  /* Simplify the header card to look super clean */
+  :global(body.reading-mode-active .post-header > div:not(.post-hero-bg)) {
+    border: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    padding-top: 2rem !important;
+    padding-bottom: 1rem !important;
+  }
+
+  /* Adjust grid container to not constrain the article */
+  :global(body.reading-mode-active #main-content .grid) {
+    display: block !important;
+  }
+
+  /* Center and constrain main layout to 928px (880px content + 48px padding) */
+  :global(body.reading-mode-active #main-content) {
+    max-width: 58rem !important; /* 928px */
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 1.5rem !important;
+    padding-right: 1.5rem !important;
+    padding-top: 1rem !important;
+    padding-bottom: 8rem !important; /* leave space for the pill */
+  }
+
+  :global(body.reading-mode-active #article) {
+    max-width: 55rem !important; /* 880px */
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Reading Mode Font Size Scale Configurations */
+  :global(body.reading-mode-active) {
+    --reading-font-scale: 1;
+  }
+  :global(body.reading-mode-active.font-scale-1) { --reading-font-scale: 0.8; }
+  :global(body.reading-mode-active.font-scale-2) { --reading-font-scale: 0.9; }
+  :global(body.reading-mode-active.font-scale-3) { --reading-font-scale: 1.0; }
+  :global(body.reading-mode-active.font-scale-4) { --reading-font-scale: 1.1; }
+  :global(body.reading-mode-active.font-scale-5) { --reading-font-scale: 1.2; }
+  :global(body.reading-mode-active.font-scale-6) { --reading-font-scale: 1.3; }
+  :global(body.reading-mode-active.font-scale-7) { --reading-font-scale: 1.4; }
+  :global(body.reading-mode-active.font-scale-8) { --reading-font-scale: 1.5; }
+
+  /* Apply typography enhancements to article content in Reading Mode */
+  :global(body.reading-mode-active #article) {
+    font-size: calc(var(--reading-font-scale, 1) * 1.125rem) !important;
+  }
+
+  :global(body.reading-mode-active #article p),
+  :global(body.reading-mode-active #article li),
+  :global(body.reading-mode-active #article blockquote) {
+    font-size: 1em !important;
+    line-height: 1.85 !important;
+  }
+
+  :global(body.reading-mode-active #article h1) { font-size: 2.25em !important; line-height: 1.25 !important; }
+  :global(body.reading-mode-active #article h2) { font-size: 1.75em !important; line-height: 1.3 !important; }
+  :global(body.reading-mode-active #article h3) { font-size: 1.5em !important; line-height: 1.35 !important; }
+  :global(body.reading-mode-active #article h4) { font-size: 1.25em !important; line-height: 1.4 !important; }
+
+  /* Serif typography toggled on */
+  :global(body.reading-mode-active.font-serif-active #article),
+  :global(body.reading-mode-active.font-serif-active #article h3),
+  :global(body.reading-mode-active.font-serif-active #article blockquote),
+  :global(body.reading-mode-active.font-serif-active #article em),
+  :global(body.reading-mode-active.font-serif-active #article i),
+  :global(body.reading-mode-active.font-serif-active .post-title) {
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif !important;
+  }
+
+  :global(#reading-controls-pill) {
     animation: reading-border-pulse 3.5s ease-in-out infinite;
     will-change: border-color, box-shadow;
   }
