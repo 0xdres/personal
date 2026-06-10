@@ -83,6 +83,9 @@ const nextPost =
 ---
 
 <Layout {...layoutProps}>
+  <div class="progress-container">
+    <div class="progress-bar" id="reading-progress-bar"></div>
+  </div>
   <Header />
   {SITE.showBackButton && <Breadcrumb withBackButton />}
   <main
@@ -327,51 +330,46 @@ const nextPost =
 </Layout>
 
 <script is:inline data-astro-rerun>
-  /** Create a progress indicator
-   *  at the top */
-  function createProgressBar() {
-    // Guard: avoid duplicating the bar on View Transitions re-runs
-    if (document.querySelector(".progress-container")) return;
+  /** Fallback reading progress bar for browsers without scroll-driven animations support */
+  function initProgressBarFallback() {
+    // Check if scroll-driven animations are supported natively (both timeline and range)
+    if (window.CSS && CSS.supports("(animation-timeline: scroll()) and (animation-range: 0% 100%)")) {
+      return; // Handled natively by CSS
+    }
 
-    const progressContainer = document.createElement("div");
-    progressContainer.className =
-      "progress-container fixed top-0 z-50 h-1 w-full bg-background";
-
-    const progressBar = document.createElement("div");
-    progressBar.className = "progress-bar h-1 w-0 bg-accent";
-    progressBar.id = "myBar";
-
-    progressContainer.appendChild(progressBar);
-    document.body.appendChild(progressContainer);
-  }
-  createProgressBar();
-
-  /** Update the progress bar
-   *  when user scrolls */
-  function updateScrollProgress() {
-    const myBar = document.getElementById("myBar"); // cache ref once
-    if (!myBar) return;
+    const progressBar = document.getElementById("reading-progress-bar");
+    if (!progressBar) return;
 
     let ticking = false;
+    const updateProgress = () => {
+      const winScroll = document.documentElement.scrollTop;
+      const height =
+        document.documentElement.scrollHeight -
+        document.documentElement.clientHeight;
+      if (height > 0) {
+        const ratio = winScroll / height;
+        progressBar.style.transform = `scaleX(${ratio})`;
+      }
+    };
+
+    // Initialize position
+    updateProgress();
+
     document.addEventListener(
       "scroll",
       () => {
         if (!ticking) {
           requestAnimationFrame(() => {
-            const winScroll = document.documentElement.scrollTop;
-            const height =
-              document.documentElement.scrollHeight -
-              document.documentElement.clientHeight;
-            myBar.style.width = ((winScroll / height) * 100) + "%";
+            updateProgress();
             ticking = false;
           });
           ticking = true;
         }
       },
-      { passive: true } // lets the browser optimise scroll handling
+      { passive: true }
     );
   }
-  updateScrollProgress();
+  initProgressBarFallback();
 
   /** Attaches links to headings in the document,
    *  allowing sharing of sections easily */
@@ -453,6 +451,65 @@ const nextPost =
 </script>
 
 <style>
+  /* Reading Progress Bar styles */
+  .progress-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 100;
+    pointer-events: none;
+    background: transparent;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    width: 100%;
+    background: linear-gradient(
+      90deg,
+      var(--accent) 0%,
+      #a855f7 50%,
+      var(--accent) 100%
+    );
+    background-size: 200% auto;
+    transform-origin: left;
+    transform: scaleX(0);
+    box-shadow: 
+      0 0 8px var(--accent),
+      0 0 16px color-mix(in oklab, var(--accent) 60%, #a855f7);
+    animation: shimmer-progress 4s linear infinite;
+  }
+
+  @keyframes grow-progress {
+    from { transform: scaleX(0); }
+    to { transform: scaleX(1); }
+  }
+
+  @keyframes shimmer-progress {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
+    .progress-bar {
+      animation: 
+        grow-progress auto linear both,
+        shimmer-progress 4s linear infinite;
+      animation-timeline: scroll(y), auto;
+      animation-range: 0% 100%, auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .progress-bar {
+      animation: none !important;
+      transform: scaleX(0) !important;
+      display: none;
+    }
+  }
+
   .post-title {
     background: linear-gradient(
       135deg,
