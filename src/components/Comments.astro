@@ -21,80 +21,97 @@ const config = {
   categoryId: PUBLIC_GISCUS_CATEGORY_ID,
   lang: SITE.lang || "en",
 };
+const isDev = import.meta.env.DEV;
 ---
 
 {
   enabled && (
-    <>
-      <script is:inline set:html={`window.giscusConfig = ${JSON.stringify(config)};`} />
-      
+    isDev ? (
       <div class="giscus-wrapper mt-16 border-t border-border/10 pt-10 w-full" data-pagefind-ignore>
-        <div class="giscus mx-auto max-w-3xl" />
+        <div class="giscus mx-auto max-w-3xl flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/30 bg-muted/5 py-10 px-6 text-center">
+          <div class="mb-3 rounded-full bg-accent/10 p-3 text-accent">
+            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+          </div>
+          <h3 class="text-sm font-semibold text-foreground/80">Comments System (Disabled in Dev Mode)</h3>
+          <p class="mt-1 text-xs text-foreground/50 max-w-sm">
+            Giscus loading is disabled in development mode to save bandwidth and prevent localhost clutter. It will load normally in production.
+          </p>
+        </div>
       </div>
+    ) : (
+      <>
+        <script is:inline set:html={`window.giscusConfig = ${JSON.stringify(config)};`} />
+        
+        <div class="giscus-wrapper mt-16 border-t border-border/10 pt-10 w-full" data-pagefind-ignore>
+          <div class="giscus mx-auto max-w-3xl" />
+        </div>
 
-      <script is:inline>
-        (function () {
-          function loadGiscus() {
-            const container = document.querySelector(".giscus");
-            if (!container) return;
+        <script is:inline>
+          (function () {
+            function loadGiscus() {
+              const container = document.querySelector(".giscus");
+              if (!container) return;
 
-            // Clear container to prevent double rendering
-            container.innerHTML = "";
+              // Clear container to prevent double rendering
+              container.innerHTML = "";
 
-            const theme = document.documentElement.getAttribute("data-theme") || "dark";
-            const giscusTheme = theme === "dark" ? "transparent_dark" : "light";
-
-            const config = window.giscusConfig;
-            if (!config || !config.repo) return;
-
-            const script = document.createElement("script");
-            script.src = "https://giscus.app/client.js";
-            script.async = true;
-            script.crossOrigin = "anonymous";
-            script.setAttribute("data-repo", config.repo);
-            script.setAttribute("data-repo-id", config.repoId);
-            script.setAttribute("data-category", config.category);
-            script.setAttribute("data-category-id", config.categoryId);
-            script.setAttribute("data-mapping", "pathname");
-            script.setAttribute("data-strict", "0");
-            script.setAttribute("data-reactions-enabled", "1");
-            script.setAttribute("data-emit-metadata", "0");
-            script.setAttribute("data-input-position", "bottom");
-            script.setAttribute("data-theme", giscusTheme);
-            script.setAttribute("data-lang", config.lang || "en");
-            script.setAttribute("data-loading", "lazy");
-
-            container.appendChild(script);
-          }
-
-          let observer;
-          function setupThemeObserver() {
-            if (observer) observer.disconnect();
-
-            observer = new MutationObserver(() => {
               const theme = document.documentElement.getAttribute("data-theme") || "dark";
               const giscusTheme = theme === "dark" ? "transparent_dark" : "light";
-              const iframe = document.querySelector("iframe.giscus-frame");
-              if (iframe && iframe.contentWindow) {
-                iframe.contentWindow.postMessage(
-                  { giscus: { setConfig: { theme: giscusTheme } } },
-                  "https://giscus.app"
-                );
-              }
-            });
 
-            observer.observe(document.documentElement, {
-              attributes: true,
-              attributeFilter: ["data-theme"],
-            });
-          }
+              const config = window.giscusConfig;
+              if (!config || !config.repo) return;
 
-          document.addEventListener("astro:page-load", () => {
-            loadGiscus();
-            setupThemeObserver();
-          });
-        })();
-      </script>
-    </>
+              const script = document.createElement("script");
+              script.src = "https://giscus.app/client.js";
+              script.async = true;
+              script.crossOrigin = "anonymous";
+              script.setAttribute("data-repo", config.repo);
+              script.setAttribute("data-repo-id", config.repoId);
+              script.setAttribute("data-category", config.category);
+              script.setAttribute("data-category-id", config.categoryId);
+              script.setAttribute("data-mapping", "pathname");
+              script.setAttribute("data-strict", "0");
+              script.setAttribute("data-reactions-enabled", "1");
+              script.setAttribute("data-emit-metadata", "0");
+              script.setAttribute("data-input-position", "bottom");
+              script.setAttribute("data-theme", giscusTheme);
+              script.setAttribute("data-lang", config.lang || "en");
+              script.setAttribute("data-loading", "lazy");
+
+              container.appendChild(script);
+            }
+
+            let observer;
+            function setupThemeObserver() {
+              if (observer) observer.disconnect();
+
+              observer = new MutationObserver(() => {
+                const theme = document.documentElement.getAttribute("data-theme") || "dark";
+                const giscusTheme = theme === "dark" ? "transparent_dark" : "light";
+                const iframe = document.querySelector("iframe.giscus-frame");
+                if (iframe && iframe.contentWindow) {
+                  iframe.contentWindow.postMessage(
+                    { giscus: { setConfig: { theme: giscusTheme } } },
+                    "https://giscus.app"
+                  );
+                }
+              });
+
+              observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ["data-theme"],
+              });
+            }
+
+            document.addEventListener("astro:page-load", () => {
+              loadGiscus();
+              setupThemeObserver();
+            });
+          })();
+        </script>
+      </>
+    )
   )
 }
