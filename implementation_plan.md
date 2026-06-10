@@ -43,17 +43,6 @@ El directorio `.github/` tiene templates de issues y PR pero **ningún workflow*
 
 ---
 
-#### 13. 🔍 SEO Mejorado — Breadcrumb structured data + FAQ Schema
-
-El breadcrumb visual ([Breadcrumb.astro](file:///Users/andres/dev/blog/src/components/Breadcrumb.astro)) es excelente pero **no emite JSON-LD BreadcrumbList**. Google usa esto para rich snippets.
-
-**Feature propuesta:**
-- Generar `BreadcrumbList` structured data en las páginas que usan Breadcrumb
-- Para posts con secciones tipo FAQ, generar `FAQPage` schema automáticamente
-- Añadir `article:tag` meta tags (uno por cada tag del post)
-
----
-
 #### 14. ⌨️ Keyboard Shortcuts — Expandir más allá de ⌘K
 
 Solo existe ⌘K para búsqueda. Un blog con tantas secciones se beneficia de más shortcuts.

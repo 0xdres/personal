@@ -43,7 +43,9 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
           aria-label={`Go to home of ${SITE.title}`}
           class="group footer-home-link relative flex items-center gap-2 rounded-md text-lg font-bold tracking-tight"
         >
-          <Logo class="footer-logo w-28 opacity-80 transition-all duration-300 group-hover:opacity-100 group-hover:scale-105 dark:invert" />
+          <Logo
+            class="footer-logo w-28 opacity-80 transition-all duration-300 group-hover:scale-105 group-hover:opacity-100 dark:invert"
+          />
           <span class="sr-only">{SITE.title}</span>
         </a>
         <p
@@ -54,12 +56,16 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
       </div>
 
       <!-- Social links -->
-      <nav class="flex flex-col items-center gap-3 sm:items-end" aria-labelledby={socialHeadingId}>
+      <nav
+        class="flex flex-col items-center gap-3 sm:items-end"
+        aria-labelledby={socialHeadingId}
+      >
         <p
           id={socialHeadingId}
           class="font-firacode text-[10px] tracking-wider text-foreground/55 uppercase select-none"
-          >Connect</p
         >
+          Connect
+        </p>
         <ul class="flex items-center gap-2" role="list">
           {
             socialLinks.map(social => (
@@ -69,7 +75,7 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
                   target={social.isExternal ? "_blank" : undefined}
                   rel={social.isExternal ? "noopener noreferrer" : undefined}
                   aria-label={social.linkTitle}
-                  class="footer-social-btn group relative flex size-9 items-center justify-center rounded-xl border border-border/20 bg-muted/20 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-accent/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent/50"
+                  class="footer-social-btn group relative flex size-9 items-center justify-center rounded-xl border border-border/20 bg-muted/20 transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-accent/10 focus-visible:ring-2 focus-visible:ring-accent/50 focus-visible:outline-none"
                   title={social.linkTitle}
                 >
                   <social.icon class="size-4.5 fill-transparent stroke-foreground/60 stroke-[1.5px] transition-all duration-300 group-hover:stroke-accent" />
@@ -97,9 +103,22 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
         &copy; {currentYear}
         {SITE.title}. All rights reserved.
       </p>
-      <p class="font-firacode text-[11px] tracking-wide text-foreground/45">
-        Made with <span class="text-accent">&#9829;</span> and lots of coffee
-      </p>
+      <div
+        class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-firacode text-[11px] text-foreground/45"
+      >
+        <span
+          >Made with <span class="text-accent">&#9829;</span> and coffee</span
+        >
+        <span class="opacity-30">|</span>
+        <button
+          id="shortcuts-trigger"
+          class="shortcuts-trigger inline-flex cursor-pointer items-center gap-1.5 rounded border border-border/30 bg-muted/10 px-2 py-0.5 text-[10px] text-foreground/60 transition-all duration-200 hover:border-accent/40 hover:bg-accent/5 hover:text-accent focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
+          aria-label="Open keyboard shortcuts guide"
+          title="Keyboard Shortcuts"
+        >
+          <kbd class="font-sans font-bold">?</kbd> Shortcuts
+        </button>
+      </div>
     </div>
   </div>
 </footer>
@@ -116,7 +135,9 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
     );
   }
 
-  @supports ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  @supports (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+  ) {
     .footer-wrapper {
       backdrop-filter: blur(12px) saturate(140%);
       -webkit-backdrop-filter: blur(12px) saturate(140%);
@@ -132,7 +153,8 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
   }
 
   .footer-social-btn:hover {
-    box-shadow: 0 8px 20px -4px color-mix(in srgb, var(--accent) 30%, transparent);
+    box-shadow: 0 8px 20px -4px
+      color-mix(in srgb, var(--accent) 30%, transparent);
   }
 
   @media (prefers-reduced-motion: reduce) {
