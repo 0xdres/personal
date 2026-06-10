@@ -69,11 +69,21 @@ const isActive = (path: string) => {
         }
 
         <!-- Nav area -->
-        <nav id="nav-menu" class="flex items-center sm:gap-1 shrink-0">
+        <nav id="nav-menu" class="flex items-center gap-1.5 lg:gap-1 shrink-0">
+          <!-- Mobile search button (visible only on screens < 1024px) -->
+          <button
+            data-search-trigger
+            class="nav-icon-btn lg:!hidden"
+            title="Search"
+            aria-label="Open search"
+          >
+            <IconSearch class="size-4.5" />
+          </button>
+
           <!-- Mobile hamburger (animated lines) -->
           <button
             id="menu-btn"
-            class="hamburger-btn sm:hidden"
+            class="hamburger-btn lg:hidden"
             aria-label="Open Menu"
             aria-expanded="false"
             aria-controls="mobile-menu"
@@ -85,8 +95,8 @@ const isActive = (path: string) => {
             </div>
           </button>
 
-          <!-- Desktop links (always visible on sm+) -->
-          <ul class="hidden sm:flex sm:flex-row sm:items-center sm:gap-1">
+          <!-- Desktop links (always visible on lg+) -->
+          <ul class="hidden lg:flex lg:flex-row lg:items-center lg:gap-1">
             <li>
               <a
                 href="/posts"
@@ -127,8 +137,8 @@ const isActive = (path: string) => {
                     title="Archives"
                     aria-label="archives"
                   >
-                    <IconArchive class="hidden sm:inline-block" />
-                    <span class="sm:sr-only">Archives</span>
+                    <IconArchive class="hidden lg:inline-block" />
+                    <span class="lg:sr-only">Archives</span>
                   </LinkButton>
                 </li>
               )
@@ -145,8 +155,8 @@ const isActive = (path: string) => {
                     title="Galleries"
                     aria-label="galleries"
                   >
-                    <IconGallery class="hidden sm:inline-block" />
-                    <span class="sm:sr-only">Galleries</span>
+                    <IconGallery class="hidden lg:inline-block" />
+                    <span class="lg:sr-only">Galleries</span>
                   </LinkButton>
                 </li>
               )
@@ -442,7 +452,7 @@ const isActive = (path: string) => {
     cursor: pointer;
   }
 
-  @media (min-width: 640px) {
+  @media (min-width: 1024px) {
     .hamburger-btn {
       display: none;
     }
