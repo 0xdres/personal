@@ -59,6 +59,12 @@ export default defineConfig({
         context: "client",
         optional: true,
       }),
+      // ── Umami Analytics ──────────────────────────────────────────────────
+      PUBLIC_UMAMI_WEBSITE_ID: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
       // ── Giscus comments ──────────────────────────────────────────────────
       PUBLIC_GISCUS_REPO: envField.string({
         access: "public",

@@ -1,7 +1,7 @@
 ---
 import { Font } from "astro:assets";
 import { ClientRouter } from "astro:transitions";
-import { PUBLIC_GOOGLE_SITE_VERIFICATION } from "astro:env/client";
+import { PUBLIC_GOOGLE_SITE_VERIFICATION, PUBLIC_UMAMI_WEBSITE_ID } from "astro:env/client";
 import { SITE } from "@/config";
 import SearchModal from "@/components/SearchModal.astro";
 import "@/styles/global.css";
@@ -207,6 +207,18 @@ const showGrain = SITE.backdropEffects.grain;
         <meta
           name="google-site-verification"
           content={PUBLIC_GOOGLE_SITE_VERIFICATION}
+        />
+      )
+    }
+
+    {
+      // Umami Analytics - Loaded only in production and if PUBLIC_UMAMI_WEBSITE_ID is defined
+      import.meta.env.PROD && PUBLIC_UMAMI_WEBSITE_ID && (
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id={PUBLIC_UMAMI_WEBSITE_ID}
+          data-domains="devosfera.vercel.app"
         />
       )
     }
