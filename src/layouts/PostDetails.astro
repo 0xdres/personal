@@ -9,6 +9,7 @@ import ShareLinks from "@/components/ShareLinks.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
 import GalleryEmbed from "@/components/GalleryEmbed.astro";
+import TableOfContents from "@/components/TableOfContents.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import { getReadingTime } from "@/utils/readingTime";
@@ -34,8 +35,9 @@ const {
   hideEditPost,
 } = post.data;
 
-const { Content } = await render(post);
+const { Content, headings } = await render(post);
 const readingTime = post.body ? getReadingTime(post.body) : null;
+const hasToc = headings.filter(h => h.depth > 1 && h.depth < 4).length > 0;
 
 let ogImageUrl: string | undefined;
 
@@ -90,7 +92,7 @@ const nextPost =
   {SITE.showBackButton && <Breadcrumb withBackButton />}
   <main
     id="main-content"
-    class:list={["relative app-layout pb-12", { "mt-8": !SITE.showBackButton }]}
+    class:list={["relative mx-auto w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl px-4 pb-12", { "mt-8": !SITE.showBackButton }]}
     data-pagefind-body
   >
     <!-- Post header section -->
@@ -204,12 +206,28 @@ const nextPost =
       </div>
     </header>
 
-    <article
-      id="article"
-      class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
-    >
-      <Content components={{ GalleryEmbed }} />
-    </article>
+    {
+      hasToc ? (
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr_250px] lg:gap-12 items-start mt-8 w-full">
+          <article
+            id="article"
+            class="app-prose w-full max-w-none lg:max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
+          >
+            <Content components={{ GalleryEmbed }} />
+          </article>
+          <aside class="sidebar-toc hidden lg:block sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+            <TableOfContents headings={headings} />
+          </aside>
+        </div>
+      ) : (
+        <article
+          id="article"
+          class="app-prose mt-8 w-full max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
+        >
+          <Content components={{ GalleryEmbed }} />
+        </article>
+      )
+    }
 
     <!-- ═══════ Post footer section ═══════ -->
     <div class="relative mt-12 mb-8 flex items-center justify-center gap-4" aria-hidden="true">
@@ -603,6 +621,12 @@ const nextPost =
   @media (pointer: fine) {
     .post-nav-link:hover .post-nav-bg {
       will-change: opacity;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    #article :global(details) {
+      display: none !important;
     }
   }
 </style>
