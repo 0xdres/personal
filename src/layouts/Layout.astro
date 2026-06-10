@@ -19,6 +19,8 @@ type Props = {
   prev?: string;
   next?: string;
   structuredData?: Record<string, unknown>;
+  tags?: string[];
+  faqs?: Array<{ question: string; answer: string }>;
 };
 
 const {
@@ -34,6 +36,8 @@ const {
   prev,
   next,
   structuredData: structuredDataProp,
+  tags,
+  faqs,
 } = Astro.props;
 
 // Always build canonical from SITE.website (production URL), never localhost.
@@ -103,6 +107,22 @@ const finalStructuredData = structuredDataProp ?? (
         : null
 );
 
+const faqSchema =
+  faqs && faqs.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faqs.map(faq => ({
+          "@type": "Question",
+          name: faq.question,
+          acceptedAnswer: {
+            "@type": "Answer",
+            text: faq.answer,
+          },
+        })),
+      }
+    : null;
+
 const showCursorGlow = SITE.backdropEffects.cursorGlow;
 const showGrain = SITE.backdropEffects.grain;
 ---
@@ -169,6 +189,11 @@ const showGrain = SITE.backdropEffects.grain;
         />
       )
     }
+    {
+      isArticle &&
+        tags &&
+        tags.map(tag => <meta property="article:tag" content={tag} />)
+    }
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
@@ -185,6 +210,15 @@ const showGrain = SITE.backdropEffects.grain;
           type="application/ld+json"
           is:inline
           set:html={JSON.stringify(finalStructuredData)}
+        />
+      )
+    }
+    {
+      faqSchema && (
+        <script
+          type="application/ld+json"
+          is:inline
+          set:html={JSON.stringify(faqSchema)}
         />
       )
     }

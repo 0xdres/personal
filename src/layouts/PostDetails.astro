@@ -35,6 +35,7 @@ const {
   timezone,
   tags,
   hideEditPost,
+  faqs,
 } = post.data;
 
 const { Content, headings } = await render(post);
@@ -69,6 +70,8 @@ const layoutProps = {
   canonicalURL,
   ogImage,
   scrollSmooth: true,
+  tags,
+  faqs,
 };
 
 /* ========== Prev/Next Posts ========== */
@@ -83,7 +86,9 @@ const currentPostIndex = allPosts.findIndex(a => a.id === post.id);
 
 const prevPost = currentPostIndex !== 0 ? allPosts[currentPostIndex - 1] : null;
 const nextPost =
-  currentPostIndex < allPosts.length - 1 ? allPosts[currentPostIndex + 1] : null;
+  currentPostIndex < allPosts.length - 1
+    ? allPosts[currentPostIndex + 1]
+    : null;
 ---
 
 <Layout {...layoutProps}>
@@ -94,13 +99,18 @@ const nextPost =
   {SITE.showBackButton && <Breadcrumb withBackButton />}
   <main
     id="main-content"
-    class:list={["relative mx-auto w-full max-w-4xl lg:max-w-5xl xl:max-w-6xl px-4 pb-12", { "mt-8": !SITE.showBackButton }]}
+    class:list={[
+      "relative mx-auto w-full max-w-4xl px-4 pb-12 lg:max-w-5xl xl:max-w-6xl",
+      { "mt-8": !SITE.showBackButton },
+    ]}
     data-pagefind-body
   >
     <!-- Post header section -->
     <header class="post-header relative mb-10 text-center">
       <div class="post-hero-bg"></div>
-      <div class="relative z-10 rounded-3xl border border-border/20 bg-muted/5 px-6 py-8 backdrop-blur-md sm:px-10 sm:py-12">
+      <div
+        class="relative z-10 rounded-3xl border border-border/20 bg-muted/5 px-6 py-8 backdrop-blur-md sm:px-10 sm:py-12"
+      >
         <!-- Title -->
         <h1
           transition:name={slugifyStr(title)}
@@ -175,26 +185,26 @@ const nextPost =
           </div>
 
           <!-- Reading time chip -->
-          {readingTime && (
-            <div
-              class="inline-flex items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 backdrop-blur-sm"
-            >
-              <svg
-                class="size-3.5 text-accent/70"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                aria-hidden="true"
-              >
-                <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
-                <path d="M12 7v5l3 3" />
-              </svg>
-              <span class="text-sm opacity-70">{readingTime}</span>
-            </div>
-          )}
+          {
+            readingTime && (
+              <div class="inline-flex items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 backdrop-blur-sm">
+                <svg
+                  class="size-3.5 text-accent/70"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                  <path d="M12 7v5l3 3" />
+                </svg>
+                <span class="text-sm opacity-70">{readingTime}</span>
+              </div>
+            )
+          }
 
           <!-- Edit post -->
           <EditPost
@@ -203,21 +213,19 @@ const nextPost =
             class="flex rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 opacity-70 backdrop-blur-sm transition-all duration-200 hover:border-accent/30 hover:opacity-100 [&>svg]:size-3.5"
           />
         </div>
-
-
       </div>
     </header>
 
     {
       hasToc ? (
-        <div class="grid grid-cols-1 lg:grid-cols-[1fr_250px] lg:gap-12 items-start mt-8 w-full">
+        <div class="mt-8 grid w-full grid-cols-1 items-start lg:grid-cols-[1fr_250px] lg:gap-12">
           <article
             id="article"
             class="app-prose w-full max-w-none lg:max-w-app prose-pre:bg-(--shiki-light-bg) dark:prose-pre:bg-(--shiki-dark-bg)"
           >
             <Content components={{ GalleryEmbed }} />
           </article>
-          <aside class="sidebar-toc hidden lg:block sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto pr-2">
+          <aside class="sidebar-toc sticky top-24 hidden max-h-[calc(100vh-8rem)] overflow-y-auto pr-2 lg:block">
             <TableOfContents headings={headings} />
           </aside>
         </div>
@@ -232,18 +240,35 @@ const nextPost =
     }
 
     <!-- ═══════ Post footer section ═══════ -->
-    <div class="relative mt-12 mb-8 flex items-center justify-center gap-4" aria-hidden="true">
-      <div class="relative h-px flex-1 bg-linear-to-r from-transparent via-border/30 to-accent/20">
-        <div class="absolute inset-0 bg-linear-to-r from-transparent via-accent/40 to-accent/40 blur-[2px]"></div>
+    <div
+      class="relative mt-12 mb-8 flex items-center justify-center gap-4"
+      aria-hidden="true"
+    >
+      <div
+        class="relative h-px flex-1 bg-linear-to-r from-transparent via-border/30 to-accent/20"
+      >
+        <div
+          class="absolute inset-0 bg-linear-to-r from-transparent via-accent/40 to-accent/40 blur-[2px]"
+        >
+        </div>
       </div>
-      
-      <div class="relative z-10 flex items-center gap-2 font-firacode text-[10px] tracking-widest text-accent/40 uppercase select-none">
-        <span class="h-1.5 w-1.5 rounded-full bg-accent/50 shadow-[0_0_8px_var(--color-accent)]"></span>
+
+      <div
+        class="relative z-10 flex items-center gap-2 font-firacode text-[10px] tracking-widest text-accent/40 uppercase select-none"
+      >
+        <span
+          class="h-1.5 w-1.5 rounded-full bg-accent/50 shadow-[0_0_8px_var(--color-accent)]"
+        ></span>
         end
       </div>
 
-      <div class="relative h-px flex-1 bg-linear-to-l from-transparent via-border/30 to-accent/20">
-        <div class="absolute inset-0 bg-linear-to-l from-transparent via-accent/40 to-accent/40 blur-[2px]"></div>
+      <div
+        class="relative h-px flex-1 bg-linear-to-l from-transparent via-border/30 to-accent/20"
+      >
+        <div
+          class="absolute inset-0 bg-linear-to-l from-transparent via-accent/40 to-accent/40 blur-[2px]"
+        >
+        </div>
       </div>
     </div>
 
@@ -252,7 +277,10 @@ const nextPost =
       class="mt-6 mb-8 flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-between"
     >
       <!-- Tags (duplicated from header — aria-hidden to avoid double indexing) -->
-      <div class="flex flex-wrap justify-center gap-2 sm:justify-start" aria-hidden="true">
+      <div
+        class="flex flex-wrap justify-center gap-2 sm:justify-start"
+        aria-hidden="true"
+      >
         {
           tags.map((tag: string) => (
             <a
@@ -359,7 +387,12 @@ const nextPost =
   /** Fallback reading progress bar for browsers without scroll-driven animations support */
   function initProgressBarFallback() {
     // Check if scroll-driven animations are supported natively (both timeline and range)
-    if (window.CSS && CSS.supports("(animation-timeline: scroll()) and (animation-range: 0% 100%)")) {
+    if (
+      window.CSS &&
+      CSS.supports(
+        "(animation-timeline: scroll()) and (animation-range: 0% 100%)"
+      )
+    ) {
       return; // Handled natively by CSS
     }
 
@@ -488,7 +521,7 @@ const nextPost =
     pointer-events: none;
     background: transparent;
   }
-  
+
   .progress-bar {
     height: 100%;
     width: 100%;
@@ -501,30 +534,42 @@ const nextPost =
     background-size: 200% auto;
     transform-origin: left;
     transform: scaleX(0);
-    box-shadow: 
+    box-shadow:
       0 0 8px var(--accent),
       0 0 16px color-mix(in oklab, var(--accent) 60%, #a855f7);
     animation: shimmer-progress 4s linear infinite;
   }
 
   @keyframes grow-progress {
-    from { transform: scaleX(0); }
-    to { transform: scaleX(1); }
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
   }
 
   @keyframes shimmer-progress {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   @supports ((animation-timeline: scroll()) and (animation-range: 0% 100%)) {
     .progress-bar {
-      animation: 
+      animation:
         grow-progress auto linear both,
         shimmer-progress 4s linear infinite;
       animation-timeline: scroll(y), auto;
-      animation-range: 0% 100%, auto;
+      animation-range:
+        0% 100%,
+        auto;
     }
   }
 
@@ -582,7 +627,11 @@ const nextPost =
      blur effect via filter:blur(16px), avoiding a second compositing layer */
     background: color-mix(in srgb, var(--muted) 5%, transparent);
     position: relative;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+    transition:
+      transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.3s ease,
+      border-color 0.3s ease,
+      background-color 0.3s ease;
   }
 
   .post-nav-link:hover {

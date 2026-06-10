@@ -39,34 +39,6 @@ El directorio `.github/` tiene templates de issues y PR pero **ningún workflow*
 - Workflow `lighthouse.yml`: correr Lighthouse CI automáticamente y reportar scores
 - Opcional: deploy preview a Vercel en cada PR
 
-### 🟠 P1 — Alto Impacto / Esfuerzo Medio
-
----
-
-#### 11. 🏷️ Related Posts — Sugerencias al final de cada artículo
-
-Actualmente hay navegación prev/next en [PostDetails.astro](file:///Users/andres/dev/blog/src/layouts/PostDetails.astro), pero es cronológica. No hay recomendaciones por relevancia.
-
-**Feature propuesta:**
-- Componente `RelatedPosts.astro` que muestre 2-3 posts con tags en común
-- Algoritmo simple: contar tags compartidos, ponderar por recencia
-- Renderizar como cards horizontales con la estética del blog
-- Posición: después del contenido, antes de los comentarios
-
----
-
-#### 12. 🎨 Tema Configurable / Accent Color Picker
-
-El blog tiene un sistema de theming sólido (light/dark) pero el accent color está hardcoded (`#1158d1` light / `#008fec` dark).
-
-**Feature propuesta:**
-- Añadir un selector de accent color (3-5 presets: blue, green, purple, amber, rose)
-- Persistir en localStorage, actualizar CSS custom properties en runtime
-- Pequeño botón en el footer o en el header al lado del theme toggle
-- Mantener los presets coherentes (no un color wheel libre — consistencia del diseño)
-
----
-
 ### 🟡 P2 — Impacto Medio / Mejora de Pulido
 
 ---

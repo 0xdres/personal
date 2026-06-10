@@ -32,6 +32,9 @@ function setPreference(): void {
 function reflectPreference(): void {
   document.firstElementChild?.setAttribute("data-theme", themeValue);
 
+  const currentAccent = localStorage.getItem("theme-accent") || "blue";
+  document.firstElementChild?.setAttribute("data-accent", currentAccent);
+
   document.querySelector("#theme-btn")?.setAttribute("aria-label", themeValue);
 
   // Get a reference to the body element
