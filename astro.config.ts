@@ -59,6 +59,27 @@ export default defineConfig({
         context: "client",
         optional: true,
       }),
+      // ── Giscus comments ──────────────────────────────────────────────────
+      PUBLIC_GISCUS_REPO: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
+      PUBLIC_GISCUS_REPO_ID: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
+      PUBLIC_GISCUS_CATEGORY: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
+      PUBLIC_GISCUS_CATEGORY_ID: envField.string({
+        access: "public",
+        context: "client",
+        optional: true,
+      }),
       // ── Personal / social links ──────────────────────────────────────────
       // Set these in .env (never commit personal data to the repo).
       // Any variable left unset will simply hide that social link.
