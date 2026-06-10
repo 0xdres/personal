@@ -11,10 +11,10 @@ import BackToTopButton from "@/components/BackToTopButton.astro";
 import GalleryEmbed from "@/components/GalleryEmbed.astro";
 import TableOfContents from "@/components/TableOfContents.astro";
 import Comments from "@/components/Comments.astro";
-import RelatedPosts from "@/components/RelatedPosts.astro";
 import { getPath } from "@/utils/getPath";
 import { slugifyStr } from "@/utils/slugify";
 import { getReadingTime } from "@/utils/readingTime";
+import IconClock from "@/assets/icons/IconClock.svg";
 import { SITE } from "@/config";
 
 type Props = {
@@ -74,21 +74,62 @@ const layoutProps = {
   faqs,
 };
 
-/* ========== Prev/Next Posts ========== */
+/* ========== Hybrid Navigation Logic ========== */
 
-const allPosts = posts.map(({ data: { title }, id, filePath }) => ({
-  id,
-  title,
-  filePath,
-}));
+const currentPostIndex = posts.findIndex(p => p.id === post.id);
 
-const currentPostIndex = allPosts.findIndex(a => a.id === post.id);
+// 1. Previous Post (chronological - Left Card)
+const rawPrevPost = currentPostIndex !== 0 ? posts[currentPostIndex - 1] : null;
+const prevPost = rawPrevPost
+  ? {
+      id: rawPrevPost.id,
+      title: rawPrevPost.data.title,
+      filePath: rawPrevPost.filePath,
+      pubDatetime: rawPrevPost.data.pubDatetime,
+      modDatetime: rawPrevPost.data.modDatetime,
+      timezone: rawPrevPost.data.timezone,
+      readingTime: rawPrevPost.body ? getReadingTime(rawPrevPost.body) : null,
+    }
+  : null;
 
-const prevPost = currentPostIndex !== 0 ? allPosts[currentPostIndex - 1] : null;
-const nextPost =
-  currentPostIndex < allPosts.length - 1
-    ? allPosts[currentPostIndex + 1]
-    : null;
+// 2. Next Post (chronological - for fallback)
+const rawNextPost =
+  currentPostIndex < posts.length - 1 ? posts[currentPostIndex + 1] : null;
+
+// 3. Find the most related post for the Right Card (Recommendation)
+// Filter out the current post AND the prevPost (if it exists) to avoid duplicate cards
+const candidatePosts = posts.filter(
+  p => p.id !== post.id && (!rawPrevPost || p.id !== rawPrevPost.id)
+);
+
+const scoredCandidates = candidatePosts.map(p => {
+  const matchingTags = p.data.tags.filter(t => tags.includes(t)).length;
+  return { p, score: matchingTags };
+});
+
+// Sort candidates: highest score first, then newest first
+const sortedCandidates = scoredCandidates
+  .filter(c => c.score > 0)
+  .sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return b.p.data.pubDatetime.getTime() - a.p.data.pubDatetime.getTime();
+  });
+
+const rawRecommendedPost =
+  sortedCandidates.length > 0 ? sortedCandidates[0].p : rawNextPost;
+const isRecommended = sortedCandidates.length > 0;
+
+const recommendedPost = rawRecommendedPost
+  ? {
+      id: rawRecommendedPost.id,
+      title: rawRecommendedPost.data.title,
+      filePath: rawRecommendedPost.filePath,
+      pubDatetime: rawRecommendedPost.data.pubDatetime,
+      modDatetime: rawRecommendedPost.data.modDatetime,
+      timezone: rawRecommendedPost.data.timezone,
+      readingTime: rawRecommendedPost.body ? getReadingTime(rawRecommendedPost.body) : null,
+    }
+  : null;
 ---
 
 <Layout {...layoutProps}>
@@ -285,9 +326,6 @@ const nextPost =
       <ShareLinks />
     </div>
 
-    <!-- Related Posts Section -->
-    <RelatedPosts currentPostId={post.id} currentPostTags={tags} />
-
     <!-- Comments Section -->
     <Comments />
 
@@ -299,13 +337,13 @@ const nextPost =
       </div>
     </div>
 
-    <!-- Previous/Next Post Navigation -->
-    <div data-pagefind-ignore class="grid grid-cols-2 gap-3">
+    <!-- Previous/Next/Recommended Post Navigation -->
+    <div data-pagefind-ignore class="grid grid-cols-1 gap-4 sm:grid-cols-2">
       {
         prevPost ? (
           <a
             href={getPath(prevPost.id, prevPost.filePath)}
-            class="post-nav-link group relative flex flex-col gap-1 rounded-2xl border border-border/20 px-5 py-4 transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
+            class="post-nav-link group relative flex flex-col gap-1.5 rounded-2xl border border-border/20 px-5 py-4 transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
           >
             <div class="post-nav-bg" />
             <div class="flex items-center gap-1.5">
@@ -322,28 +360,54 @@ const nextPost =
                 <polyline points="12 19 5 12 12 5" />
               </svg>
               <span class="font-firacode text-[10px] tracking-wider text-foreground/35 uppercase">
-                Previous
+                Previous Post
               </span>
             </div>
             <span class="line-clamp-2 text-sm leading-snug font-medium text-foreground/70 transition-colors duration-200 group-hover:text-accent">
               {prevPost.title}
             </span>
+            <div class="mt-2.5 flex items-center gap-2 text-xs text-foreground/45">
+              <Datetime
+                pubDatetime={prevPost.pubDatetime}
+                modDatetime={prevPost.modDatetime}
+                timezone={prevPost.timezone}
+                class="text-xs [&>svg]:size-3.5 [&>svg]:min-w-3.5 [&>svg]:text-accent/60 [&>time]:text-xs text-foreground/45"
+              />
+              {prevPost.readingTime && (
+                <>
+                  <span class="opacity-30 select-none">•</span>
+                  <span class="flex items-center gap-1.5 whitespace-nowrap">
+                    <IconClock class="size-3.5 text-accent/60 shrink-0" aria-hidden="true" />
+                    <span>{prevPost.readingTime}</span>
+                  </span>
+                </>
+              )}
+            </div>
           </a>
         ) : (
-          <div />
+          <div class="hidden sm:block" />
         )
       }
       {
-        nextPost && (
+        recommendedPost && (
           <a
-            href={getPath(nextPost.id, nextPost.filePath)}
-            class="post-nav-link group relative col-start-2 flex flex-col items-end gap-1 rounded-2xl border border-border/20 px-5 py-4 text-end transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
+            href={getPath(recommendedPost.id, recommendedPost.filePath)}
+            class="post-nav-link group relative flex flex-col items-end gap-1.5 rounded-2xl border border-border/20 px-5 py-4 text-end transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
           >
             <div class="post-nav-bg" />
             <div class="flex items-center gap-1.5">
-              <span class="font-firacode text-[10px] tracking-wider text-foreground/35 uppercase">
-                Next
-              </span>
+              {isRecommended ? (
+                <span class="font-firacode text-[9px] font-bold tracking-widest text-accent uppercase flex items-center gap-1.5 bg-accent/8 border border-accent/20 px-2 py-0.5 rounded-full select-none transition-colors duration-300 group-hover:bg-accent/15">
+                  <svg class="size-3 fill-accent text-accent animate-pulse" viewBox="0 0 24 24">
+                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                  </svg>
+                  Recommended Read
+                </span>
+              ) : (
+                <span class="font-firacode text-[10px] tracking-wider text-foreground/35 uppercase">
+                  Next Post
+                </span>
+              )}
               <svg
                 class="size-3.5 text-accent/50 transition-transform duration-300 group-hover:translate-x-1 rtl:rotate-180"
                 viewBox="0 0 24 24"
@@ -358,8 +422,25 @@ const nextPost =
               </svg>
             </div>
             <span class="line-clamp-2 text-sm leading-snug font-medium text-foreground/70 transition-colors duration-200 group-hover:text-accent">
-              {nextPost.title}
+              {recommendedPost.title}
             </span>
+            <div class="mt-2.5 flex items-center justify-end gap-2 text-xs text-foreground/45">
+              <Datetime
+                pubDatetime={recommendedPost.pubDatetime}
+                modDatetime={recommendedPost.modDatetime}
+                timezone={recommendedPost.timezone}
+                class="text-xs [&>svg]:size-3.5 [&>svg]:min-w-3.5 [&>svg]:text-accent/60 [&>time]:text-xs text-foreground/45"
+              />
+              {recommendedPost.readingTime && (
+                <>
+                  <span class="opacity-30 select-none">•</span>
+                  <span class="flex items-center gap-1.5 whitespace-nowrap">
+                    <IconClock class="size-3.5 text-accent/60 shrink-0" aria-hidden="true" />
+                    <span>{recommendedPost.readingTime}</span>
+                  </span>
+                </>
+              )}
+            </div>
           </a>
         )
       }
