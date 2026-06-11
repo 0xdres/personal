@@ -1,0 +1,83 @@
+---
+title: Optimiza la Velocidad de tu Web - Tutorial con WebP y PageSpeed
+description: Mejora en gran medida la velocidad de carga de tu página a tus usuarios
+pubDatetime: 2022-07-18T05:35:00.000Z
+modDatetime: 2025-07-13T05:35:00.000Z
+tags:
+  - Optimización Web
+  - Tutorial
+  - Tutoriales útiles
+draft: false
+featured: false
+coverImage: ../../assets/images/post-covers/pagespeed-y-optimizacion-web.jpeg
+---
+
+En este articulo voy a ir al grano, navegando por la web me he encontrado muchos sitios sin optimización o con problemas de carga, algunos están dentro del 40% al 70% de optimización según Google y esto podría estar afectando tanto a la experiencia de usuario como al posicionamiento en el buscador más grande del mundo, por eso les comparto este pequeño tutorial que posiblemente podría ayudar a algunos a utilizar herramientas nuevas, reforzar sus conocimientos y mejorar un poco la carga de su sitio web.
+
+---
+
+## Herramientas:
+
+![](../../assets/images/posts/pagespeed-y-optimizacion-web-31f95d3c-webp.webp)
+
+### Imágenes en Webp
+
+Creado y distribuido por Google, **Webp** es un formato contenedor de imágenes, ofrece la posibilidad de reducir el peso de una imagen desde un 60%, ademas de estar optimizado para trabajar con la mayoría de navegadores web. Esta será nuestra primer herramienta.
+
+![](../../assets/images/posts/pagespeed-y-optimizacion-web-40d1bf8c-kisspng-google-pagespeed-tools-website-google-search-web-p-5ccec86fac9811.916385711557055599707.png)
+
+### PageSpeed Insights de Google
+
+Herramienta para análisis y diagnostico de rendimiento. Diseñada por Google, **PageSpeed Insights** ofrece un análisis gratuito del rendimiento de tu sitio web. Esta sera nuestra segunda herramienta.
+
+---
+
+## Vamos a comenzar
+
+Para empezar debemos saber que problemas tiene nuestro sitio web en cuestión de **performance**, para esto vamos a ingresar al sitio web oficial de **[PageSpeed](https://pagespeed.web.dev/)** y colocaremos la url de nuestro sitio.
+
+![](../../assets/images/posts/pagespeed-y-optimizacion-web-521b337f-blog.png)
+
+En este caso vemos un rendimiento bajo, visitando el sitio de manera orgánica notamos que es una app hecha con **React**, y que a pesar de obtener un porcentaje bajo en este análisis, la carga está oscilando entre 1 y 2 segundos promedio, entonces veremos que falla.
+
+![](../../assets/images/posts/pagespeed-y-optimizacion-web-c8c59969-Captura_20de_20pantalla_202022-07-17_20-_2023.25.03.png)
+
+Al desplazarnos leemos una lista detallada de errores y posibles soluciones. Dentro de ellas encontramos que algunas imágenes se encuentran en formato **jpg** y **png**.
+
+---
+
+## Solución:
+
+### Paso 1
+Necesitamos convertir nuestros archivos png a webp. Ingresamos al siguiente url: **[convertio.co](https://convertio.co/es)**, nos mostrara un panel donde agregaremos y convertiremos nuestros archivos a webp.
+
+### Paso 2
+Remplazar estos archivos dentro de nuestro proyecto.
+
+![](../../assets/images/posts/pagespeed-y-optimizacion-web-4f649643-araee.png)
+
+### Paso 3
+Agregar **lazy loading** a las imágenes. En Html es tan simple como agregar la propiedad `loading="lazy"` dentro de nuestra etiqueta img, de la siguiente manera:
+
+![](https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgfxD3alCUGAZql2egBJAAvIUn2CbJ6uYovgS3S_VWkz4C9dKF8cFg9-DSRrwwvpSa1iiQ0vW9ltYs-wgcEDKsBPX4OemdRfeGDbuOkCxohje3lW0k1_8Kxioo6SkL_IzIsOdSLfqYEWeVujbNhJstmpCEjgc_ZdfiqMXX2yFLkBf6DpVkCkmfi-w7x/s1600/ll.png)
+
+Ahora vamos a hacer un segundo análisis para ver el resultado.
+
+![](../../assets/images/posts/pagespeed-y-optimizacion-web-5129ae59-Captura_20de_20pantalla_202022-07-17_20-_2023.51.42.png)
+
+Al ser un sitio web con **React** nos damos cuenta de que un ligero cambio en formatos de imágenes y un poco de **lazy loading** al momento de renderizar el **DOM** nos ayudaron a mejorar el performance y lo datos de rendimiento, mejorando la visión que tiene Google de nuestro sitio y haciéndolo un mejor candidato para posicionamiento **SEO**, es posible que en tu sitio experimentes una mejora notoria aunque no tan sorprendente como esta.
+
+Ademas de lo anterior algunos consejos para mejorar el rendimiento del sitio web son:
+
+* Utiliza un tamaño adecuado de imágenes para dispositivos móviles.
+* Utiliza siempre buenas practicas al programar.
+* El uso de bibliotecas como: **Bootstrap** o **Tailwind** podría afectar la carga si no se depura el código correctamente.
+* Permite que tu **Hosting** cree una aceleración por medio de caché.
+
+---
+
+## Conclusión:
+Mejorar el rendimiento de tu sitio web ayudará a tener una mejor interacción y crear una experiencia fluida para el usuario.
+
+con 💜 s3ntin3l
+Invítame un **[Cafecín](https://www.buymeacoffee.com/sentinelbot)** ☕

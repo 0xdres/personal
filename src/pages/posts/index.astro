@@ -1,46 +1,29 @@
 ---
-import type { GetStaticPaths } from "astro";
 import { getCollection } from "astro:content";
 import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import Card from "@/components/Card.astro";
-import Pagination from "@/components/Pagination.astro";
 import "@pagefind/default-ui/css/ui.css";
 import type { ContentEntry } from "@/utils/contentEntry";
 import getSortedPosts from "@/utils/getSortedPosts";
 import { SITE } from "@/config";
 
-export const getStaticPaths = (async ({ paginate }) => {
-  const [blogPosts, galleryPosts] = await Promise.all([
-    getCollection("blog", ({ data }) => !data.draft),
-    SITE.showGalleries && SITE.showGalleriesInIndex
-      ? getCollection("galleries", ({ data }) => !data.draft)
-      : Promise.resolve([]),
-  ]);
-  return paginate(getSortedPosts([...blogPosts, ...galleryPosts]), {
-    pageSize: SITE.postPerPage,
-  });
-}) satisfies GetStaticPaths;
+const [blogPosts, galleryPosts] = await Promise.all([
+  getCollection("blog", ({ data }) => !data.draft),
+  SITE.showGalleries && SITE.showGalleriesInIndex
+    ? getCollection("galleries", ({ data }) => !data.draft)
+    : Promise.resolve([]),
+]);
+const posts = getSortedPosts([...blogPosts, ...galleryPosts]);
+const totalPosts = posts.length;
 
-const { page } = Astro.props;
-const totalPosts = page.total;
-
-// Prevent duplicate metadata in pagination
-const metaTitle = page.currentPage > 1
-  ? `Posts (Page ${page.currentPage} of ${page.lastPage}) | ${SITE.title}`
-  : `Posts | ${SITE.title}`;
-
-const metaDesc = page.currentPage > 1
-  ? `Browse articles, guides, and tutorials on Astro Devosfera (Page ${page.currentPage} of ${page.lastPage}).`
-  : `All the articles I have published.`;
-
-const prevURL = page.url.prev ? new URL(page.url.prev, SITE.website).toString() : undefined;
-const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() : undefined;
+const metaTitle = `Posts | ${SITE.title}`;
+const metaDesc = `All the articles I have published.`;
 ---
 
-<Layout title={metaTitle} description={metaDesc} prev={prevURL} next={nextURL}>
+<Layout title={metaTitle} description={metaDesc}>
   <Header />
   <Breadcrumb />
   <main id="main-content" class="app-layout pb-4">
@@ -59,13 +42,6 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
         </p>
         <div class="mt-4 flex flex-wrap items-center gap-2">
           <span class="hero-badge">{totalPosts} posts</span>
-          {
-            page.lastPage > 1 && (
-              <span class="hero-badge">
-                Page {page.currentPage}/{page.lastPage}
-              </span>
-            )
-          }
         </div>
       </div>
     </div>
@@ -80,7 +56,7 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
     <!-- Posts Grid -->
     <div data-default-posts-container class="w-full">
       {
-        page.data.length === 0 ? (
+        posts.length === 0 ? (
           <div class="empty-state">
             <div class="empty-icon-wrapper">
               <svg
@@ -104,7 +80,7 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
           </div>
         ) : (
           <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {page.data.map((data: ContentEntry, index) => (
+            {posts.map((data: ContentEntry, index) => (
               <Card
                 {...data}
                 loading={index < 3 ? "eager" : "lazy"}
@@ -114,14 +90,10 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
           </ul>
         )
       }
-      
-      <div data-pagination-wrapper>
-        <Pagination {page} />
-      </div>
     </div>
   </main>
 
-  <Footer noMarginTop={page.lastPage > 1} />
+  <Footer />
 </Layout>
 
 <script>
