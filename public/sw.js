@@ -1,4 +1,7 @@
-const CACHE_NAME = 'devosfera-cache-v1';
+const CACHE_VERSION = '2';
+const STATIC_CACHE = `devosfera-static-v${CACHE_VERSION}`;
+const RUNTIME_CACHE = `devosfera-runtime-v${CACHE_VERSION}`;
+
 const ASSETS_TO_CACHE = [
   '/',
   '/404.html',
@@ -9,13 +12,15 @@ const ASSETS_TO_CACHE = [
   '/icon-512.png',
   '/icon-192-maskable.png',
   '/icon-512-maskable.png',
-  '/manifest.json'
+  '/manifest.json',
+  '/desktop.webp',
+  '/mobile.webp'
 ];
 
-// Install Event - Pre-cache critical assets
+// Install Event - Pre-cache critical assets in STATIC_CACHE
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
+    caches.open(STATIC_CACHE).then((cache) => {
       const cachePromises = ASSETS_TO_CACHE.map((asset) => {
         return fetch(asset)
           .then((res) => {
@@ -34,11 +39,12 @@ self.addEventListener('install', (e) => {
 
 // Activate Event - Clean up old caches
 self.addEventListener('activate', (e) => {
+  const activeCaches = [STATIC_CACHE, RUNTIME_CACHE];
   e.waitUntil(
     caches.keys().then((keys) => {
       return Promise.all(
         keys.map((key) => {
-          if (key !== CACHE_NAME) {
+          if (!activeCaches.includes(key)) {
             return caches.delete(key);
           }
         })
@@ -47,7 +53,7 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Fetch Event - Dynamic caching with Network-First fallback to Cache
+// Fetch Event
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   const url = new URL(req.url);
@@ -57,38 +63,44 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Skip query string resources like pagefind search queries or analytics
-  if (url.pathname.startsWith('/_astro/') || url.pathname.match(/\.(jpg|jpeg|png|gif|svg|webp|woff|woff2|css|js)$/)) {
-    // Cache First for static assets & images (Stale-While-Revalidate pattern)
+  // Check if it's a static asset (immutable/long-cacheable)
+  const isAstroAsset = url.pathname.startsWith('/_astro/');
+  const isImageOrFont = url.pathname.match(/\.(jpg|jpeg|png|gif|svg|webp|avif|woff|woff2|css|js)$/);
+  
+  if (isAstroAsset || isImageOrFont) {
+    // Cache First strategy
     e.respondWith(
       caches.match(req).then((cachedRes) => {
         if (cachedRes) {
-          // Fetch new version in background to update cache
-          fetch(req).then((networkRes) => {
-            if (networkRes.status === 200) {
-              caches.open(CACHE_NAME).then((cache) => cache.put(req, networkRes));
-            }
-          }).catch(() => {/* Ignore network failures */});
+          // Since _astro assets are immutable (they contain hashes), we don't need to revalidate them.
+          // For other static assets, we can stale-while-revalidate.
+          if (!isAstroAsset) {
+            fetch(req).then((networkRes) => {
+              if (networkRes.status === 200) {
+                caches.open(RUNTIME_CACHE).then((cache) => cache.put(req, networkRes));
+              }
+            }).catch(() => {/* Ignore network failures */});
+          }
           return cachedRes;
         }
 
         return fetch(req).then((networkRes) => {
           if (networkRes.status === 200) {
             const resClone = networkRes.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+            caches.open(RUNTIME_CACHE).then((cache) => cache.put(req, resClone));
           }
           return networkRes;
         });
       })
     );
   } else {
-    // Network First for HTML and other documents
+    // Network First strategy for HTML/other pages
     e.respondWith(
       fetch(req)
         .then((networkRes) => {
           if (networkRes.status === 200) {
             const resClone = networkRes.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(req, resClone));
+            caches.open(RUNTIME_CACHE).then((cache) => cache.put(req, resClone));
           }
           return networkRes;
         })
@@ -96,7 +108,7 @@ self.addEventListener('fetch', (e) => {
           // Fallback to cache if offline
           return caches.match(req).then((cachedRes) => {
             if (cachedRes) return cachedRes;
-            // Fallback to 404 page if offline and not cached
+            // Fallback to pre-cached 404 page if not found in cache
             return caches.match('/404.html');
           });
         })

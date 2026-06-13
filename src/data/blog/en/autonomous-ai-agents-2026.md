@@ -14,10 +14,9 @@ draft: false
 For years, AI assistants acted as oracles: you asked, they answered. In 2026 the paradigm changed. Now **autonomous agents** can plan, execute tools, evaluate results, and correct their own course without constant human intervention.
 
 <figure>
-  <img
-    src="https://images.unsplash.com/photo-1677442135703-1787eea5ce01?w=1200&q=80"
-    alt="Abstract diagram of interconnected neural networks"
-  />
+
+![Abstract diagram of interconnected neural networks](../../../assets/images/posts/autonomous-ai-agents.jpg)
+
   <figcaption class="text-center">
     AI agents chain reasoning and action in autonomous loops.
   </figcaption>

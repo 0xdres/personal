@@ -159,8 +159,11 @@ const gallerySchema = {
             alt={title}
             class="max-h-[60vh] w-full object-cover"
             loading="eager"
+            fetchpriority="high"
             widths={[800, 1200, 1600]}
             sizes="(max-width: 1200px) 100vw, 1200px"
+            format="avif"
+            quality={72}
           />
         </div>
       )
@@ -187,9 +190,12 @@ const gallerySchema = {
                   src={img.src}
                   alt={img.alt}
                   class="gallery-img"
-                  loading={idx < 6 ? "eager" : "lazy"}
+                  loading={idx < 3 ? "eager" : "lazy"}
+                  fetchpriority={idx < 2 ? "high" : "auto"}
                   widths={[400, 800]}
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  format="avif"
+                  quality={72}
                 />
                 <div class="gallery-item-overlay">
                   <span class="gallery-item-alt">{img.alt}</span>
@@ -224,7 +230,7 @@ const gallerySchema = {
       </button>
       
       <div class="lightbox-figure">
-        <img id="lightbox-img" src="" alt="" class="lightbox-image" />
+        <img id="lightbox-img" src="" alt="" class="lightbox-image" decoding="async" />
         <p id="lightbox-caption" class="lightbox-caption text-foreground/80"></p>
       </div>
 

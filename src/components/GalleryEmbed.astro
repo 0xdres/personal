@@ -148,9 +148,12 @@ const gridClass = {
                   src={img.src}
                   alt={img.alt}
                   class="ge-img"
-                  loading={idx < 4 ? "eager" : "lazy"}
+                  loading={idx < 3 ? "eager" : "lazy"}
+                  fetchpriority={idx < 2 ? "high" : "auto"}
                   widths={[300, 600]}
                   sizes={`(max-width: 640px) ${cols === 2 ? "50vw" : "33vw"}, ${cols === 4 ? "25vw" : cols === 2 ? "40vw" : "30vw"}`}
+                  format="avif"
+                  quality={72}
                 />
                 <div class="ge-overlay">
                   <span class="ge-alt">{img.alt}</span>

@@ -13,10 +13,9 @@ draft: false
 The term was coined by Andrej Karpathy in early 2025: _"Vibe coding is when you fully give in to the vibes, embrace exponentials, and forget that the code even exists."_ Two years later it is already part of the industry's vocabulary, although it is still misunderstood.
 
 <figure>
-  <img
-    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&q=80"
-    alt="Developer in front of multiple screens with code"
-  />
+
+![Developer in front of multiple screens with code](../../../assets/images/posts/vibe-coding.jpg)
+
   <figcaption class="text-center">
     AI-assisted development changed the relationship between the programmer and the code.
   </figcaption>

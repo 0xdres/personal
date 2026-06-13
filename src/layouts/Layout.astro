@@ -174,7 +174,6 @@ const showGrain = SITE.backdropEffects.grain;
     />
     <Font cssVariable="--font-sriracha" />
     <Font cssVariable="--font-firacode" />
-    <Font cssVariable="--font-cascadia-code" />
 
     <!-- General Meta Tags -->
     <title>{title}</title>
@@ -337,6 +336,8 @@ const showGrain = SITE.backdropEffects.grain;
 
     <!-- Load full theme logic -->
     <script src="../scripts/theme.ts"></script>
+    <!-- Smart prefetch for slow connections -->
+    <script src="../scripts/smart-prefetch.ts"></script>
   </body>
 </html>
 

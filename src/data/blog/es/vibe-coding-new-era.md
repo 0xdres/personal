@@ -13,10 +13,9 @@ draft: false
 El término fue acuñado por Andrej Karpathy a principios de 2025: _"Vibe coding es cuando te entregas por completo a las vibras, abrazas los exponenciales y te olvidas de que el código siquiera existe"_. Dos años después, ya es parte del vocabulario de la industria, aunque todavía se malinterpreta.
 
 <figure>
-  <img
-    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&q=80"
-    alt="Desarrollador frente a múltiples pantallas con código"
-  />
+
+![Desarrollador frente a múltiples pantallas con código](../../../assets/images/posts/vibe-coding.jpg)
+
   <figcaption class="text-center">
     El desarrollo asistido por IA cambió la relación entre el programador y el código.
   </figcaption>

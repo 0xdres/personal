@@ -39,16 +39,16 @@
   ],
   "screenshots": [
     {
-      "src": "/desktop.png",
+      "src": "/desktop.webp",
       "sizes": "1920x1080",
-      "type": "image/png",
+      "type": "image/webp",
       "form_factor": "wide",
       "label": "Devosfera Home (Desktop)"
     },
     {
-      "src": "/mobile.png",
+      "src": "/mobile.webp",
       "sizes": "886x1920",
-      "type": "image/png",
+      "type": "image/webp",
       "form_factor": "narrow",
       "label": "Devosfera Home (Mobile)"
     }
