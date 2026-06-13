@@ -33,12 +33,14 @@ const { title, description, pubDatetime } = data;
 const modDatetime = "modDatetime" in data ? data.modDatetime : null;
 const timezone = "timezone" in data ? data.timezone : undefined;
 const tags = "tags" in data ? data.tags : [];
-const href = getEntryPath({ collection, id, filePath });
+const locale = Astro.currentLocale || "en";
+const prefix = locale === "es" ? "/es" : "";
+const href = prefix + getEntryPath({ collection, id, filePath });
 const isGallery = collection === "galleries";
 const headingId = `${collection}-${slugifyStr(String(id))}-title`;
 const descriptionId = `${collection}-${slugifyStr(String(id))}-description`;
 const viewTransitionName = slugifyStr(String(title).replaceAll(".", "-"));
-const readingTime = body ? getReadingTime(body) : null;
+const readingTime = body ? getReadingTime(body, locale) : null;
 
 // Resolve cover image source
 let coverSrc: string | ImageMetadata | undefined;
@@ -55,8 +57,9 @@ if (SITE.showCoverImages) {
         { eager: true }
       );
       const gallerySlug = getGallerySlug(id);
+      const galleryLang = id.startsWith("es/") ? "es" : "en";
       const firstImage = Object.entries(allGalleryImages)
-        .filter(([path]) => path.startsWith(`/src/data/galleries/${gallerySlug}/`))
+        .filter(([path]) => path.startsWith(`/src/data/galleries/${galleryLang}/${gallerySlug}/`))
         .sort(([a], [b]) => a.localeCompare(b))
         .at(0)?.[1]?.default;
       if (firstImage) {
@@ -215,7 +218,7 @@ if (SITE.showCoverImages) {
         {tags.slice(0, 4).map((tag: string) => (
           <li>
             <a
-              href={`/tags/${slugifyStr(tag)}/`}
+              href={`${prefix}/tags/${slugifyStr(tag)}/`}
               class:list={[
                 "inline-flex items-center gap-0.5 rounded-full px-2.5 py-0.5",
                 "text-xs font-medium",

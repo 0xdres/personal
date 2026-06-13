@@ -24,14 +24,18 @@ type Props = {
 
 const { slug, limit = 6, showLink = true, cols = 3 } = Astro.props;
 
+const locale = Astro.currentLocale || "en";
+const prefix = locale === "es" ? "/es" : "";
+
 // ── 1. Find the collection entry by slug ────────────────────────────
 // Find ALL entries (including drafts) so the embed works in preview;
 // the draft filter is applied by the author choosing not to publish the post.
-const allGalleries = await getCollection("galleries");
+const allGalleries = await getCollection("galleries", ({ id }) => id.startsWith(`${locale}/`));
 const entry = allGalleries.find(g => {
-  // Normalize separators and strip extension to match purely the slug
+  // Normalize separators and strip extension to match purely the slug (excluding locale prefix)
   const normalized = g.id
     .replace(/\\/g, "/")
+    .replace(/^(?:en|es)\//, "")
     .replace(/\/index\.(md|mdx)$/, "")
     .replace(/\.(md|mdx)$/, "");
   return normalized === slug;
@@ -59,7 +63,7 @@ function filenameToAlt(filename: string, fallback: string): string {
 const folderImages: GalleryImage[] = Object.entries(allImages)
   .filter(
     ([path]) =>
-      path.startsWith(`/src/data/galleries/${slug}/`) && !path.includes("index")
+      path.startsWith(`/src/data/galleries/${locale}/${slug}/`) && !path.includes("index")
   )
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([path, mod]) => {
@@ -87,8 +91,17 @@ const gridClass = {
 {
   !entry ? (
     <div class="ge-error">
-      ⚠️ Gallery <code>{slug}</code> not found. Verify that{" "}
-      <code>src/data/galleries/{slug}/index.md</code> exists.
+      {locale === "es" ? (
+        <>
+          ⚠️ Galería <code>{slug}</code> no encontrada. Verifica que{" "}
+          <code>src/data/galleries/{locale}/{slug}/index.md</code> exista.
+        </>
+      ) : (
+        <>
+          ⚠️ Gallery <code>{slug}</code> not found. Verify that{" "}
+          <code>src/data/galleries/{locale}/{slug}/index.md</code> exists.
+        </>
+      )}
     </div>
   ) : (
     <figure class="gallery-embed not-prose" data-gallery-embed={slug}>
@@ -147,7 +160,11 @@ const gridClass = {
           ))}
         </ul>
       ) : (
-        <p class="ge-empty">This gallery doesn't have any images yet.</p>
+        <p class="ge-empty">
+          {locale === "es"
+            ? "Esta galería aún no tiene imágenes."
+            : "This gallery doesn't have any images yet."}
+        </p>
       )}
 
       {/* Footer: description + link to full gallery */}
@@ -156,8 +173,8 @@ const gridClass = {
           <span class="ge-desc">{entry.data.description}</span>
         )}
         {showLink && (
-          <a href={`/galleries/${slug}`} class="ge-link">
-            View full gallery
+          <a href={`${prefix}/galleries/${slug}`} class="ge-link">
+            {locale === "es" ? "Ver galería completa" : "View full gallery"}
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="14"

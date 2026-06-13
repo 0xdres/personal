@@ -4,7 +4,6 @@ import Layout from "@/layouts/Layout.astro";
 import Header from "@/components/Header.astro";
 import Footer from "@/components/Footer.astro";
 import Datetime from "@/components/Datetime.astro";
-import EditPost from "@/components/EditPost.astro";
 import ShareLinks from "@/components/ShareLinks.astro";
 import Breadcrumb from "@/components/Breadcrumb.astro";
 import BackToTopButton from "@/components/BackToTopButton.astro";
@@ -16,6 +15,7 @@ import { slugifyStr } from "@/utils/slugify";
 import { getReadingTime } from "@/utils/readingTime";
 import IconClock from "@/assets/icons/IconClock.svg";
 import { SITE } from "@/config";
+import { useTranslations } from "@/i18n/utils";
 
 type Props = {
   post: CollectionEntry<"blog">;
@@ -23,6 +23,9 @@ type Props = {
 };
 
 const { post, posts } = Astro.props;
+const locale = Astro.currentLocale || "en";
+const t = useTranslations(locale as any);
+const prefix = locale === "es" ? "/es" : "";
 
 const {
   title,
@@ -34,12 +37,11 @@ const {
   modDatetime,
   timezone,
   tags,
-  hideEditPost,
   faqs,
 } = post.data;
 
 const { Content, headings } = await render(post);
-const readingTime = post.body ? getReadingTime(post.body) : null;
+const readingTime = post.body ? getReadingTime(post.body, locale) : null;
 const hasToc = headings.filter(h => h.depth > 1 && h.depth < 4).length > 0;
 
 let ogImageUrl: string | undefined;
@@ -88,7 +90,7 @@ const prevPost = rawPrevPost
       pubDatetime: rawPrevPost.data.pubDatetime,
       modDatetime: rawPrevPost.data.modDatetime,
       timezone: rawPrevPost.data.timezone,
-      readingTime: rawPrevPost.body ? getReadingTime(rawPrevPost.body) : null,
+      readingTime: rawPrevPost.body ? getReadingTime(rawPrevPost.body, locale) : null,
     }
   : null;
 
@@ -127,7 +129,7 @@ const recommendedPost = rawRecommendedPost
       pubDatetime: rawRecommendedPost.data.pubDatetime,
       modDatetime: rawRecommendedPost.data.modDatetime,
       timezone: rawRecommendedPost.data.timezone,
-      readingTime: rawRecommendedPost.body ? getReadingTime(rawRecommendedPost.body) : null,
+      readingTime: rawRecommendedPost.body ? getReadingTime(rawRecommendedPost.body, locale) : null,
     }
   : null;
 ---
@@ -145,6 +147,8 @@ const recommendedPost = rawRecommendedPost
       { "mt-8": !SITE.showBackButton },
     ]}
     data-pagefind-body
+    data-resume-question={t("post.resumeQuestion")}
+    data-resume-btn={t("post.resumeBtn")}
   >
     <!-- Post header section -->
     <header class="post-header relative mb-10 text-center">
@@ -165,7 +169,7 @@ const recommendedPost = rawRecommendedPost
           {
             tags.map((tag: string) => (
               <a
-                href={`/tags/${slugifyStr(tag)}/`}
+                href={`${prefix}/tags/${slugifyStr(tag)}/`}
                 class="post-tag-badge inline-flex items-center gap-1 rounded-full border border-accent/20 bg-accent/5 px-2.5 py-0.5 font-firacode text-xs text-accent transition-all duration-200 hover:border-accent/40 hover:bg-accent/10 hover:shadow-sm hover:shadow-accent/10"
               >
                 <span class="opacity-50">#</span>
@@ -251,8 +255,8 @@ const recommendedPost = rawRecommendedPost
           <button
             id="read-mode-btn"
             class="inline-flex items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 opacity-70 backdrop-blur-sm transition-all duration-200 hover:border-accent/30 hover:opacity-100 cursor-pointer"
-            title="Toggle Reading Mode (Shortcut: r)"
-            aria-label="Toggle Reading Mode"
+            title={locale === "es" ? "Alternar Modo Lectura (Atajo: r)" : "Toggle Reading Mode (Shortcut: r)"}
+            aria-label={t("post.readMode")}
           >
             <svg
               class="size-3.5 text-accent/70"
@@ -267,15 +271,9 @@ const recommendedPost = rawRecommendedPost
               <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
               <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
             </svg>
-            <span class="text-sm">Read Mode</span>
+            <span class="text-sm">{t("post.readMode")}</span>
           </button>
 
-          <!-- Edit post -->
-          <EditPost
-            {hideEditPost}
-            {post}
-            class="flex rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 opacity-70 backdrop-blur-sm transition-all duration-200 hover:border-accent/30 hover:opacity-100 [&>svg]:size-3.5"
-          />
         </div>
       </div>
     </header>
@@ -365,7 +363,7 @@ const recommendedPost = rawRecommendedPost
       {
         prevPost ? (
           <a
-            href={getPath(prevPost.id, prevPost.filePath)}
+            href={prefix + getPath(prevPost.id, prevPost.filePath)}
             class="post-nav-link group relative flex flex-col gap-1.5 rounded-2xl border border-border/20 px-5 py-4 transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
           >
             <div class="post-nav-bg" />
@@ -383,7 +381,7 @@ const recommendedPost = rawRecommendedPost
                 <polyline points="12 19 5 12 12 5" />
               </svg>
               <span class="font-firacode text-[10px] tracking-wider text-foreground/35 uppercase">
-                Previous Post
+                {t("post.prev")}
               </span>
             </div>
             <span class="line-clamp-2 text-sm leading-snug font-medium text-foreground/70 transition-colors duration-200 group-hover:text-accent">
@@ -414,7 +412,7 @@ const recommendedPost = rawRecommendedPost
       {
         recommendedPost && (
           <a
-            href={getPath(recommendedPost.id, recommendedPost.filePath)}
+            href={prefix + getPath(recommendedPost.id, recommendedPost.filePath)}
             class="post-nav-link group relative flex flex-col items-end gap-1.5 rounded-2xl border border-border/20 px-5 py-4 text-end transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
           >
             <div class="post-nav-bg" />
@@ -424,11 +422,11 @@ const recommendedPost = rawRecommendedPost
                   <svg class="size-3 fill-accent text-accent animate-pulse" viewBox="0 0 24 24">
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
-                  Recommended Read
+                  {t("post.recommended")}
                 </span>
               ) : (
                 <span class="font-firacode text-[10px] tracking-wider text-foreground/35 uppercase">
-                  Next Post
+                  {t("post.next")}
                 </span>
               )}
               <svg
@@ -483,14 +481,14 @@ const recommendedPost = rawRecommendedPost
       <button
         id="reading-font-sans"
         class="px-2.5 py-1 rounded-full text-xs font-medium bg-accent text-background transition-colors hover:bg-accent/80 cursor-pointer"
-        title="Sans Serif Font"
+        title={locale === "es" ? "Tipografía Sans Serif" : "Sans Serif Font"}
       >
         Sans
       </button>
       <button
         id="reading-font-serif"
         class="px-2.5 py-1 rounded-full text-xs font-medium text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
-        title="Serif Font"
+        title={locale === "es" ? "Tipografía Serif" : "Serif Font"}
       >
         Serif
       </button>
@@ -503,8 +501,8 @@ const recommendedPost = rawRecommendedPost
       <button
         id="reading-size-dec"
         class="p-1 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
-        title="Decrease Font Size"
-        aria-label="Decrease Font Size"
+        title={locale === "es" ? "Disminuir tamaño de fuente" : "Decrease Font Size"}
+        aria-label={locale === "es" ? "Disminuir tamaño de fuente" : "Decrease Font Size"}
       >
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -516,8 +514,8 @@ const recommendedPost = rawRecommendedPost
       <button
         id="reading-size-inc"
         class="p-1 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
-        title="Increase Font Size"
-        aria-label="Increase Font Size"
+        title={locale === "es" ? "Aumentar tamaño de fuente" : "Increase Font Size"}
+        aria-label={locale === "es" ? "Aumentar tamaño de fuente" : "Increase Font Size"}
       >
         <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -532,9 +530,9 @@ const recommendedPost = rawRecommendedPost
     <button
       id="reading-exit-btn"
       class="flex items-center gap-1.5 px-3 py-1 bg-foreground/10 text-foreground rounded-full text-xs font-semibold hover:bg-foreground/15 transition-colors cursor-pointer"
-      title="Exit Reading Mode (Shortcut: r)"
+      title={locale === "es" ? "Salir de Modo Lectura (Atajo: r)" : "Exit Reading Mode (Shortcut: r)"}
     >
-      <span>Exit</span>
+      <span>{t("post.exit")}</span>
       <kbd class="hidden sm:inline-block text-[9px] px-1.5 py-0.5 rounded border border-foreground/20 bg-foreground/5 opacity-60">R</kbd>
     </button>
   </div>
@@ -749,6 +747,14 @@ const recommendedPost = rawRecommendedPost
     // Only show toast if saved position is significant (> 100px) and user is not already there
     if (saved && saved.scrollY > 100 && Math.abs(currentScroll - saved.scrollY) > 150) {
       if (document.body) {
+        const mainEl = document.querySelector("#main-content");
+        const resumeQuestion = mainEl?.getAttribute("data-resume-question") || "Continue reading from where you left off?";
+        const resumeBtnText = mainEl?.getAttribute("data-resume-btn") || "Resume";
+
+        const lang = document.documentElement.lang || "en";
+        const orText = lang === "es" ? "o" : "or";
+        const dismissLabel = lang === "es" ? "Descartar" : "Dismiss";
+
         toast = document.createElement("div");
         toast.className = "fixed top-6 left-1/2 -translate-x-1/2 z-100 flex items-center gap-3.5 rounded-full border border-accent/20 bg-background/85 px-5 py-2 shadow-2xl backdrop-blur-md transition-all duration-300 pointer-events-auto select-none opacity-0 -translate-y-4 scale-95 hover:border-accent/40";
         toast.id = "reading-resume-modal";
@@ -761,21 +767,21 @@ const recommendedPost = rawRecommendedPost
               <path d="M12 8v4l3 3"></path>
               <circle cx="12" cy="12" r="10"></circle>
             </svg>
-            <span class="text-xs font-medium">Continue reading from where you left off?</span>
+            <span class="text-xs font-medium">${resumeQuestion}</span>
           </div>
           <div class="h-4 w-px bg-border/40"></div>
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-1.5">
               <button class="px-2.5 py-1 bg-accent text-background rounded-full text-[10px] font-bold uppercase tracking-wider hover:bg-accent/80 transition-colors" data-resume-btn>
-                Resume
+                ${resumeBtnText}
               </button>
               <div class="flex items-center gap-0.5 opacity-60">
                 <kbd class="toast-kbd text-[9px] scale-90">Y</kbd>
-                <span class="text-[9px] text-foreground/45">or</span>
+                <span class="text-[9px] text-foreground/45">${orText}</span>
                 <kbd class="toast-kbd text-[9px] scale-90">↵</kbd>
               </div>
             </div>
-            <button class="p-1 hover:bg-foreground/5 rounded-full text-foreground/45 hover:text-foreground/70 transition-colors" aria-label="Dismiss" data-dismiss-btn>
+            <button class="p-1 hover:bg-foreground/5 rounded-full text-foreground/45 hover:text-foreground/70 transition-colors" aria-label="${dismissLabel}" data-dismiss-btn>
               <svg class="size-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -806,12 +812,12 @@ const recommendedPost = rawRecommendedPost
           }, 800);
         };
 
-        resumeBtn?.addEventListener("click", (e) => {
+        resumeBtn?.addEventListener("click", (e: Event) => {
           e.stopPropagation();
           performResume();
         });
 
-        dismissBtn?.addEventListener("click", (e) => {
+        dismissBtn?.addEventListener("click", (e: Event) => {
           e.stopPropagation();
           dismissToast(true); // clear storage on explicit dismiss
         });
@@ -1042,6 +1048,21 @@ const recommendedPost = rawRecommendedPost
 
   // Hook all setups to page-load event
   document.addEventListener("astro:page-load", () => {
+    const pathname = window.location.pathname;
+    // Check if we are on a blog post details page: /posts/[slug] or /es/posts/[slug]
+    const isPostPage = pathname.match(/^\/(es\/)?posts\/.+/);
+
+    if (!isPostPage) {
+      // Clean up previous event listeners if we navigated away from a post page
+      if (typeof window.cleanupReadingPosition === "function") {
+        try { window.cleanupReadingPosition(); } catch {}
+      }
+      if (typeof window.cleanupReadingMode === "function") {
+        try { window.cleanupReadingMode(); } catch {}
+      }
+      return;
+    }
+
     try { initProgressBarFallback(); } catch {}
     try { addHeadingLinks(); } catch {}
     try { attachCopyButtons(); } catch {}

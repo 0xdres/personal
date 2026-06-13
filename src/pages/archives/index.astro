@@ -14,15 +14,33 @@ if (!SITE.showArchives) {
   return Astro.redirect("/404");
 }
 
+import { useTranslations } from "@/i18n/utils";
+const locale = Astro.currentLocale || "en";
+const t = useTranslations(locale as any);
+
 const [blogPosts, galleryPosts] = await Promise.all([
-  getCollection("blog", ({ data }) => !data.draft),
+  getCollection("blog", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)),
   SITE.showGalleries && SITE.showGalleriesInIndex
-    ? getCollection("galleries", ({ data }) => !data.draft)
+    ? getCollection("galleries", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`))
     : Promise.resolve([]),
 ]);
 const posts = [...blogPosts, ...galleryPosts];
 
-const months = [
+const monthsEN = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+const monthsES = [
   "Enero",
   "Febrero",
   "Marzo",
@@ -36,6 +54,7 @@ const months = [
   "Noviembre",
   "Diciembre",
 ];
+const months = locale === "es" ? monthsES : monthsEN;
 
 const totalPosts = posts.length;
 
@@ -46,7 +65,7 @@ const yearGroups = Object.entries(
 let postIndex = 0;
 ---
 
-<Layout title={`Archives | ${SITE.title}`}>
+<Layout title={`${t("archives.title")} | ${SITE.title}`}>
   <Header />
   <Breadcrumb />
   <main id="main-content" class="app-layout pb-12">
@@ -58,16 +77,16 @@ let postIndex = 0;
       <div class="aurora-mouse" data-archive-mouse></div>
       <div class="relative z-10">
         <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
-          <span class="glow-text">Archive</span>
+          <span class="glow-text">{t("archives.title")}</span>
         </h1>
         <p class="mt-3 max-w-lg text-foreground/70 italic">
-          A journey through everything I've published, organized over time.
+          {t("archives.desc")}
         </p>
         <div class="mt-4 flex flex-wrap items-center gap-2">
-          <span class="hero-badge">{totalPosts} posts</span>
+          <span class="hero-badge">{totalPosts} {t("archives.posts")}</span>
           <span class="hero-badge"
             >{yearGroups.length}
-            {yearGroups.length === 1 ? "año" : "años"}</span
+            {yearGroups.length === 1 ? t("archives.year") : t("archives.years")}</span
           >
         </div>
       </div>

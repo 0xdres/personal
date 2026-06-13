@@ -6,9 +6,9 @@ import { SITE } from "@/config";
 
 export async function GET() {
   const [blogPosts, galleryPosts] = await Promise.all([
-    getCollection("blog"),
+    getCollection("blog", ({ id }) => id.startsWith("en/")),
     SITE.showGalleries && SITE.showGalleriesInIndex
-      ? getCollection("galleries")
+      ? getCollection("galleries", ({ id }) => id.startsWith("en/"))
       : Promise.resolve([]),
   ]);
   const sortedPosts = getSortedPosts([...blogPosts, ...galleryPosts]);

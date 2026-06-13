@@ -1,0 +1,28 @@
+---
+title: Interactive Diagram of Named CSS Colors
+description: Explore all named CSS colors through an interactive diagram using the Voronoi algorithm
+pubDatetime: 2025-09-18T01:20:00.000Z
+tags:
+  - CSS
+  - Colors
+  - Interactive
+  - SVG
+  - Web Development
+  - CSS
+  - Visualization
+draft: false
+featured: false
+coverImage: ../../../assets/images/post-covers/colores-css.webp
+---
+
+import CssColorDiagram from "@/components/CssColorDiagram.astro";
+
+Named colors in CSS are a fascinating feature that allows us to use descriptive names like "crimson", "teal", or "lavender" instead of hexadecimal codes. This interactive diagram displays all named CSS colors organized visually.
+
+{/* more */}
+
+<CssColorDiagram />
+
+## How does it work?
+
+This diagram uses the **Voronoi algorithm** to create regions based on color similarity. Each region represents a named CSS color, and you can interact with it to see its name and value.

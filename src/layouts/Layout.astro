@@ -5,6 +5,7 @@ import { PUBLIC_GOOGLE_SITE_VERIFICATION, PUBLIC_UMAMI_WEBSITE_ID } from "astro:
 import { SITE } from "@/config";
 import SearchModal from "@/components/SearchModal.astro";
 import ShortcutsModal from "@/components/ShortcutsModal.astro";
+import { useTranslations } from "@/i18n/utils";
 import "@/styles/global.css";
 
 type Props = {
@@ -38,8 +39,12 @@ const {
   next,
   structuredData: structuredDataProp,
   tags,
-  faqs,
+    faqs,
 } = Astro.props;
+
+const locale = Astro.currentLocale || SITE.lang || "en";
+const t = useTranslations(locale as any);
+const prefix = locale === "es" ? "es/" : "";
 
 // Always build canonical from SITE.website (production URL), never localhost.
 // Normalize trailing slash: always include it for consistency.
@@ -81,27 +86,27 @@ const finalStructuredData = structuredDataProp ?? (
           ...(profile && { url: profile }),
         },
       }
-    : rawPath === ""
+    : (rawPath === "" || rawPath === "/es")
       ? {
           "@context": "https://schema.org",
           "@type": "WebSite",
           name: SITE.title,
           url: SITE.website,
-          description: SITE.desc,
+          description: locale === "es" ? t("index.heroDesc") : SITE.desc,
           potentialAction: {
             "@type": "SearchAction",
-            target: `${SITE.website}search/?q={search_term_string}`,
+            target: `${SITE.website}${prefix}search/?q={search_term_string}`,
             "query-input": "required name=search_term_string",
           },
         }
-      : rawPath === "/about"
+      : (rawPath === "/about" || rawPath === "/es/about")
         ? {
             "@context": "https://schema.org",
             "@type": "ProfilePage",
             mainEntity: {
               "@type": "Person",
               name: author,
-              description: "Developer, student, and gamer. Creator of Astro Devosfera.",
+              description: locale === "es" ? "Desarrollador, estudiante y videojugador. Creador de Astro Devosfera." : "Developer, student, and gamer. Creator of Astro Devosfera.",
               ...(profile && { url: profile }),
             },
           }
@@ -131,10 +136,20 @@ const showGrain = SITE.backdropEffects.grain;
 <!doctype html>
 <html
   dir={SITE.dir}
-  lang={`${SITE.lang ?? "en"}`}
+  lang={locale}
   class={`${scrollSmooth ? "scroll-smooth" : ""}`}
 >
   <head>
+    <script is:inline>
+      try {
+        if (window.location.pathname === "/") {
+          const preferredLang = localStorage.getItem("preferred-lang");
+          if (preferredLang === "es") {
+            window.location.replace("/es");
+          }
+        }
+      } catch (e) {}
+    </script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -470,3 +485,35 @@ const showGrain = SITE.backdropEffects.grain;
     </script>
   )
 }
+
+<script>
+  let langCleanup: AbortController | null = null;
+
+  document.addEventListener("astro:page-load", () => {
+    if (langCleanup) langCleanup.abort();
+    langCleanup = new AbortController();
+    const { signal } = langCleanup;
+
+    const pathname = window.location.pathname;
+
+    // 1. Auto-save preference based on path (except root /)
+    if (pathname !== "/") {
+      if (pathname.startsWith("/es/") || pathname === "/es") {
+        localStorage.setItem("preferred-lang", "es");
+      } else {
+        localStorage.setItem("preferred-lang", "en");
+      }
+    }
+
+    // 2. Track language switcher button clicks
+    document.addEventListener("click", (e) => {
+      const toggle = (e.target as HTMLElement).closest("[data-lang-toggle]");
+      if (toggle) {
+        const targetLang = toggle.getAttribute("data-lang-toggle");
+        if (targetLang) {
+          localStorage.setItem("preferred-lang", targetLang);
+        }
+      }
+    }, { signal });
+  });
+</script>

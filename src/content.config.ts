@@ -21,7 +21,6 @@ const blog = defineCollection({
       coverImage: image().optional(),
       description: z.string(),
       canonicalURL: z.string().optional(),
-      hideEditPost: z.boolean().optional(),
       timezone: z.string().optional(),
       faqs: z
         .array(

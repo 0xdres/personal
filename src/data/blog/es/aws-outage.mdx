@@ -1,0 +1,48 @@
+---
+title: "¿Qué Sucede Cuando \"La Mitad de Internet\" Cae? Lecciones de la Caída Crítica de AWS US-EAST-1"
+description: Un fallo de DNS en la región de N. Virginia (US-EAST-1) expuso la dependencia global del plano de control de AWS, afectando servicios bancarios y de e-commerce.
+pubDatetime: 2025-10-21T06:00:00.000Z
+tags:
+  - Computación
+  - Tecnología
+  - Ciencia y Tecnología
+draft: false
+featured: false
+coverImage: ../../../assets/images/post-covers/aws-caida.png
+---
+
+El 20 de octubre de 2025 pasará a la historia de la infraestructura digital. Un fallo de servicio en **Amazon Web Services (AWS)** que se originó en la región más crítica del proveedor, **N. Virginia (US-EAST-1)**, provocó una interrupción masiva de servicios, afectando desde la banca hasta el comercio electrónico a escala global.
+
+Expertos calificaron el evento como una "amnesia de red" o un momento en el que "la mitad de internet" pareció desconectarse simultáneamente, exponiendo el riesgo inherente a la excesiva centralización de la infraestructura digital.
+
+## La Causa Raíz: Amnesia Digital del Plano de Control
+
+El incidente comenzó en las últimas horas del 19 de octubre con elevadas tasas de error y latencias. La causa raíz, identificada a las 12:26 AM PDT, fue un problema de **resolución DNS** que afectó a los *endpoints* del servicio regional **DynamoDB**.
+
+**¿Por qué fue tan grave un fallo de DNS?**
+DynamoDB no es solo una base de datos de clientes; es un componente fundamental utilizado por el *plano de control* de AWS para gestionar el estado, la configuración y la autenticación de casi todos los demás servicios. Cuando el DNS de DynamoDB falló, fue como si los sistemas perdieran temporalmente su memoria, incapaces de encontrar datos críticos para operar.
+
+Como lo describió un experto, Amazon aún tenía los datos, pero durante horas, "nadie pudo encontrarlos", separando temporalmente las aplicaciones de sus datos.
+
+## El Efecto Dominó: 16 Horas de Inestabilidad
+
+Aunque el problema inicial de DNS fue resuelto a las 2:24 AM PDT, el sistema no se recuperó inmediatamente. La falla en el servicio de estado desató una compleja cadena de efectos en cascada:
+
+*   **Falla de EC2:** Un subsistema interno de EC2 (el servicio que lanza instancias de máquinas virtuales) sufrió un deterioro debido a su dependencia subyacente de DynamoDB.
+*   **Problemas de Red:** Los *health checks* (chequeos de salud) de los Network Load Balancer (NLB) también se vieron afectados. Esta falla de conectividad afectó a servicios esenciales como Lambda, DynamoDB y CloudWatch.
+*   **Recuperación Escalada:** Para evitar una sobrecarga masiva, AWS implementó una medida de control clave: el *throttling* temporal. Esto restringió operaciones de alta demanda, como el lanzamiento de nuevas instancias EC2 y las invocaciones asíncronas de Lambda.
+
+La recuperación completa de todas las operaciones de AWS no se declaró hasta las **3:01 PM PDT** del 20 de octubre, lo que resultó en casi 16 horas de disrupción o inestabilidad para el ecosistema digital global.
+
+## Impacto en la Vida Cotidiana: Bancos y E-commerce
+
+La dependencia global de US-EAST-1 se tradujo en fallas tangibles para los usuarios y las empresas:
+
+*   **Sector Financiero:** En Colombia, los principales bancos, **Bancolombia y Davivienda**, experimentaron intermitencias o fallas en sus páginas web y aplicaciones móviles. En total, al menos 16 entidades financieras emitieron comunicados sobre problemas en sus canales. Las afectaciones en estas plataformas bancarias persistieron hasta aproximadamente las 6:00 de la tarde local, horas después de que AWS anunciara la recuperación.
+*   **Comercio y Servicios Esenciales:** Sitios de comercio electrónico de alto volumen como **Mercado Libre** reportaron afectaciones en el almacenamiento y desempeño de sus servicios. Incluso servicios públicos esenciales, como la Electrificadora de Santander (ESSA), vieron comprometidos sus canales de atención (líneas telefónicas y WhatsApp) debido a la falla.
+
+## La Lección Estratégica: Más Allá de la Multi-AZ
+
+El evento demostró que una arquitectura diseñada con simple resiliencia **Multi-AZ** (dentro de una región) no es suficiente para mitigar un fallo en el plano de control regional, como fue la falla de DNS/DynamoDB.
+
+La gran conclusión para las empresas es que las cargas de trabajo más críticas deben evolucionar hacia modelos **Multi-Región**. Este incidente fuerza a reevaluar la planificación de riesgos: el fallo de un componente de bajo nivel en una región crítica puede paralizar operaciones globales, lo que exige estrategias que garanticen la continuidad incluso cuando la región más importante de la nube se desestabiliza.

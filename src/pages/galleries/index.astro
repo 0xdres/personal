@@ -9,9 +9,14 @@ import GalleryCard from "@/components/GalleryCard.astro";
 import { SITE } from "@/config";
 import { getGallerySlug } from "@/utils/contentEntry";
 
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+
 if (!SITE.showGalleries) {
   return Astro.redirect("/404");
 }
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
 // Load all images from all galleries at build-time
 const allImages = import.meta.glob<{ default: ImageMetadata }>(
@@ -24,7 +29,7 @@ function getGalleryImages(slug: string): ImageMetadata[] {
   return Object.entries(allImages)
     .filter(
       ([path]) =>
-        path.startsWith(`/src/data/galleries/${slug}/`) &&
+        path.startsWith(`/src/data/galleries/${lang}/${slug}/`) &&
         !path.endsWith("index.md") &&
         !path.endsWith("index.mdx")
     )
@@ -34,7 +39,7 @@ function getGalleryImages(slug: string): ImageMetadata[] {
 
 const rawGalleries = await getCollection(
   "galleries",
-  ({ data }) => !data.draft
+  ({ id, data }) => !data.draft && id.startsWith(`${lang}/`)
 );
 
 const galleries = rawGalleries
@@ -55,7 +60,7 @@ const galleries = rawGalleries
   });
 ---
 
-<Layout title={`Galleries | ${SITE.title}`}>
+<Layout title={`${t("nav.galleries")} | ${SITE.title}`}>
   <Header />
   <Breadcrumb />
   <main id="main-content" class="app-layout pb-12">
@@ -67,15 +72,15 @@ const galleries = rawGalleries
       <div class="aurora-mouse" data-archive-mouse></div>
       <div class="relative z-10">
         <h1 class="text-3xl font-bold tracking-tight sm:text-4xl">
-          <span class="glow-text">Galleries</span>
+          <span class="glow-text">{t("nav.galleries")}</span>
         </h1>
         <p class="mt-3 max-w-lg text-foreground/70 italic">
-          Image collections to share moments and projects.
+          {t("galleries.desc")}
         </p>
         <div class="mt-4 flex flex-wrap items-center gap-2">
           <span class="hero-badge"
             >{galleries.length}
-            {galleries.length === 1 ? "gallery" : "galleries"}</span
+            {galleries.length === 1 ? t("galleries.count") : t("galleries.counts")}</span
           >
         </div>
       </div>
@@ -85,7 +90,7 @@ const galleries = rawGalleries
     {
       galleries.length === 0 ? (
         <p class="mt-12 text-center text-foreground/50 italic">
-          No galleries published yet.
+          {t("galleries.empty")}
         </p>
       ) : (
         <ul

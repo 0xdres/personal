@@ -4,9 +4,13 @@ import { SOCIALS } from "@/constants";
 import LinkButton from "./LinkButton.astro";
 import { SITE } from "@/config";
 import Logo from "@/assets/logo/devosfera.svg";
+import { useTranslations } from "@/i18n/utils";
 
 const currentYear = new Date().getFullYear();
 const socialHeadingId = "footer-social-heading";
+
+const locale = Astro.currentLocale || "en";
+const t = useTranslations(locale as any);
 
 const socialLinks = SOCIALS.map(social => ({
   ...social,
@@ -39,8 +43,8 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
       <!-- Brand column -->
       <div class="flex flex-col items-center gap-3 sm:items-start">
         <a
-          href="/"
-          aria-label={`Go to home of ${SITE.title}`}
+          href={locale === "es" ? "/es" : "/"}
+          aria-label={locale === "es" ? `Ir al inicio de ${SITE.title}` : `Go to home of ${SITE.title}`}
           class="group footer-home-link relative flex items-center gap-2 rounded-md text-lg font-bold tracking-tight"
         >
           <Logo
@@ -51,7 +55,7 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
         <p
           class="max-w-xs text-center font-firacode text-[11px] leading-relaxed tracking-wide text-foreground/55 sm:text-start"
         >
-          A space where curiosity turns into code.
+          {t("footer.desc")}
         </p>
       </div>
 
@@ -64,7 +68,7 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
           id={socialHeadingId}
           class="font-firacode text-[10px] tracking-wider text-foreground/55 uppercase select-none"
         >
-          Connect
+          {t("footer.connect")}
         </p>
         <ul class="flex items-center gap-2" role="list">
           {
@@ -101,22 +105,22 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
     >
       <p class="font-firacode text-[11px] tracking-wide text-foreground/50">
         &copy; {currentYear}
-        {SITE.title}. All rights reserved.
+        {SITE.title}. {t("footer.rights")}
       </p>
       <div
         class="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 font-firacode text-[11px] text-foreground/45"
       >
         <span
-          >Made with <span class="text-accent">&#9829;</span> and coffee</span
+          >{t("footer.madeWith")} <span class="text-accent">&#9829;</span> {t("footer.andCoffee")}</span
         >
         <span class="opacity-30">|</span>
         <button
           id="shortcuts-trigger"
           class="shortcuts-trigger inline-flex cursor-pointer items-center gap-1.5 rounded border border-border/30 bg-muted/10 px-2 py-0.5 text-[10px] text-foreground/60 transition-all duration-200 hover:border-accent/40 hover:bg-accent/5 hover:text-accent focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
-          aria-label="Open keyboard shortcuts guide"
-          title="Keyboard Shortcuts"
+          aria-label={locale === "es" ? "Abrir guía de atajos de teclado" : "Open keyboard shortcuts guide"}
+          title={locale === "es" ? "Atajos de teclado" : "Keyboard Shortcuts"}
         >
-          <kbd class="font-sans font-bold">?</kbd> Shortcuts
+          <kbd class="font-sans font-bold">?</kbd> {t("footer.shortcuts")}
         </button>
       </div>
     </div>

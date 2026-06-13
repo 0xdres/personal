@@ -10,12 +10,13 @@ import Pagination from "@/components/Pagination.astro";
 import getUniqueTags from "@/utils/getUniqueTags";
 import getPostsByTag from "@/utils/getPostsByTag";
 import { SITE } from "@/config";
+import { useTranslations } from "@/i18n/utils";
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
   const [blogPosts, galleryPosts] = await Promise.all([
-    getCollection("blog"),
+    getCollection("blog", ({ id }) => id.startsWith("en/")),
     SITE.showGalleries && SITE.showGalleriesInIndex
-      ? getCollection("galleries")
+      ? getCollection("galleries", ({ id }) => id.startsWith("en/"))
       : Promise.resolve([]),
   ]);
   const posts = [...blogPosts, ...galleryPosts];
@@ -36,16 +37,23 @@ const params = Astro.params;
 const { tag } = params;
 const { page, tagName } = Astro.props;
 
+const locale = Astro.currentLocale || "en";
+const t = useTranslations(locale as any);
+
 const tagOgImage = `/tags/${tag}/og.png`;
 
 // Prevent duplicate metadata in tag pagination pages
 const metaTitle = page.currentPage > 1
-  ? `Tag: ${tagName} (Page ${page.currentPage} of ${page.lastPage}) | ${SITE.title}`
-  : `Tag: ${tagName} | ${SITE.title}`;
+  ? `${t("tags.tag")}: ${tagName} (${t("tags.page")} ${page.currentPage} ${t("tags.of")} ${page.lastPage}) | ${SITE.title}`
+  : `${t("tags.tag")}: ${tagName} | ${SITE.title}`;
 
 const tagDescription = page.currentPage > 1
-  ? `All articles tagged with "${tagName}" on ${SITE.title} (Page ${page.currentPage} of ${page.lastPage}).`
-  : `All articles tagged with "${tagName}" on ${SITE.title}.`;
+  ? (locale === "es"
+      ? `Todos los artículos etiquetados con "${tagName}" en ${SITE.title} (Página ${page.currentPage} de ${page.lastPage}).`
+      : `All articles tagged with "${tagName}" on ${SITE.title} (Page ${page.currentPage} of ${page.lastPage}).`)
+  : (locale === "es"
+      ? `Todos los artículos etiquetados con "${tagName}" en ${SITE.title}.`
+      : `All articles tagged with "${tagName}" on ${SITE.title}.`);
 
 const prevURL = page.url.prev ? new URL(page.url.prev, SITE.website).toString() : undefined;
 const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() : undefined;
@@ -60,9 +68,9 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
 >
   <Header />
   <Main
-    pageTitle={[`Tag:`, `${tagName}`]}
+    pageTitle={[`${t("tags.tag")}:`, `${tagName}`]}
     titleTransition={tag}
-    pageDesc={`All the articles with the tag "${tagName}".`}
+    pageDesc={`${t("tags.articlesWith")} "${tagName}".`}
   >
     <ul>
       {page.data.map((data, index) => (

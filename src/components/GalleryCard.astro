@@ -3,6 +3,7 @@ import type { CollectionEntry } from "astro:content";
 import type { ImageMetadata } from "astro";
 import { Image } from "astro:assets";
 import Datetime from "./Datetime.astro";
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
 
 type Props = {
   gallery: CollectionEntry<"galleries">;
@@ -15,10 +16,14 @@ type Props = {
 const { gallery, slug, fallbackImage, imageCount, loading = "lazy" } = Astro.props;
 const { title, description, pubDatetime, coverImage } = gallery.data;
 const coverSrc = coverImage ?? fallbackImage;
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+const prefix = lang === "es" ? "/es" : "";
 ---
 
 <a
-  href={`/galleries/${slug}`}
+  href={`${prefix}/galleries/${slug}`}
   class:list={[
     "card-glow group/card relative flex flex-col overflow-hidden rounded-2xl",
     "border border-border/25 backdrop-blur-sm",
@@ -78,7 +83,7 @@ const coverSrc = coverImage ?? fallbackImage;
     {
       imageCount !== undefined && imageCount > 0 && (
         <span class="absolute end-2 bottom-2 rounded-full bg-background/80 px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
-          {imageCount} {imageCount === 1 ? "photo" : "photos"}
+          {imageCount} {imageCount === 1 ? t("galleries.photo") : t("galleries.photos")}
         </span>
       )
     }

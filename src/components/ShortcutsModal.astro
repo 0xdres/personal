@@ -1,9 +1,8 @@
 ---
-/**
- * ShortcutsModal — A premium, interactive guide modal for keyboard shortcuts.
- * Includes support for Vim navigation, quick page jumps, and theme toggling
- * alongside visual feedback toasts.
- */
+import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+
+const locale = Astro.currentLocale || "en";
+const t = useTranslations(locale as any);
 ---
 
 <div
@@ -11,7 +10,16 @@
   class="shortcuts-modal-overlay"
   role="dialog"
   aria-modal="true"
-  aria-label="Keyboard Shortcuts Guide"
+  aria-label={t("shortcuts.title")}
+  data-toast-opened={t("shortcuts.toast.opened")}
+  data-toast-closed={t("shortcuts.toast.closed")}
+  data-toast-search-closed={t("shortcuts.toast.searchClosed")}
+  data-toast-goto-home={t("shortcuts.toast.gotoHome")}
+  data-toast-goto-posts={t("shortcuts.toast.gotoPosts")}
+  data-toast-goto-tags={t("shortcuts.toast.gotoTags")}
+  data-toast-goto-galleries={t("shortcuts.toast.gotoGalleries")}
+  data-toast-theme={t("shortcuts.toast.themeChanged")}
+  data-toast-lang={t("shortcuts.toast.lang")}
 >
   <div class="shortcuts-modal-backdrop" data-shortcuts-close></div>
   <div class="shortcuts-modal-container" data-modal-card>
@@ -49,12 +57,12 @@
             <line x1="10" y1="12" x2="14" y2="12"></line>
           </svg>
         </span>
-        <span class="shortcuts-title-text">Keyboard Shortcuts</span>
+        <span class="shortcuts-title-text">{t("shortcuts.title")}</span>
       </div>
       <button
         class="shortcuts-modal-close"
         data-shortcuts-close
-        aria-label="Close shortcuts guide"
+        aria-label={t("shortcuts.closeLabel")}
       >
         <svg
           class="size-4"
@@ -78,53 +86,57 @@
         <svg class="size-4 shrink-0 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
         </svg>
-        <span>Note: Keyboard shortcuts are optimized for desktop use with a physical keyboard.</span>
+        <span>{t("shortcuts.mobileWarning")}</span>
       </div>
 
       <div class="shortcuts-grid">
         <!-- Group 1: General -->
         <div class="shortcuts-group">
-          <h3 class="group-title">General</h3>
+          <h3 class="group-title">{t("shortcuts.group.general")}</h3>
           <ul class="shortcuts-list">
             <li>
-              <span class="action-desc">Toggle Shortcuts Panel</span>
+              <span class="action-desc">{t("shortcuts.action.toggle")}</span>
               <span class="key-combo"><kbd class="kbd-key">?</kbd></span>
             </li>
             <li>
-              <span class="action-desc">Toggle Theme (Light/Dark)</span>
+              <span class="action-desc">{t("shortcuts.action.theme")}</span>
               <span class="key-combo"><kbd class="kbd-key">t</kbd></span>
             </li>
             <li>
-              <span class="action-desc">Toggle Search Modal</span>
+              <span class="action-desc">{t("shortcuts.action.search")}</span>
               <span class="key-combo"
                 ><kbd class="kbd-key">⌘</kbd> <kbd class="kbd-key">K</kbd></span
               >
             </li>
             <li>
-              <span class="action-desc">Close Current Modal</span>
+              <span class="action-desc">{t("shortcuts.action.close")}</span>
               <span class="key-combo"><kbd class="kbd-key">esc</kbd></span>
             </li>
             <li>
-              <span class="action-desc">Toggle Reading Mode (Articles)</span>
+              <span class="action-desc">{t("shortcuts.action.reading")}</span>
               <span class="key-combo"><kbd class="kbd-key">r</kbd></span>
+            </li>
+            <li>
+              <span class="action-desc">{t("shortcuts.action.lang")}</span>
+              <span class="key-combo"><kbd class="kbd-key">l</kbd></span>
             </li>
           </ul>
         </div>
 
         <!-- Group 2: Navigation -->
         <div class="shortcuts-group">
-          <h3 class="group-title">Vim Navigation</h3>
+          <h3 class="group-title">{t("shortcuts.group.vim")}</h3>
           <ul class="shortcuts-list">
             <li>
-              <span class="action-desc">Select Next Post Card</span>
+              <span class="action-desc">{t("shortcuts.action.next")}</span>
               <span class="key-combo"><kbd class="kbd-key">j</kbd></span>
             </li>
             <li>
-              <span class="action-desc">Select Prev Post Card</span>
+              <span class="action-desc">{t("shortcuts.action.prev")}</span>
               <span class="key-combo"><kbd class="kbd-key">k</kbd></span>
             </li>
             <li>
-              <span class="action-desc">Open Selected Post Card</span>
+              <span class="action-desc">{t("shortcuts.action.open")}</span>
               <span class="key-combo"><kbd class="kbd-key">enter</kbd></span>
             </li>
           </ul>
@@ -133,29 +145,29 @@
         <!-- Group 3: Go To Pages -->
         <div class="shortcuts-group md:col-span-2">
           <h3 class="group-title">
-            Go To (Press <kbd class="kbd-key">g</kbd> first)
+            {t("shortcuts.group.goto")} {t("shortcuts.group.gotoHelp").replace("{g}", "g")}
           </h3>
           <ul class="shortcuts-list grid grid-cols-1 gap-x-8 md:grid-cols-2">
             <li>
-              <span class="action-desc">Go to Home</span>
+              <span class="action-desc">{t("shortcuts.action.gotoHome")}</span>
               <span class="key-combo"
                 ><kbd class="kbd-key">g</kbd> <kbd class="kbd-key">h</kbd></span
               >
             </li>
             <li>
-              <span class="action-desc">Go to Articles</span>
+              <span class="action-desc">{t("shortcuts.action.gotoPosts")}</span>
               <span class="key-combo"
                 ><kbd class="kbd-key">g</kbd> <kbd class="kbd-key">p</kbd></span
               >
             </li>
             <li>
-              <span class="action-desc">Go to Tags</span>
+              <span class="action-desc">{t("shortcuts.action.gotoTags")}</span>
               <span class="key-combo"
                 ><kbd class="kbd-key">g</kbd> <kbd class="kbd-key">t</kbd></span
               >
             </li>
             <li>
-              <span class="action-desc">Go to Galleries</span>
+              <span class="action-desc">{t("shortcuts.action.gotoGalleries")}</span>
               <span class="key-combo"
                 ><kbd class="kbd-key">g</kbd> <kbd class="kbd-key">g</kbd></span
               >
@@ -185,6 +197,16 @@
 
     const modal = document.getElementById("shortcuts-modal");
     if (!modal) return;
+
+    const toastOpened = modal.getAttribute("data-toast-opened") || "Shortcuts panel opened";
+    const toastClosed = modal.getAttribute("data-toast-closed") || "Shortcuts panel closed";
+    const toastSearchClosed = modal.getAttribute("data-toast-search-closed") || "Search modal closed";
+    const toastGotoHome = modal.getAttribute("data-toast-goto-home") || "Navigating to Home...";
+    const toastGotoPosts = modal.getAttribute("data-toast-goto-posts") || "Navigating to Articles...";
+    const toastGotoTags = modal.getAttribute("data-toast-goto-tags") || "Navigating to Tags...";
+    const toastGotoGalleries = modal.getAttribute("data-toast-goto-galleries") || "Navigating to Galleries...";
+    const toastTheme = modal.getAttribute("data-toast-theme") || "Theme changed to";
+    const toastLang = modal.getAttribute("data-toast-lang") || "Switching language...";
 
     const card = modal.querySelector("[data-modal-card]") as HTMLElement;
     const glow = modal.querySelector("[data-modal-glow]") as HTMLElement;
@@ -222,7 +244,7 @@
 
       modal!.classList.add("active");
       document.body.style.overflow = "hidden";
-      showToast(["?"], "Shortcuts panel opened");
+      showToast(["?"], toastOpened);
     }
 
     function closeModal() {
@@ -319,7 +341,7 @@
             if (searchActive) {
               searchModal!.classList.remove("active");
               document.body.style.overflow = "";
-              showToast(["esc"], "Search modal closed");
+              showToast(["esc"], toastSearchClosed);
             }
             if (shortcutsActive) {
               closeModal();
@@ -357,7 +379,7 @@
 
           if (key === "h" || key === "H") {
             e.preventDefault();
-            showToast(["g", "h"], "Navigating to Home...");
+             showToast(["g", "h"], toastGotoHome);
             setTimeout(() => {
               navigate("/");
             }, 150);
@@ -365,7 +387,7 @@
           }
           if (key === "p" || key === "P") {
             e.preventDefault();
-            showToast(["g", "p"], "Navigating to Articles...");
+             showToast(["g", "p"], toastGotoPosts);
             setTimeout(() => {
               navigate("/posts");
             }, 150);
@@ -373,7 +395,7 @@
           }
           if (key === "t" || key === "T") {
             e.preventDefault();
-            showToast(["g", "t"], "Navigating to Tags...");
+             showToast(["g", "t"], toastGotoTags);
             setTimeout(() => {
               navigate("/tags");
             }, 150);
@@ -381,7 +403,7 @@
           }
           if (key === "g" || key === "G") {
             e.preventDefault();
-            showToast(["g", "g"], "Navigating to Galleries...");
+             showToast(["g", "g"], toastGotoGalleries);
             setTimeout(() => {
               navigate("/galleries");
             }, 150);
@@ -424,8 +446,21 @@
           // Let's determine the new theme to show a precise toast
           setTimeout(() => {
             const currentTheme = localStorage.getItem("theme") || "dark";
-            showToast(["t"], `Theme changed to ${currentTheme}`);
+            showToast(["t"], `${toastTheme} ${currentTheme}`);
           }, 50);
+          return;
+        }
+
+        // [l] Key -> Toggle Language
+        if (key === "l" || key === "L") {
+          e.preventDefault();
+          const langToggle = document.querySelector("[data-lang-toggle]") as HTMLElement | null;
+          if (langToggle) {
+            showToast(["l"], toastLang);
+            setTimeout(() => {
+              langToggle.click();
+            }, 150);
+          }
           return;
         }
 

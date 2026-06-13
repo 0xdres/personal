@@ -1,0 +1,89 @@
+---
+title: How to Install Packages in Arch Linux Easily
+description: One of many methods available to install an application in Arch
+pubDatetime: 2023-01-19T16:00:00.000Z
+modDatetime: 2025-07-12T16:00:00.000Z
+tags:
+  - Arch Linux
+  - Linux
+  - Packages
+  - Pacman
+  - Linux Guides
+draft: false
+featured: false
+coverImage: ../../../assets/images/post-covers/instalar-programas-en-arch-linux.jpg
+---
+
+![Install Arch Linux](../../../assets/images/post-covers/instalar-programas-en-arch-linux.jpg)
+
+Just like in other distributions, **Arch Linux** has its own package manager with which we can install, update, or uninstall packages from the system.  
+If you already have some basic or intermediate knowledge of Linux, you will know that there is not only one way to install packages. There are many, which **adapt to you and your preferences**.
+
+Watch the video by the great [Riky Linux](https://fediverse.tv/c/gnuxero_el_canal_de_rikylinux/) below to learn more about it:
+
+{/* more */}
+
+<iframe
+  title="Compiled, binary, yay, helper, other ways to install programs on Arch distributions or derivatives!"
+  width="100%"
+  height="480"
+  src="https://fediverse.tv/videos/embed/36f37bf3-6f02-43f6-b1f3-83066f45bd15?autoplay=1&amp;warningTitle=0&amp;peertubeLink=0"
+  frameBorder="0"
+  allowFullScreen
+  sandbox="allow-same-origin allow-scripts allow-popups"
+></iframe>
+
+---
+
+## How to Install Packages in Arch Step by Step
+
+Here is a summary to install packages easily:
+
+1. **Update the system:**  
+   Before installing any program, make sure the system is up to date:  
+   ```bash
+   sudo pacman -Syu
+   ```
+
+2. **Search for the desired package:**  
+   Use the following command to search:  
+   ```bash
+   pacman -Ss package_name
+   ```
+
+3. **Install the package:**  
+   Once found, install it with:  
+   ```bash
+   sudo pacman -S package_name
+   ```
+
+4. **Update a specific package:**  
+   ```bash
+   sudo pacman -Sy package_name
+   ```
+
+5. **Uninstall a package:**  
+   ```bash
+   sudo pacman -R package_name
+   ```
+
+6. **Install an AUR package:**  
+   Use an AUR helper like `yay` or `paru`. For example:  
+   ```bash
+   yay -S package_name
+   ```
+
+> 💡 **Note:** AUR is not officially supported by the Arch team. Use it with caution.
+
+---
+
+## Conclusions
+
+In summary, installing programs in Arch Linux is done using commands with `pacman`, and you can also use AUR to install programs that are not in the official repositories. Arch gives you the freedom to choose how and with what to install your favorite tools.
+
+---
+
+## Credits
+
+- [https://fediverse.tv/c/gnuxero_el_canal_de_rikylinux/](https://fediverse.tv/c/gnuxero_el_canal_de_rikylinux/)  
+  **Riky Linux**
