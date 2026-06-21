@@ -17,8 +17,10 @@ const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
 const targetLocale = locale === "es" ? "en" : "es";
 const targetLanguageUrl = getTargetLanguageUrl(pathname, targetLocale);
-const langToggleTitle = locale === "es" ? "Switch to English" : "Cambiar a Español";
-const langToggleLabel = locale === "es" ? "Switch to English" : "Cambiar a Español";
+const langToggleTitle =
+  locale === "es" ? "Switch to English" : "Cambiar a Español";
+const langToggleLabel =
+  locale === "es" ? "Switch to English" : "Cambiar a Español";
 
 // Remove trailing slash from current pathname if exists
 const currentPath =
@@ -29,7 +31,7 @@ const isActive = (path: string) => {
   if (normalizedCurrent.startsWith("/es/") || normalizedCurrent === "/es") {
     normalizedCurrent = normalizedCurrent.slice(3) || "/";
   }
-  
+
   const currentPathArray = normalizedCurrent.split("/").filter(p => p.trim());
   const pathArray = path.split("/").filter(p => p.trim());
 
@@ -45,14 +47,17 @@ const isActive = (path: string) => {
   {t("nav.skip")}
 </a>
 
-<header id="main-header" class="sticky top-0 z-40 w-full transition-colors duration-300">
+<header
+  id="main-header"
+  class="sticky top-0 z-40 w-full transition-colors duration-300"
+>
   <div class="header-scrolled-filter w-full">
     <div class="app-layout">
       <div
         id="top-nav-wrap"
         class:list={[
           "py-3 sm:py-5",
-          "relative w-full",
+          "relative z-30 w-full",
           "flex items-center justify-between gap-2 sm:gap-4",
           "transition-all duration-300",
         ]}
@@ -60,16 +65,15 @@ const isActive = (path: string) => {
         <!-- Logo -->
         <a
           href={locale === "es" ? "/es" : "/"}
-          class="group relative z-20 flex items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl shrink-0"
+          class="group relative z-20 flex shrink-0 items-center gap-2 text-xl font-bold tracking-tight sm:text-2xl"
         >
-          <!-- <span class="nav-logo-text">{SITE.title}</span> -->
           <Logo class="w-37.5 dark:invert" />
         </a>
 
         <!-- Center Audio Player -->
         {
           SITE.introAudio.enabled && (
-            <div class="flex-1 flex justify-center min-w-0">
+            <div class="flex min-w-0 flex-1 justify-center">
               <IntroAudioCompact
                 src={SITE.introAudio.src}
                 label={SITE.introAudio.label}
@@ -82,7 +86,7 @@ const isActive = (path: string) => {
         }
 
         <!-- Nav area -->
-        <nav id="nav-menu" class="flex items-center gap-1.5 lg:gap-1 shrink-0">
+        <nav id="nav-menu" class="flex shrink-0 items-center gap-1.5 lg:gap-1">
           <!-- Mobile search button (visible only on screens < 1024px) -->
           <button
             data-search-trigger
@@ -100,6 +104,8 @@ const isActive = (path: string) => {
             aria-label={t("nav.openMenu")}
             aria-expanded="false"
             aria-controls="mobile-menu"
+            data-label-open={t("nav.openMenu")}
+            data-label-close={t("nav.closeMenu")}
           >
             <div class="hamburger-box">
               <span class="hamburger-line hamburger-line--1"></span>
@@ -110,6 +116,7 @@ const isActive = (path: string) => {
 
           <!-- Desktop links (always visible on lg+) -->
           <ul class="hidden lg:flex lg:flex-row lg:items-center lg:gap-1">
+            <!-- Primary nav: Posts · About -->
             <li>
               <a
                 href={locale === "es" ? "/es/posts" : "/posts"}
@@ -119,67 +126,18 @@ const isActive = (path: string) => {
             </li>
             <li>
               <a
-                href={locale === "es" ? "/es/tags" : "/tags"}
-                class:list={["nav-link", { "nav-active": isActive("/tags") }]}
-                >{t("nav.tags")}</a
-              >
-            </li>
-            <li>
-              <a
                 href={locale === "es" ? "/es/about" : "/about"}
                 class:list={["nav-link", { "nav-active": isActive("/about") }]}
                 >{t("nav.about")}</a
               >
             </li>
-            <li class="flex items-center">
-              <a
-                href={locale === "es" ? "/es/search" : "/search"}
-                class:list={["nav-link", { "nav-active": isActive("/search") }]}
-                title={locale === "es" ? "Ir a Buscar" : "Go to Search"}>{t("nav.search")}</a
-              >
-            </li>
-            {
-              SITE.showArchives && (
-                <li>
-                  <LinkButton
-                    href={locale === "es" ? "/es/archives" : "/archives"}
-                    class:list={[
-                      "nav-link",
-                      { "nav-active": isActive("/archives") },
-                    ]}
-                    title={t("nav.archives")}
-                    aria-label="archives"
-                  >
-                    <IconArchive class="hidden lg:inline-block" />
-                    <span class="lg:sr-only">{t("nav.archives")}</span>
-                  </LinkButton>
-                </li>
-              )
-            }
-            {
-              SITE.showGalleries && (
-                <li>
-                  <LinkButton
-                    href={locale === "es" ? "/es/galleries" : "/galleries"}
-                    class:list={[
-                      "nav-link",
-                      { "nav-active": isActive("/galleries") },
-                    ]}
-                    title={t("nav.galleries")}
-                    aria-label="galleries"
-                  >
-                    <IconGallery class="hidden lg:inline-block" />
-                    <span class="lg:sr-only">{t("nav.galleries")}</span>
-                  </LinkButton>
-                </li>
-              )
-            }
 
             <!-- Separator -->
             <li class="flex items-center px-1" aria-hidden="true">
               <div class="h-4 w-px bg-border/30"></div>
             </li>
 
+            <!-- Search ⌘K -->
             <li class="flex items-center">
               <button
                 data-search-trigger
@@ -188,84 +146,275 @@ const isActive = (path: string) => {
                 aria-label={t("nav.openSearch")}
                 aria-keyshortcuts="Meta+K"
               >
-                <IconSearch class="size-4.5" />
+                <IconSearch class="size-4" />
                 <kbd class="nav-kbd">⌘K</kbd>
               </button>
             </li>
-            <li class="flex items-center">
-              <button
-                class="shortcuts-trigger nav-search-btn"
-                title={locale === "es" ? "Atajos (?)" : "Shortcuts (?)"}
-                aria-label={locale === "es" ? "Abrir guía de atajos de teclado" : "Open keyboard shortcuts guide"}
-                aria-keyshortcuts="?"
-              >
-                <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
-                  <rect x="3" y="5" width="18" height="14" rx="2" ry="2"></rect>
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 9h.01M11 9h.01M15 9h.01M17 9h.01M7 13h.01M11 13h.01M15 13h.01M17 13h.01M9 16h6" />
-                </svg>
-                <kbd class="nav-kbd">?</kbd>
-              </button>
+
+            <!-- Separator -->
+            <li class="flex items-center px-1" aria-hidden="true">
+              <div class="h-4 w-px bg-border/30"></div>
             </li>
-            <li class="flex items-center relative accent-picker-container">
+
+            <!-- ··· More button with popover -->
+            <li class="more-btn-container relative flex items-center">
               <button
-                id="accent-btn"
+                id="more-btn"
                 class="nav-icon-btn relative"
-                title={t("nav.changeAccent")}
-                aria-label={t("nav.changeAccent")}
+                title={locale === "es" ? "Más opciones" : "More options"}
+                aria-label={locale === "es" ? "Más opciones" : "More options"}
                 aria-haspopup="true"
                 aria-expanded="false"
               >
-                <!-- Color Swatch Icon -->
-                <svg class="size-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                <!-- Three dots icon -->
+                <svg
+                  class="size-4.5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <circle cx="5" cy="12" r="1.5"></circle>
+                  <circle cx="12" cy="12" r="1.5"></circle>
+                  <circle cx="19" cy="12" r="1.5"></circle>
                 </svg>
               </button>
-              
-              <div id="accent-popover" class="absolute right-0 top-10 hidden rounded-xl border border-border/20 bg-background/95 backdrop-blur-md p-2.5 shadow-xl min-w-[150px] flex flex-col gap-1.5 z-50">
-                <div class="text-[10px] font-firacode font-bold tracking-wider text-foreground/45 px-1 uppercase select-none">
-                  {t("nav.accentColor")}
+
+              <!-- More Popover -->
+              <div
+                id="more-popover"
+                class="more-popover hidden"
+                role="dialog"
+                aria-label={locale === "es" ? "Más opciones" : "More options"}
+              >
+                <!-- Section: Explore -->
+                <div class="popover-section">
+                  <p class="popover-section-label">
+                    {locale === "es" ? "Explorar" : "Explore"}
+                  </p>
+                  <div class="popover-links">
+                    <a
+                      href={locale === "es" ? "/es/tags" : "/tags"}
+                      class:list={[
+                        "popover-link",
+                        { "popover-link-active": isActive("/tags") },
+                      ]}
+                    >
+                      <!-- Tag icon -->
+                      <svg
+                        class="size-3.5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        aria-hidden="true"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M7 7h.01M3 7l6 6 6 6 6-6-6-6-6-6-6 6z"></path>
+                      </svg>
+                      {t("nav.tags")}
+                    </a>
+                    {
+                      SITE.showArchives && (
+                        <a
+                          href={locale === "es" ? "/es/archives" : "/archives"}
+                          class:list={[
+                            "popover-link",
+                            { "popover-link-active": isActive("/archives") },
+                          ]}
+                        >
+                          <IconArchive class="size-3.5 shrink-0" />
+                          {t("nav.archives")}
+                        </a>
+                      )
+                    }
+                    {
+                      SITE.showGalleries && (
+                        <a
+                          href={
+                            locale === "es" ? "/es/galleries" : "/galleries"
+                          }
+                          class:list={[
+                            "popover-link",
+                            { "popover-link-active": isActive("/galleries") },
+                          ]}
+                        >
+                          <IconGallery class="size-3.5 shrink-0" />
+                          {t("nav.galleries")}
+                        </a>
+                      )
+                    }
+                  </div>
                 </div>
-                <div class="flex items-center justify-between gap-1 mt-1">
-                  <!-- Blue -->
-                  <button data-accent-color="blue" class="size-5 rounded-full bg-[#008fec] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Blue"></button>
-                  <!-- Green -->
-                  <button data-accent-color="green" class="size-5 rounded-full bg-[#10b981] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Green"></button>
-                  <!-- Purple -->
-                  <button data-accent-color="purple" class="size-5 rounded-full bg-[#a855f7] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Purple"></button>
-                  <!-- Amber -->
-                  <button data-accent-color="amber" class="size-5 rounded-full bg-[#f59e0b] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Amber"></button>
-                  <!-- Rose -->
-                  <button data-accent-color="rose" class="size-5 rounded-full bg-[#f43f5e] border border-border/25 hover:scale-110 active:scale-95 transition-all focus:outline-none relative" title="Rose"></button>
+
+                <!-- Divider -->
+                <div class="popover-divider" aria-hidden="true"></div>
+
+                <!-- Section: Preferences -->
+                <div class="popover-section">
+                  <p class="popover-section-label">
+                    {locale === "es" ? "Preferencias" : "Preferences"}
+                  </p>
+                  <div class="popover-links">
+                    <!-- Theme toggle row -->
+                    {
+                      SITE.lightAndDarkMode && (
+                        <div class="popover-row">
+                          <div class="popover-row-label">
+                            <svg
+                              class="size-3.5 shrink-0"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              stroke-width="1.8"
+                              aria-hidden="true"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 7a5 5 0 110 10A5 5 0 0112 7z"
+                              />
+                            </svg>
+                            {locale === "es" ? "Tema" : "Theme"}
+                          </div>
+                          <button
+                            id="theme-btn"
+                            class="theme-toggle-pill"
+                            title={t("nav.theme")}
+                            aria-label="auto"
+                            aria-live="polite"
+                          >
+                            <span class="theme-pill-option block dark:hidden">
+                              <IconMoon class="size-3" />
+                              {locale === "es" ? "Oscuro" : "Dark"}
+                            </span>
+                            <span class="theme-pill-option hidden dark:flex">
+                              <IconSunHigh class="size-3" />
+                              {locale === "es" ? "Claro" : "Light"}
+                            </span>
+                          </button>
+                        </div>
+                      )
+                    }
+
+                    <!-- Language toggle row -->
+                    <div class="popover-row">
+                      <div class="popover-row-label">
+                        <svg
+                          class="size-3.5 shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5c-.03.077-.07.154-.114.23-.9 1.54-2.11 3.05-3.535 4.5M6.412 9a14.95 14.95 0 003.535 4.5m0 0a14.973 14.973 0 01-3.298 3.19M6.412 9H3.9M15 9h-2.5"
+                          ></path>
+                        </svg>
+                        {locale === "es" ? "Idioma" : "Language"}
+                      </div>
+                      <a
+                        href={targetLanguageUrl}
+                        class="lang-pill font-firacode"
+                        title={langToggleTitle}
+                        aria-label={langToggleLabel}
+                        data-lang-toggle={targetLocale}
+                      >
+                        {locale === "es" ? "EN" : "ES"}
+                      </a>
+                    </div>
+
+                    <!-- Accent color row -->
+                    <div class="popover-row popover-row--accent">
+                      <div class="popover-row-label">
+                        <svg
+                          class="size-3.5 shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          stroke-width="2"
+                          aria-hidden="true"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                          ></path>
+                        </svg>
+                        {t("nav.accentColor")}
+                      </div>
+                      <div class="accent-swatches">
+                        <button
+                          data-accent-color="blue"
+                          class="accent-swatch bg-[#008fec]"
+                          title="Blue"></button>
+                        <button
+                          data-accent-color="green"
+                          class="accent-swatch bg-[#10b981]"
+                          title="Green"></button>
+                        <button
+                          data-accent-color="purple"
+                          class="accent-swatch bg-[#a855f7]"
+                          title="Purple"></button>
+                        <button
+                          data-accent-color="amber"
+                          class="accent-swatch bg-[#f59e0b]"
+                          title="Amber"></button>
+                        <button
+                          data-accent-color="rose"
+                          class="accent-swatch bg-[#f43f5e]"
+                          title="Rose"></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Divider -->
+                <div class="popover-divider" aria-hidden="true"></div>
+
+                <!-- Section: Help -->
+                <div class="popover-section">
+                  <p class="popover-section-label">
+                    {locale === "es" ? "Ayuda" : "Help"}
+                  </p>
+                  <div class="popover-links">
+                    <button
+                      class="shortcuts-trigger popover-link w-full text-left"
+                      title={locale === "es"
+                        ? "Atajos de teclado (?)"
+                        : "Keyboard shortcuts (?)"}
+                      aria-label={locale === "es"
+                        ? "Abrir guía de atajos de teclado"
+                        : "Open keyboard shortcuts guide"}
+                      aria-keyshortcuts="?"
+                    >
+                      <svg
+                        class="size-3.5 shrink-0"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                        aria-hidden="true"
+                      >
+                        <rect x="3" y="5" width="18" height="14" rx="2" ry="2"
+                        ></rect>
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          d="M7 9h.01M11 9h.01M15 9h.01M17 9h.01M7 13h.01M11 13h.01M15 13h.01M17 13h.01M9 16h6"
+                        ></path>
+                      </svg>
+                      {t("nav.shortcuts")}
+                      <kbd class="nav-kbd ml-auto">?</kbd>
+                    </button>
+                  </div>
                 </div>
               </div>
             </li>
-            <li class="flex items-center">
-              <a
-                href={targetLanguageUrl}
-                class="nav-icon-btn text-xs font-bold font-firacode tracking-wider flex items-center justify-center"
-                title={langToggleTitle}
-                aria-label={langToggleLabel}
-                data-lang-toggle={targetLocale}
-              >
-                {locale === "es" ? "EN" : "ES"}
-              </a>
-            </li>
-            {
-              SITE.lightAndDarkMode && (
-                <li class="flex items-center">
-                  <button
-                    id="theme-btn"
-                    class="nav-icon-btn relative"
-                    title={t("nav.theme")}
-                    aria-label="auto"
-                    aria-live="polite"
-                  >
-                    <IconMoon class="absolute top-1/2 left-1/2 -translate-1/2 scale-100 rotate-0 transition-all duration-300 dark:scale-0 dark:-rotate-90" />
-                    <IconSunHigh class="absolute top-1/2 left-1/2 -translate-1/2 scale-0 rotate-90 transition-all duration-300 dark:scale-100 dark:rotate-0" />
-                  </button>
-                </li>
-              )
-            }
           </ul>
         </nav>
       </div>
@@ -276,7 +425,7 @@ const isActive = (path: string) => {
   <!-- Bottom border with gradient -->
   <div
     id="header-border"
-    class="header-border-line opacity-0 transition-opacity duration-300 h-px w-full bg-linear-to-r from-transparent via-border/40 to-transparent"
+    class="header-border-line h-px w-full bg-linear-to-r from-transparent via-border/40 to-transparent opacity-0 transition-opacity duration-300"
   >
   </div>
 </header>
@@ -286,9 +435,13 @@ const isActive = (path: string) => {
   #main-header {
     background: transparent;
   }
-  
+
   :global(.header-scrolled) {
-    background: color-mix(in srgb, var(--background) 80%, transparent) !important;
+    background: color-mix(
+      in srgb,
+      var(--background) 80%,
+      transparent
+    ) !important;
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
   }
 
@@ -372,10 +525,14 @@ const isActive = (path: string) => {
     font-weight: 500;
     color: var(--foreground);
     border-radius: 0.5rem;
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
   }
 
-  .nav-link:focus-visible, .nav-icon-btn:focus-visible, .nav-search-btn:focus-visible {
+  .nav-link:focus-visible,
+  .nav-icon-btn:focus-visible,
+  .nav-search-btn:focus-visible {
     outline: none;
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent);
   }
@@ -387,7 +544,6 @@ const isActive = (path: string) => {
 
   .nav-active {
     color: var(--accent);
-    /* Clean active state for desktop */
     background: transparent;
   }
 
@@ -412,16 +568,18 @@ const isActive = (path: string) => {
     width: 2rem;
     height: 2rem;
     border-radius: 0.5rem;
-    transition: color 0.2s ease, background-color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease;
     color: var(--foreground);
   }
 
-  /* ─── Desktop Search Button with ⌘K ─── */
+  /* ─── Desktop Search Button ─── */
   .nav-search-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    padding: 0.3rem 0.5rem 0.3rem 0.5rem;
+    padding: 0.3rem 0.625rem;
     font-size: 0.8125rem;
     font-weight: 500;
     color: var(--muted-foreground);
@@ -429,13 +587,18 @@ const isActive = (path: string) => {
     border-radius: 0.5rem;
     background: color-mix(in srgb, var(--muted) 40%, transparent);
     cursor: pointer;
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .nav-search-btn:hover {
     color: var(--accent);
     border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     background: color-mix(in srgb, var(--accent) 8%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent);
   }
 
   .nav-kbd {
@@ -451,13 +614,288 @@ const isActive = (path: string) => {
     border-bottom-width: 2px;
     background: color-mix(in srgb, var(--background) 90%, transparent);
     color: var(--muted-foreground);
-    box-shadow: inset 0 -1px 0 rgba(0,0,0,0.1);
-    transition: color 0.2s ease, border-color 0.2s ease;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+    transition:
+      color 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .nav-search-btn:hover .nav-kbd {
     border-color: color-mix(in srgb, var(--accent) 30%, transparent);
     color: var(--accent);
+  }
+
+  /* ─── More (···) Popover ─── */
+  .more-btn-container {
+    position: relative;
+  }
+
+  /* Active state for more button when popover is open */
+  #more-btn[aria-expanded="true"] {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
+
+  /*
+   * FIX OVAL: after a mouse click, browsers set :focus on the button which
+   * triggers :focus-visible in some engines (e.g. Chrome >=86 heuristics).
+   * Suppress focus-visible styling on #more-btn entirely — it's a pure
+   * pointer-driven control and doesn't need a keyboard focus ring.
+   */
+  #more-btn:focus-visible {
+    outline: none;
+    box-shadow: none;
+  }
+
+  /*
+   * FIX LAG: backdrop-filter is on a ::before pseudo-element isolated from
+   * the content layer. This prevents hover repaints inside the popover from
+   * forcing the GPU to recalculate the blur on every frame.
+   */
+  .more-popover {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    width: 220px;
+    border-radius: 0.875rem;
+    border: 1px solid color-mix(in srgb, var(--border) 25%, transparent);
+    /* Use an opaque-enough background so content is legible without blur */
+    background: color-mix(in srgb, var(--background) 96%, transparent);
+    box-shadow:
+      0 20px 40px -8px rgba(0, 0, 0, 0.12),
+      0 8px 16px -4px rgba(0, 0, 0, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    padding: 0.5rem;
+    z-index: 50;
+    /* FIX OVAL: never show a focus ring on the dialog container */
+    outline: none;
+    /* Isolate stacking context so child focus rings stay inside */
+    isolation: isolate;
+    /* Entrance animation */
+    transform-origin: top right;
+    animation: popover-in 0.18s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  /* Blur lives here — completely isolated from hover/paint of children */
+  .more-popover::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .more-popover.hidden {
+    display: none;
+  }
+
+  @keyframes popover-in {
+    from {
+      opacity: 0;
+      transform: scale(0.94) translateY(-4px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .popover-section {
+    padding: 0.25rem 0;
+  }
+
+  .popover-section-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--foreground) 35%, transparent);
+    padding: 0.25rem 0.625rem 0.375rem;
+    font-family: var(--font-firacode, monospace);
+    user-select: none;
+  }
+
+  .popover-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .popover-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.625rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: var(--foreground);
+    border-radius: 0.5rem;
+    /* FIX LAG: promote to own composite layer for instant hover response */
+    transform: translateZ(0);
+    transition:
+      color 0.12s ease,
+      background-color 0.12s ease;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    text-decoration: none;
+  }
+
+  .popover-link:hover {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+
+  .popover-link:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--accent) 50%, transparent);
+    outline-offset: -2px;
+  }
+
+  .popover-link-active {
+    color: var(--accent);
+  }
+
+  .popover-divider {
+    margin: 0.375rem 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--border) 40%, transparent),
+      transparent
+    );
+  }
+
+  /* ─── Preference rows (theme, lang, accent) ─── */
+  .popover-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    border-radius: 0.5rem;
+  }
+
+  .popover-row-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: color-mix(in srgb, var(--foreground) 70%, transparent);
+    user-select: none;
+  }
+
+  /* Theme pill toggle */
+  .theme-toggle-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    background: color-mix(in srgb, var(--muted) 50%, transparent);
+    color: var(--foreground);
+    cursor: pointer;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+    gap: 0.3rem;
+  }
+
+  .theme-toggle-pill:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+  }
+
+  .theme-pill-option {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  /* Language pill */
+  .lang-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    background: color-mix(in srgb, var(--muted) 50%, transparent);
+    color: var(--foreground);
+    text-decoration: none;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .lang-pill:hover {
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    color: var(--accent);
+  }
+
+  /* Accent swatches inside popover */
+  .popover-row--accent {
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.375rem;
+  }
+
+  .accent-swatches {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .accent-swatch {
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 50%;
+    border: 1.5px solid color-mix(in srgb, var(--border) 30%, transparent);
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      box-shadow 0.15s ease;
+    padding: 0;
+  }
+
+  .accent-swatch:hover {
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--background) 100%, transparent),
+      0 0 0 3.5px color-mix(in srgb, var(--foreground) 30%, transparent);
+  }
+
+  .accent-swatch:focus-visible {
+    outline: none;
+    transform: scale(1.2);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--accent);
+  }
+
+  /* Active accent swatch styling */
+  html[data-accent="blue"] [data-accent-color="blue"],
+  html[data-accent="green"] [data-accent-color="green"],
+  html[data-accent="purple"] [data-accent-color="purple"],
+  html[data-accent="amber"] [data-accent-color="amber"],
+  html[data-accent="rose"] [data-accent-color="rose"] {
+    transform: scale(1.15);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 3.5px var(--accent);
   }
 
   /* ─── Animated Hamburger Button ─── */
@@ -472,7 +910,9 @@ const isActive = (path: string) => {
     border-radius: 0.625rem;
     border: 1px solid transparent;
     background: transparent;
-    transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition:
+      background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     cursor: pointer;
   }
 
@@ -538,8 +978,6 @@ const isActive = (path: string) => {
     width: 100%;
     transform: rotate(-45deg);
   }
-
-
 </style>
 
 <script>
@@ -577,7 +1015,6 @@ const isActive = (path: string) => {
   }
 
   function setupMobileNav() {
-    // Cleanup previous listeners
     if (headerCleanup) headerCleanup.abort();
     headerCleanup = new AbortController();
     const { signal } = headerCleanup;
@@ -587,10 +1024,13 @@ const isActive = (path: string) => {
     const backdrop = document.querySelector(".mobile-menu-backdrop");
 
     if (!menuBtn || !mobileMenu) return;
-    
+
+    const labelOpen = menuBtn.getAttribute("data-label-open") || "Open Menu";
+    const labelClose = menuBtn.getAttribute("data-label-close") || "Close Menu";
+
     const closeMenu = () => {
       menuBtn.setAttribute("aria-expanded", "false");
-      menuBtn.setAttribute("aria-label", "Open Menu");
+      menuBtn.setAttribute("aria-label", labelOpen);
       mobileMenu.classList.remove("is-open");
       mobileMenu.setAttribute("aria-hidden", "true");
     };
@@ -599,28 +1039,110 @@ const isActive = (path: string) => {
       "click",
       () => {
         const isOpen = menuBtn.getAttribute("aria-expanded") === "true";
-
         if (isOpen) {
           closeMenu();
         } else {
           menuBtn.setAttribute("aria-expanded", "true");
-          menuBtn.setAttribute("aria-label", "Close Menu");
+          menuBtn.setAttribute("aria-label", labelClose);
           mobileMenu.classList.add("is-open");
           mobileMenu.setAttribute("aria-hidden", "false");
         }
       },
       { signal }
     );
-    
-    // Close when clicking the backdrop
+
     if (backdrop) {
       backdrop.addEventListener("click", closeMenu, { signal });
-      window.addEventListener("scroll", closeMenu, { passive: true, signal });
     }
 
-    // Close mobile menu on link click
     mobileMenu.querySelectorAll("a").forEach(link => {
       link.addEventListener("click", closeMenu, { signal });
+    });
+  }
+
+  let moreCleanup: AbortController | null = null;
+
+  function setupMorePopover() {
+    if (moreCleanup) moreCleanup.abort();
+    moreCleanup = new AbortController();
+    const { signal } = moreCleanup;
+
+    const moreBtn = document.getElementById("more-btn");
+    const morePopover = document.getElementById("more-popover");
+
+    if (!moreBtn || !morePopover) return;
+
+    const openPopover = () => {
+      moreBtn.setAttribute("aria-expanded", "true");
+      morePopover.classList.remove("hidden");
+    };
+
+    const closePopover = () => {
+      moreBtn.setAttribute("aria-expanded", "false");
+      morePopover.classList.add("hidden");
+    };
+
+    moreBtn.addEventListener(
+      "click",
+      e => {
+        e.stopPropagation();
+        const isExpanded = moreBtn.getAttribute("aria-expanded") === "true";
+        isExpanded ? closePopover() : openPopover();
+      },
+      { signal }
+    );
+
+    // Close when clicking outside
+    document.addEventListener(
+      "click",
+      e => {
+        const target = e.target as HTMLElement;
+        if (
+          !morePopover.classList.contains("hidden") &&
+          !morePopover.contains(target) &&
+          target !== moreBtn &&
+          !moreBtn.contains(target)
+        ) {
+          closePopover();
+        }
+      },
+      { signal }
+    );
+
+    // Close popover on Escape key
+    document.addEventListener(
+      "keydown",
+      e => {
+        if (e.key === "Escape" && !morePopover.classList.contains("hidden")) {
+          closePopover();
+          moreBtn.focus();
+        }
+      },
+      { signal }
+    );
+
+    // Close popover on scroll
+    window.addEventListener("scroll", closePopover, { passive: true, signal });
+
+    // Close popover when focus leaves the container
+    morePopover.addEventListener(
+      "focusout",
+      e => {
+        const relatedTarget = e.relatedTarget as HTMLElement;
+        if (
+          relatedTarget &&
+          !morePopover.contains(relatedTarget) &&
+          relatedTarget !== moreBtn
+        ) {
+          closePopover();
+        }
+      },
+      { signal }
+    );
+
+    // Close popover when a link inside is clicked
+    morePopover.querySelectorAll("a").forEach(link => {
+      link.addEventListener("click", closePopover, { signal });
     });
   }
 
@@ -631,53 +1153,33 @@ const isActive = (path: string) => {
     accentCleanup = new AbortController();
     const { signal } = accentCleanup;
 
-    const accentBtn = document.getElementById("accent-btn");
-    const accentPopover = document.getElementById("accent-popover");
-
-    if (!accentBtn || !accentPopover) return;
-
-    // Toggle popover
-    accentBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      const isExpanded = accentBtn.getAttribute("aria-expanded") === "true";
-      accentBtn.setAttribute("aria-expanded", !isExpanded ? "true" : "false");
-      accentPopover.classList.toggle("hidden", isExpanded);
-    }, { signal });
-
-    // Close when clicking outside
-    document.addEventListener("click", (e) => {
-      const target = e.target as HTMLElement;
-      if (!accentPopover.classList.contains("hidden") && !accentPopover.contains(target) && target !== accentBtn) {
-        accentBtn.setAttribute("aria-expanded", "false");
-        accentPopover.classList.add("hidden");
-      }
-    }, { signal });
-
     // Accent selection logic (desktop and mobile picker buttons)
     document.querySelectorAll("[data-accent-color]").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const color = btn.getAttribute("data-accent-color");
-        if (color) {
-          document.documentElement.setAttribute("data-accent", color);
-          localStorage.setItem("theme-accent", color);
-          
-          // Also close popover if desktop button clicked
-          accentBtn.setAttribute("aria-expanded", "false");
-          accentPopover.classList.add("hidden");
-        }
-      }, { signal });
+      btn.addEventListener(
+        "click",
+        () => {
+          const color = btn.getAttribute("data-accent-color");
+          if (color) {
+            document.documentElement.setAttribute("data-accent", color);
+            localStorage.setItem("theme-accent", color);
+          }
+        },
+        { signal }
+      );
     });
   }
 
   // Initial load
   setupScrollPhysics();
   setupMobileNav();
+  setupMorePopover();
   setupAccentPicker();
 
   // Runs on view transitions navigation
   document.addEventListener("astro:after-swap", () => {
     setupScrollPhysics();
     setupMobileNav();
+    setupMorePopover();
     setupAccentPicker();
   });
 </script>

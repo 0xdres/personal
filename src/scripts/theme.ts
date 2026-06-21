@@ -74,9 +74,15 @@ if (window.theme) {
 // Ensure theme is reflected (in case body wasn't ready when inline script ran)
 reflectPreference();
 
+let themeCleanup: AbortController | null = null;
+
 function setThemeFeature(): void {
   // set on load so screen readers can get the latest value on the button
   reflectPreference();
+
+  if (themeCleanup) themeCleanup.abort();
+  themeCleanup = new AbortController();
+  const { signal } = themeCleanup;
 
   // now this script can find and listen for clicks on the control
   const toggleTheme = () => {
@@ -88,17 +94,12 @@ function setThemeFeature(): void {
   const themeBtn = document.querySelector("#theme-btn");
   const themeBtnMobile = document.querySelector("#theme-btn-mobile");
 
-  // Remove previous listeners to avoid duplicates on view transitions
-  const freshBtn = themeBtn?.cloneNode(true) as Element | null;
-  if (themeBtn && freshBtn) {
-    themeBtn.replaceWith(freshBtn);
-    freshBtn.addEventListener("click", toggleTheme);
+  if (themeBtn) {
+    themeBtn.addEventListener("click", toggleTheme, { signal });
   }
 
-  const freshBtnMobile = themeBtnMobile?.cloneNode(true) as Element | null;
-  if (themeBtnMobile && freshBtnMobile) {
-    themeBtnMobile.replaceWith(freshBtnMobile);
-    freshBtnMobile.addEventListener("click", toggleTheme);
+  if (themeBtnMobile) {
+    themeBtnMobile.addEventListener("click", toggleTheme, { signal });
   }
 }
 
