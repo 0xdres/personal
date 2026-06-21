@@ -15,9 +15,15 @@ const t = useTranslations(locale as any);
 const prefix = locale === "es" ? "/es" : "";
 
 const [blogPosts, galleryPosts] = await Promise.all([
-  getCollection("blog", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)),
+  getCollection(
+    "blog",
+    ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)
+  ),
   SITE.showGalleries && SITE.showGalleriesInIndex
-    ? getCollection("galleries", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`))
+    ? getCollection(
+        "galleries",
+        ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)
+      )
     : Promise.resolve([]),
 ]);
 const posts = [...blogPosts, ...galleryPosts];
@@ -29,7 +35,8 @@ const tagsWithCount = tags.map(({ tag, tagName }) => ({
   count: getPostsByTag(posts, tag).length,
 }));
 
-const maxCount = tagsWithCount.length > 0 ? Math.max(...tagsWithCount.map(t => t.count)) : 0;
+const maxCount =
+  tagsWithCount.length > 0 ? Math.max(...tagsWithCount.map(t => t.count)) : 0;
 ---
 
 <Layout title={`${t("tags.title")} | ${SITE.title}`}>
@@ -51,10 +58,12 @@ const maxCount = tagsWithCount.length > 0 ? Math.max(...tagsWithCount.map(t => t
         </p>
         <div class="mt-4 flex items-center gap-2 text-sm text-foreground/50">
           <span class="hero-badge">
-            {tagsWithCount.length} {t("tags.count")}
+            {tagsWithCount.length}
+            {t("tags.count")}
           </span>
           <span class="hero-badge">
-            {posts.length} {t("tags.postsCount")}
+            {posts.length}
+            {t("tags.postsCount")}
           </span>
         </div>
       </div>

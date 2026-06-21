@@ -15,9 +15,15 @@ const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
 
 const [blogPosts, galleryPosts] = await Promise.all([
-  getCollection("blog", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)),
+  getCollection(
+    "blog",
+    ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)
+  ),
   SITE.showGalleries && SITE.showGalleriesInIndex
-    ? getCollection("galleries", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`))
+    ? getCollection(
+        "galleries",
+        ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)
+      )
     : Promise.resolve([]),
 ]);
 const posts = getSortedPosts([...blogPosts, ...galleryPosts]);
@@ -58,7 +64,8 @@ const metaDesc = t("posts.desc");
           class="premium-search"
           data-placeholder={t("search.placeholder")}
           data-clear={t("search.close")}
-        ></div>
+        >
+        </div>
       </div>
     </div>
 
@@ -77,15 +84,13 @@ const metaDesc = t("posts.desc");
                 stroke-linecap="round"
                 stroke-linejoin="round"
               >
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="9" y1="15" x2="15" y2="15"></line>
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                <polyline points="14 2 14 8 20 8" />
+                <line x1="9" y1="15" x2="15" y2="15" />
               </svg>
             </div>
             <h3 class="empty-title">{t("posts.emptyTitle")}</h3>
-            <p class="empty-desc">
-              {t("posts.emptyDesc")}
-            </p>
+            <p class="empty-desc">{t("posts.emptyDesc")}</p>
           </div>
         ) : (
           <ul class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -107,7 +112,7 @@ const metaDesc = t("posts.desc");
 
 <script>
   let cleanupController: AbortController | null = null;
-  
+
   function initPostsPage() {
     if (cleanupController) cleanupController.abort();
     cleanupController = new AbortController();
@@ -115,19 +120,29 @@ const metaDesc = t("posts.desc");
 
     // Hero mouse glow
     const hero = document.querySelector("[data-posts-hero]") as HTMLElement;
-    const heroMouse = document.querySelector("[data-posts-mouse]") as HTMLElement;
+    const heroMouse = document.querySelector(
+      "[data-posts-mouse]"
+    ) as HTMLElement;
     if (hero && heroMouse) {
-      hero.addEventListener("mousemove", e => {
-        requestAnimationFrame(() => {
-          const rect = hero.getBoundingClientRect();
-          heroMouse.style.setProperty("--mx", `${e.clientX - rect.left}px`);
-          heroMouse.style.setProperty("--my", `${e.clientY - rect.top}px`);
-          heroMouse.style.opacity = "1";
-        });
-      }, { signal });
-      hero.addEventListener("mouseleave", () => {
-        heroMouse.style.opacity = "0";
-      }, { signal });
+      hero.addEventListener(
+        "mousemove",
+        e => {
+          requestAnimationFrame(() => {
+            const rect = hero.getBoundingClientRect();
+            heroMouse.style.setProperty("--mx", `${e.clientX - rect.left}px`);
+            heroMouse.style.setProperty("--my", `${e.clientY - rect.top}px`);
+            heroMouse.style.opacity = "1";
+          });
+        },
+        { signal }
+      );
+      hero.addEventListener(
+        "mouseleave",
+        () => {
+          heroMouse.style.opacity = "0";
+        },
+        { signal }
+      );
     }
 
     // Initialize Pagefind local search
@@ -168,9 +183,13 @@ const metaDesc = t("posts.desc");
       });
 
       // Toggle default posts grid visibility when typing
-      const input = container.querySelector(".pagefind-ui__search-input") as HTMLInputElement;
-      const defaultContainer = document.querySelector("[data-default-posts-container]") as HTMLElement;
-      
+      const input = container.querySelector(
+        ".pagefind-ui__search-input"
+      ) as HTMLInputElement;
+      const defaultContainer = document.querySelector(
+        "[data-default-posts-container]"
+      ) as HTMLElement;
+
       if (input && defaultContainer) {
         const toggleVisibility = () => {
           const hasValue = input.value.trim().length > 0;
@@ -182,13 +201,17 @@ const metaDesc = t("posts.desc");
         };
 
         input.addEventListener("input", toggleVisibility, { signal });
-        
+
         // Handle clear button
         const clearBtn = container.querySelector(".pagefind-ui__search-clear");
         if (clearBtn) {
-          clearBtn.addEventListener("click", () => {
-            requestAnimationFrame(() => toggleVisibility());
-          }, { signal });
+          clearBtn.addEventListener(
+            "click",
+            () => {
+              requestAnimationFrame(() => toggleVisibility());
+            },
+            { signal }
+          );
         }
       }
 
@@ -200,14 +223,16 @@ const metaDesc = t("posts.desc");
           if (input) {
             input.focus();
             // Scroll to the search box if it's not visible
-            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            input.scrollIntoView({ behavior: "smooth", block: "center" });
           }
         }
       };
-      
-      // Use capture mode to intercept before the global modal listener
-      document.addEventListener("keydown", handleCmdK, { signal, capture: true });
 
+      // Use capture mode to intercept before the global modal listener
+      document.addEventListener("keydown", handleCmdK, {
+        signal,
+        capture: true,
+      });
     });
   }
 
@@ -389,15 +414,19 @@ const metaDesc = t("posts.desc");
     background: color-mix(in srgb, var(--accent) 8%, transparent);
     color: var(--accent);
     margin-bottom: 1.5rem;
-    box-shadow: 
+    box-shadow:
       0 0 0 1px color-mix(in srgb, var(--accent) 15%, transparent),
       0 10px 30px -10px color-mix(in srgb, var(--accent) 25%, transparent);
     animation: empty-float 4s ease-in-out infinite alternate;
   }
 
   @keyframes empty-float {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-8px); }
+    0% {
+      transform: translateY(0);
+    }
+    100% {
+      transform: translateY(-8px);
+    }
   }
 
   .empty-title {

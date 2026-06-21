@@ -34,15 +34,18 @@ const resolvedTimezone = postTimezone || SITE.timezone;
 const t = useTranslations(locale as any);
 
 const publishedDatetime = dayjs(pubDatetime).tz(resolvedTimezone);
-const modifiedDatetime = modDatetime ? dayjs(modDatetime).tz(resolvedTimezone) : null;
+const modifiedDatetime = modDatetime
+  ? dayjs(modDatetime).tz(resolvedTimezone)
+  : null;
 
 const isModified = Boolean(
   modifiedDatetime?.isValid() &&
-    publishedDatetime.isValid() &&
-    modifiedDatetime.isAfter(publishedDatetime)
+  publishedDatetime.isValid() &&
+  modifiedDatetime.isAfter(publishedDatetime)
 );
 
-const datetime = isModified && modifiedDatetime ? modifiedDatetime : publishedDatetime;
+const datetime =
+  isModified && modifiedDatetime ? modifiedDatetime : publishedDatetime;
 
 const date = datetime.locale(localeCode).format("D MMM, YYYY");
 
@@ -77,10 +80,12 @@ const srLabel = isModified ? updatedSrText : publishedText;
     )
   }
   <time
-    class:list={["text-sm whitespace-nowrap", { "sm:text-base": size === "lg" }]}
+    class:list={[
+      "text-sm whitespace-nowrap",
+      { "sm:text-base": size === "lg" },
+    ]}
     datetime={datetime.toISOString()}
     title={srDate}
-    aria-label={`${srLabel}: ${srDate}`}
-    >{date}</time
+    aria-label={`${srLabel}: ${srDate}`}>{date}</time
   >
 </div>

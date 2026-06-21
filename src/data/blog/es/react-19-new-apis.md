@@ -198,10 +198,10 @@ export function PostCard({ post }: { post: Post }) {
 
 ## Resumen de las nuevas API
 
-| API | Reemplaza | Cuándo usar |
-| --- | --- | --- |
-| `useActionState` | `useState` + `useReducer` para formularios | Cualquier mutación con feedback en la UI |
-| `useOptimistic` | Lógica de reversión manual | Actualizaciones que mejoran el rendimiento percibido |
-| `use(promise)` | `useEffect` + `useState` para obtención de datos | Componentes que leen promesas en render |
-| `use(context)` | `useContext` | Cuando necesitas leerlo condicionalmente |
-| `ref` como prop | `forwardRef` | Siempre — elimina el wrapper innecesario |
+| API              | Reemplaza                                        | Cuándo usar                                          |
+| ---------------- | ------------------------------------------------ | ---------------------------------------------------- |
+| `useActionState` | `useState` + `useReducer` para formularios       | Cualquier mutación con feedback en la UI             |
+| `useOptimistic`  | Lógica de reversión manual                       | Actualizaciones que mejoran el rendimiento percibido |
+| `use(promise)`   | `useEffect` + `useState` para obtención de datos | Componentes que leen promesas en render              |
+| `use(context)`   | `useContext`                                     | Cuando necesitas leerlo condicionalmente             |
+| `ref` como prop  | `forwardRef`                                     | Siempre — elimina el wrapper innecesario             |

@@ -89,7 +89,8 @@ const t = useTranslations(locale as any);
         style="--pagefind-ui-scale: 0.9;"
         data-placeholder={t("search.placeholder")}
         data-clear={t("search.close")}
-      ></div>
+      >
+      </div>
       <!-- Empty state illustration -->
       <div class="search-empty-state" data-search-empty>
         <div class="empty-icon">
@@ -115,10 +116,12 @@ const t = useTranslations(locale as any);
     <!-- Footer -->
     <div class="search-modal-footer">
       <div class="footer-hint">
-        <span class="footer-icon">↵</span> {t("search.open")}
+        <span class="footer-icon">↵</span>
+        {t("search.open")}
       </div>
       <div class="footer-hint">
-        <span class="footer-icon">↑↓</span> {t("search.navigate")}
+        <span class="footer-icon">↑↓</span>
+        {t("search.navigate")}
       </div>
       <div class="footer-powered">
         powered by <strong>pagefind</strong>
@@ -249,7 +252,7 @@ const t = useTranslations(locale as any);
         window.requestIdleCallback || ((cb: () => void) => setTimeout(cb, 1));
       onIdle(async () => {
         if (signal.aborted) return;
-        
+
         // Ensure Pagefind UI does not re-initialize on the same element
         if (container.querySelector(".pagefind-ui")) return;
 

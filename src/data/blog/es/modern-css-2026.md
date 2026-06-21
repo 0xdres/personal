@@ -143,11 +143,11 @@ Antes de Anchor Positioning, colocar un tooltip de forma relativa a su disparado
 
 ## ¿Qué pasa con el soporte?
 
-| Característica | Chrome | Firefox | Safari |
-| --- | --- | --- | --- |
-| Container Queries | 105+ ✓ | 110+ ✓ | 16+ ✓ |
-| `:has()` | 105+ ✓ | 121+ ✓ | 15.4+ ✓ |
-| Anchor Positioning | 125+ ✓ | 131+ ✓ | 18+ ✓ |
+| Característica     | Chrome | Firefox | Safari  |
+| ------------------ | ------ | ------- | ------- |
+| Container Queries  | 105+ ✓ | 110+ ✓  | 16+ ✓   |
+| `:has()`           | 105+ ✓ | 121+ ✓  | 15.4+ ✓ |
+| Anchor Positioning | 125+ ✓ | 131+ ✓  | 18+ ✓   |
 
 En 2026, con la distribución actual de navegadores, puedes usar las tres en producción para la mayoría de los proyectos. Considera polyfills solo si tu audiencia incluye navegadores muy antiguos.
 

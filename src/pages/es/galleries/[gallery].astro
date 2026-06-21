@@ -6,9 +6,15 @@ import Page from "../../galleries/[gallery].astro";
 export async function getStaticPaths() {
   if (!SITE.showGalleries) return [];
 
-  const galleries = await getCollection("galleries", ({ id, data }) => !data.draft && id.startsWith("es/"));
+  const galleries = await getCollection(
+    "galleries",
+    ({ id, data }) => !data.draft && id.startsWith("es/")
+  );
   return galleries.map(gallery => {
-    const slug = gallery.id.replace(/^es\//, "").replace(/\/index\.(md|mdx)$/, "").replace(/\.(md|mdx)$/, "");
+    const slug = gallery.id
+      .replace(/^es\//, "")
+      .replace(/\/index\.(md|mdx)$/, "")
+      .replace(/\.(md|mdx)$/, "");
     return {
       params: { gallery: slug },
       props: { entry: gallery },
@@ -18,4 +24,5 @@ export async function getStaticPaths() {
 
 const props = Astro.props;
 ---
+
 <Page {...props} />

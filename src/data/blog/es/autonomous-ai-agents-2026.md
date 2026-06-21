@@ -104,12 +104,12 @@ crew.kickoff()
 
 ## Casos de uso reales
 
-| Caso de uso | Agente involucrado | Ahorro estimado |
-| --- | --- | --- |
-| Revisión de código automatizada | Agente de análisis estático + LLM | 60% del tiempo de revisión |
-| Generación de pruebas | Plan-and-Execute sobre el código base | 40% de cobertura sin esfuerzo |
-| Respuesta a incidentes | Monitor + Reasoner + Actuator | Reducción de MTTR en un 70% |
-| Documentación viva | Agente que lee commits y hace docs | Documentación actualizada sin parar |
+| Caso de uso                     | Agente involucrado                    | Ahorro estimado                     |
+| ------------------------------- | ------------------------------------- | ----------------------------------- |
+| Revisión de código automatizada | Agente de análisis estático + LLM     | 60% del tiempo de revisión          |
+| Generación de pruebas           | Plan-and-Execute sobre el código base | 40% de cobertura sin esfuerzo       |
+| Respuesta a incidentes          | Monitor + Reasoner + Actuator         | Reducción de MTTR en un 70%         |
+| Documentación viva              | Agente que lee commits y hace docs    | Documentación actualizada sin parar |
 
 ## Consideraciones de seguridad
 

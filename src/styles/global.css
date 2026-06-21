@@ -29,31 +29,31 @@ html[data-accent="blue"] {
   --accent: #1158d1;
   --border: #7cadff;
   --featured-color: #b56007; /* Amber */
-  --gallery-color: #6d28d9;  /* Purple */
+  --gallery-color: #6d28d9; /* Purple */
 }
 html[data-accent="green"] {
   --accent: #0d7a5f;
   --border: #52d2a4;
   --featured-color: #be185d; /* Rose */
-  --gallery-color: #1158d1;  /* Blue */
+  --gallery-color: #1158d1; /* Blue */
 }
 html[data-accent="purple"] {
   --accent: #6d28d9;
   --border: #c084fc;
   --featured-color: #0d7a5f; /* Green */
-  --gallery-color: #b56007;  /* Amber */
+  --gallery-color: #b56007; /* Amber */
 }
 html[data-accent="amber"] {
   --accent: #b56007;
   --border: #fcd34d;
   --featured-color: #6d28d9; /* Purple */
-  --gallery-color: #be185d;  /* Rose */
+  --gallery-color: #be185d; /* Rose */
 }
 html[data-accent="rose"] {
   --accent: #be185d;
   --border: #fda4af;
   --featured-color: #1158d1; /* Blue */
-  --gallery-color: #0d7a5f;  /* Green */
+  --gallery-color: #0d7a5f; /* Green */
 }
 
 /* Accent presets — Dark mode */
@@ -61,31 +61,31 @@ html[data-accent="blue"][data-theme="dark"] {
   --accent: #008fec;
   --border: #2264e3;
   --featured-color: #f59e0b; /* Amber */
-  --gallery-color: #a855f7;  /* Purple */
+  --gallery-color: #a855f7; /* Purple */
 }
 html[data-accent="green"][data-theme="dark"] {
   --accent: #10b981;
   --border: #065f46;
   --featured-color: #f43f5e; /* Rose */
-  --gallery-color: #008fec;  /* Blue */
+  --gallery-color: #008fec; /* Blue */
 }
 html[data-accent="purple"][data-theme="dark"] {
   --accent: #a855f7;
   --border: #581c87;
   --featured-color: #10b981; /* Green */
-  --gallery-color: #f59e0b;  /* Amber */
+  --gallery-color: #f59e0b; /* Amber */
 }
 html[data-accent="amber"][data-theme="dark"] {
   --accent: #f59e0b;
   --border: #78350f;
   --featured-color: #a855f7; /* Purple */
-  --gallery-color: #f43f5e;  /* Rose */
+  --gallery-color: #f43f5e; /* Rose */
 }
 html[data-accent="rose"][data-theme="dark"] {
   --accent: #f43f5e;
   --border: #881337;
   --featured-color: #008fec; /* Blue */
-  --gallery-color: #10b981;  /* Green */
+  --gallery-color: #10b981; /* Green */
 }
 
 /* Active indicator for accent picker buttons */
@@ -101,7 +101,6 @@ html[data-accent="rose"] [data-accent-color="rose"]::after {
   border-radius: 50%;
   box-shadow: 0 0 4px var(--accent);
 }
-
 
 @theme inline {
   --font-app: var(--font-wotfard);
@@ -188,7 +187,8 @@ i {
   background: color-mix(in srgb, var(--foreground) 3%, var(--background));
   padding: 1rem 1rem 1rem 3.5rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 20px -5px color-mix(in srgb, var(--background) 50%, transparent);
+  box-shadow: 0 4px 20px -5px
+    color-mix(in srgb, var(--background) 50%, transparent);
 }
 
 .premium-search input.pagefind-ui__search-input:focus-visible {
@@ -238,11 +238,14 @@ i {
   margin-bottom: 1rem;
 }
 
-.premium-search .pagefind-ui__results .pagefind-ui__result.pagefind-ui__result:hover {
+.premium-search
+  .pagefind-ui__results
+  .pagefind-ui__result.pagefind-ui__result:hover {
   border-color: color-mix(in srgb, var(--accent) 30%, transparent);
   background: color-mix(in srgb, var(--accent) 4%, var(--background));
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--accent) 15%, transparent);
+  box-shadow: 0 10px 30px -10px
+    color-mix(in srgb, var(--accent) 15%, transparent);
 }
 
 .premium-search .pagefind-ui__result-title a {

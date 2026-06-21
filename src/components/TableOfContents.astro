@@ -16,7 +16,9 @@ if (tocHeadings.length === 0) {
 ---
 
 <nav class="toc-navigation" aria-label="Table of contents">
-  <h2 class="toc-heading font-firacode uppercase tracking-widest text-[10px] text-foreground/45 select-none">
+  <h2
+    class="toc-heading font-firacode text-[10px] tracking-widest text-foreground/45 uppercase select-none"
+  >
     On this page
   </h2>
   <ul class="toc-list mt-4 flex flex-col gap-1.5">
@@ -38,52 +40,58 @@ if (tocHeadings.length === 0) {
 
 <script>
   function setupTocHighlight() {
-    const headingElements = Array.from(document.querySelectorAll("#article h2, #article h3"));
+    const headingElements = Array.from(
+      document.querySelectorAll("#article h2, #article h3")
+    );
     const tocLinks = Array.from(document.querySelectorAll("[data-toc-link]"));
 
     if (headingElements.length === 0 || tocLinks.length === 0) return null;
 
     const activeHeaders = new Map<string, boolean>();
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        activeHeaders.set(entry.target.id, entry.isIntersecting);
-      });
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          activeHeaders.set(entry.target.id, entry.isIntersecting);
+        });
 
-      // Find the first visible heading
-      let activeId = "";
-      for (const heading of headingElements) {
-        if (activeHeaders.get(heading.id)) {
-          activeId = heading.id;
-          break;
-        }
-      }
-
-      // If no heading is currently in view, find the last one that was above the viewport
-      if (!activeId) {
-        const scrollPosition = window.scrollY + 120; // offset for sticky header
-        for (let i = headingElements.length - 1; i >= 0; i--) {
-          const heading = headingElements[i];
-          const offsetTop = heading.getBoundingClientRect().top + window.scrollY;
-          if (scrollPosition >= offsetTop) {
+        // Find the first visible heading
+        let activeId = "";
+        for (const heading of headingElements) {
+          if (activeHeaders.get(heading.id)) {
             activeId = heading.id;
             break;
           }
         }
-      }
 
-      // Update active state in DOM
-      tocLinks.forEach(link => {
-        if (link.getAttribute("href") === `#${activeId}`) {
-          link.classList.add("active");
-        } else {
-          link.classList.remove("active");
+        // If no heading is currently in view, find the last one that was above the viewport
+        if (!activeId) {
+          const scrollPosition = window.scrollY + 120; // offset for sticky header
+          for (let i = headingElements.length - 1; i >= 0; i--) {
+            const heading = headingElements[i];
+            const offsetTop =
+              heading.getBoundingClientRect().top + window.scrollY;
+            if (scrollPosition >= offsetTop) {
+              activeId = heading.id;
+              break;
+            }
+          }
         }
-      });
-    }, {
-      rootMargin: "0px 0px -65% 0px",
-      threshold: 0.1
-    });
+
+        // Update active state in DOM
+        tocLinks.forEach(link => {
+          if (link.getAttribute("href") === `#${activeId}`) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      },
+      {
+        rootMargin: "0px 0px -65% 0px",
+        threshold: 0.1,
+      }
+    );
 
     headingElements.forEach(el => observer.observe(el));
 

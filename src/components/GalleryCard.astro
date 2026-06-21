@@ -14,7 +14,14 @@ type Props = {
   fetchpriority?: "auto" | "high" | "low";
 };
 
-const { gallery, slug, fallbackImage, imageCount, loading = "lazy", fetchpriority } = Astro.props;
+const {
+  gallery,
+  slug,
+  fallbackImage,
+  imageCount,
+  loading = "lazy",
+  fetchpriority,
+} = Astro.props;
 const { title, description, pubDatetime, coverImage } = gallery.data;
 const coverSrc = coverImage ?? fallbackImage;
 
@@ -34,10 +41,12 @@ const prefix = lang === "es" ? "/es" : "";
     "hover:-translate-y-0.5",
     "hover:shadow-lg hover:shadow-accent/10",
   ]}
-  style={loading === "lazy" ? {
-    contentVisibility: "auto",
-    containIntrinsicSize: "auto 340px",
-  } : undefined}
+  style={loading === "lazy"
+    ? {
+        contentVisibility: "auto",
+        containIntrinsicSize: "auto 340px",
+      }
+    : undefined}
 >
   <!-- Cursor-following glow -->
   <div
@@ -87,7 +96,8 @@ const prefix = lang === "es" ? "/es" : "";
     {
       imageCount !== undefined && imageCount > 0 && (
         <span class="absolute end-2 bottom-2 rounded-full bg-background/80 px-2 py-0.5 text-xs font-medium backdrop-blur-sm">
-          {imageCount} {imageCount === 1 ? t("galleries.photo") : t("galleries.photos")}
+          {imageCount}{" "}
+          {imageCount === 1 ? t("galleries.photo") : t("galleries.photos")}
         </span>
       )
     }

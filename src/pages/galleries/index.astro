@@ -80,7 +80,11 @@ const galleries = rawGalleries
         <div class="mt-4 flex flex-wrap items-center gap-2">
           <span class="hero-badge"
             >{galleries.length}
-            {galleries.length === 1 ? t("galleries.count") : t("galleries.counts")}</span
+            {
+              galleries.length === 1
+                ? t("galleries.count")
+                : t("galleries.counts")
+            }</span
           >
         </div>
       </div>
@@ -97,17 +101,19 @@ const galleries = rawGalleries
           class="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
           role="list"
         >
-          {galleries.map(({ gallery, slug, fallbackImage, imageCount }, index) => (
-            <li>
-              <GalleryCard
-                gallery={gallery}
-                slug={slug}
-                fallbackImage={fallbackImage}
-                imageCount={imageCount}
-                loading={index < 3 ? "eager" : "lazy"}
-              />
-            </li>
-          ))}
+          {galleries.map(
+            ({ gallery, slug, fallbackImage, imageCount }, index) => (
+              <li>
+                <GalleryCard
+                  gallery={gallery}
+                  slug={slug}
+                  fallbackImage={fallbackImage}
+                  imageCount={imageCount}
+                  loading={index < 3 ? "eager" : "lazy"}
+                />
+              </li>
+            )
+          )}
         </ul>
       )
     }

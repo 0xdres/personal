@@ -19,9 +19,15 @@ const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
 
 const [blogPosts, galleryPosts] = await Promise.all([
-  getCollection("blog", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)),
+  getCollection(
+    "blog",
+    ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)
+  ),
   SITE.showGalleries && SITE.showGalleriesInIndex
-    ? getCollection("galleries", ({ id, data }) => !data.draft && id.startsWith(`${locale}/`))
+    ? getCollection(
+        "galleries",
+        ({ id, data }) => !data.draft && id.startsWith(`${locale}/`)
+      )
     : Promise.resolve([]),
 ]);
 const posts = [...blogPosts, ...galleryPosts];
@@ -86,7 +92,9 @@ let postIndex = 0;
           <span class="hero-badge">{totalPosts} {t("archives.posts")}</span>
           <span class="hero-badge"
             >{yearGroups.length}
-            {yearGroups.length === 1 ? t("archives.year") : t("archives.years")}</span
+            {
+              yearGroups.length === 1 ? t("archives.year") : t("archives.years")
+            }</span
           >
         </div>
       </div>
@@ -136,10 +144,14 @@ let postIndex = 0;
                             href={getEntryPath(post)}
                             class="post-card group"
                             data-archive-card
-                            style={isLazy ? {
-                              contentVisibility: "auto",
-                              containIntrinsicSize: "auto 110px",
-                            } : undefined}
+                            style={
+                              isLazy
+                                ? {
+                                    contentVisibility: "auto",
+                                    containIntrinsicSize: "auto 110px",
+                                  }
+                                : undefined
+                            }
                           >
                             <div class="post-aurora" data-card-aurora />
                             <div class="post-border-glow" data-card-border />
@@ -158,7 +170,10 @@ let postIndex = 0;
                                   }}
                                 >
                                   {post.collection === "galleries" && (
-                                    <span title="Gallery" class="inline-flex items-center justify-center p-0.5 rounded-md text-accent/80 opacity-70">
+                                    <span
+                                      title="Gallery"
+                                      class="inline-flex items-center justify-center rounded-md p-0.5 text-accent/80 opacity-70"
+                                    >
                                       <IconGallery class="size-3.5" />
                                     </span>
                                   )}

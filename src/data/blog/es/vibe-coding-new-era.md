@@ -49,13 +49,13 @@ Un ciclo típico de vibe coding hoy se ve así:
 
 ## Qué herramientas definen el ecosistema en 2026
 
-| Herramienta | Propósito | Punto fuerte |
-| --- | --- | --- |
-| **GitHub Copilot** | Autocompletado + agente en editor | Integración nativa con VS Code |
-| **Cursor** | Editor centrado en IA | Contexto completo del código base |
-| **Windsurf** | Agente de edición autónomo | Flujos multiarchivo |
-| **Claude (API)** | Razonamiento complejo | Ventana de contexto enorme |
-| **Gemini 2.0 Flash** | Velocidad y costo | Iteraciones rápidas |
+| Herramienta          | Propósito                         | Punto fuerte                      |
+| -------------------- | --------------------------------- | --------------------------------- |
+| **GitHub Copilot**   | Autocompletado + agente en editor | Integración nativa con VS Code    |
+| **Cursor**           | Editor centrado en IA             | Contexto completo del código base |
+| **Windsurf**         | Agente de edición autónomo        | Flujos multiarchivo               |
+| **Claude (API)**     | Razonamiento complejo             | Ventana de contexto enorme        |
+| **Gemini 2.0 Flash** | Velocidad y costo                 | Iteraciones rápidas               |
 
 ## Las habilidades que ganan más valor
 

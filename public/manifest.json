@@ -4,10 +4,7 @@
   "description": "Personal blog about software development, technology, and productivity",
   "start_url": "/",
   "display": "standalone",
-  "display_override": [
-    "window-controls-overlay",
-    "minimal-ui"
-  ],
+  "display_override": ["window-controls-overlay", "minimal-ui"],
   "background_color": "#10131a",
   "theme_color": "#008fec",
   "categories": ["education", "technology"],

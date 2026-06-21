@@ -20,6 +20,7 @@ export const getEntryPath = (
     : getPath(entry.id, entry.filePath);
 
 export const getEntryPublishedMs = (entry: ContentEntry) => {
-  const modDatetime = "modDatetime" in entry.data ? entry.data.modDatetime : null;
+  const modDatetime =
+    "modDatetime" in entry.data ? entry.data.modDatetime : null;
   return new Date(modDatetime ?? entry.data.pubDatetime).getTime();
 };

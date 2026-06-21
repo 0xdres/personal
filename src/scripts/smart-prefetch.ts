@@ -1,24 +1,28 @@
 // Smart prefetch - respects saveData and slow connections
 document.addEventListener("astro:page-load", () => {
   const conn = (navigator as any).connection;
-  
+
   // Disable prefetch entirely if user has save-data enabled
   if (conn?.saveData) {
-    document.querySelectorAll("link[rel='prefetch']").forEach(el => el.remove());
+    document
+      .querySelectorAll("link[rel='prefetch']")
+      .forEach(el => el.remove());
     return;
   }
-  
+
   // On slow connections (2g/slow-2g), disable prefetch
   if (conn?.effectiveType && ["slow-2g", "2g"].includes(conn.effectiveType)) {
-    document.querySelectorAll("link[rel='prefetch']").forEach(el => el.remove());
+    document
+      .querySelectorAll("link[rel='prefetch']")
+      .forEach(el => el.remove());
     return;
   }
-  
+
   // On 3g, only prefetch on hover (not viewport)
   if (conn?.effectiveType === "3g") {
     // Astro's viewport observer already handles this,
     // but we intercept and remove viewport-triggered prefetches
-    const observer = new MutationObserver((mutations) => {
+    const observer = new MutationObserver(mutations => {
       for (const m of mutations) {
         for (const node of m.addedNodes) {
           if (node instanceof HTMLLinkElement && node.rel === "prefetch") {

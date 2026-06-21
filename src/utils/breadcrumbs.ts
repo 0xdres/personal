@@ -34,9 +34,11 @@ const translations: Record<string, Record<string, string>> = {
 };
 
 export const formatPathSegmentLabel = (segment: string, locale?: string) => {
-  const normalizedLocale = locale ? locale.toLowerCase().split("-")[0] : undefined;
+  const normalizedLocale = locale
+    ? locale.toLowerCase().split("-")[0]
+    : undefined;
   const lowerSegment = segment.toLowerCase();
-  
+
   if (normalizedLocale && translations[normalizedLocale]?.[lowerSegment]) {
     return translations[normalizedLocale][lowerSegment];
   }

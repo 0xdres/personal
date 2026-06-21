@@ -30,7 +30,9 @@ const prefix = locale === "es" ? "/es" : "";
 // ── 1. Find the collection entry by slug ────────────────────────────
 // Find ALL entries (including drafts) so the embed works in preview;
 // the draft filter is applied by the author choosing not to publish the post.
-const allGalleries = await getCollection("galleries", ({ id }) => id.startsWith(`${locale}/`));
+const allGalleries = await getCollection("galleries", ({ id }) =>
+  id.startsWith(`${locale}/`)
+);
 const entry = allGalleries.find(g => {
   // Normalize separators and strip extension to match purely the slug (excluding locale prefix)
   const normalized = g.id
@@ -63,7 +65,8 @@ function filenameToAlt(filename: string, fallback: string): string {
 const folderImages: GalleryImage[] = Object.entries(allImages)
   .filter(
     ([path]) =>
-      path.startsWith(`/src/data/galleries/${locale}/${slug}/`) && !path.includes("index")
+      path.startsWith(`/src/data/galleries/${locale}/${slug}/`) &&
+      !path.includes("index")
   )
   .sort(([a], [b]) => a.localeCompare(b))
   .map(([path, mod]) => {
@@ -94,12 +97,18 @@ const gridClass = {
       {locale === "es" ? (
         <>
           ⚠️ Galería <code>{slug}</code> no encontrada. Verifica que{" "}
-          <code>src/data/galleries/{locale}/{slug}/index.md</code> exista.
+          <code>
+            src/data/galleries/{locale}/{slug}/index.md
+          </code>{" "}
+          exista.
         </>
       ) : (
         <>
           ⚠️ Gallery <code>{slug}</code> not found. Verify that{" "}
-          <code>src/data/galleries/{locale}/{slug}/index.md</code> exists.
+          <code>
+            src/data/galleries/{locale}/{slug}/index.md
+          </code>{" "}
+          exists.
         </>
       )}
     </div>
@@ -208,24 +217,87 @@ const gridClass = {
 >
   <div class="lightbox-layout">
     <div class="lightbox-topbar">
-      <span id={`${lbId}-counter`} class="lightbox-counter font-firacode"></span>
-      <button class="lightbox-btn" data-lb-close={lbId} aria-label="Close" title="Close (Esc)" type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      <span id={`${lbId}-counter`} class="lightbox-counter font-firacode"
+      ></span>
+      <button
+        class="lightbox-btn"
+        data-lb-close={lbId}
+        aria-label="Close"
+        title="Close (Esc)"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><line x1="18" y1="6" x2="6" y2="18"></line><line
+            x1="6"
+            y1="6"
+            x2="18"
+            y2="18"></line></svg
+        >
       </button>
     </div>
 
     <div class="lightbox-main">
-      <button class="lightbox-btn lightbox-nav ge-lb-prev" data-lb-prev={lbId} aria-label="Previous" title="Previous (Left Arrow)" type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      <button
+        class="lightbox-btn lightbox-nav ge-lb-prev"
+        data-lb-prev={lbId}
+        aria-label="Previous"
+        title="Previous (Left Arrow)"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="36"
+          height="36"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><polyline points="15 18 9 12 15 6"></polyline></svg
+        >
       </button>
-      
+
       <div class="lightbox-figure">
-        <img id={`${lbId}-img`} src="" alt="" class="lightbox-image" decoding="async" />
-        <p id={`${lbId}-caption`} class="lightbox-caption text-foreground/80"></p>
+        <img
+          id={`${lbId}-img`}
+          src=""
+          alt=""
+          class="lightbox-image"
+          decoding="async"
+        />
+        <p id={`${lbId}-caption`} class="lightbox-caption text-foreground/80">
+        </p>
       </div>
 
-      <button class="lightbox-btn lightbox-nav ge-lb-next" data-lb-next={lbId} aria-label="Next" title="Next (Right Arrow)" type="button">
-        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      <button
+        class="lightbox-btn lightbox-nav ge-lb-next"
+        data-lb-next={lbId}
+        aria-label="Next"
+        title="Next (Right Arrow)"
+        type="button"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="36"
+          height="36"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><polyline points="9 18 15 12 9 6"></polyline></svg
+        >
       </button>
     </div>
   </div>
@@ -570,7 +642,8 @@ const gridClass = {
     padding: 0.75rem;
     border-radius: 50%;
     backdrop-filter: blur(4px);
-    box-shadow: 0 4px 12px color-mix(in srgb, var(--background) 50%, transparent);
+    box-shadow: 0 4px 12px
+      color-mix(in srgb, var(--background) 50%, transparent);
   }
 
   .lightbox-btn:hover {
@@ -578,7 +651,8 @@ const gridClass = {
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     color: var(--accent);
     transform: scale(1.05) translateY(-2px);
-    box-shadow: 0 8px 24px -4px color-mix(in srgb, var(--accent) 25%, transparent);
+    box-shadow: 0 8px 24px -4px
+      color-mix(in srgb, var(--accent) 25%, transparent);
   }
 
   .lightbox-nav {

@@ -18,22 +18,40 @@ const URL = Astro.url;
 {
   isSidebar ? (
     <div class="sidebar-share-widget pl-2">
-      <h2 class="toc-heading font-firacode uppercase tracking-widest text-[10px] text-foreground/45 select-none pb-2 border-b border-dashed border-border/15">
+      <h2 class="toc-heading border-b border-dashed border-border/15 pb-2 font-firacode text-[10px] tracking-widest text-foreground/45 uppercase select-none">
         Share Post
       </h2>
-      <div class="flex flex-wrap gap-2 mt-4">
+      <div class="mt-4 flex flex-wrap gap-2">
         {/* Copy URL Button */}
         <button
           class="copy-url-btn share-btn inline-flex size-8 cursor-pointer items-center justify-center rounded-lg border border-border/20 bg-muted/5 transition-all duration-200 hover:border-accent/40 hover:bg-accent/10 hover:text-accent hover:shadow-sm hover:shadow-accent/10"
           title="Copy URL"
           aria-label="Copy post URL to clipboard"
         >
-          <svg class="copy-icon size-4 fill-transparent stroke-current stroke-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-linecap="round" stroke-linejoin="round"></path>
+          <svg
+            class="copy-icon size-4 fill-transparent stroke-current stroke-2"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path
+              d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
-          <svg class="check-icon hidden size-4 fill-transparent stroke-current stroke-2 text-green-500 animate-scale-in" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <svg
+            class="check-icon animate-scale-in hidden size-4 fill-transparent stroke-current stroke-2 text-green-500"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <polyline
+              points="20 6 9 17 4 12"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </button>
 
@@ -64,12 +82,30 @@ const URL = Astro.url;
           title="Copy URL"
           aria-label="Copy post URL to clipboard"
         >
-          <svg class="copy-icon size-4 fill-transparent stroke-current stroke-2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" stroke-linecap="round" stroke-linejoin="round"></path>
+          <svg
+            class="copy-icon size-4 fill-transparent stroke-current stroke-2"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+            <path
+              d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
-          <svg class="check-icon hidden size-4 fill-transparent stroke-current stroke-2 text-green-500 animate-scale-in" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round"></polyline>
+          <svg
+            class="check-icon animate-scale-in hidden size-4 fill-transparent stroke-current stroke-2 text-green-500"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+          >
+            <polyline
+              points="20 6 9 17 4 12"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
           </svg>
         </button>
 

@@ -6,7 +6,11 @@
  * @param wordsPerMinute - Average reading speed (default: 200 wpm)
  * @returns Formatted string like "3 min read" or "< 1 min read"
  */
-export function getReadingTime(body: string, locale = "en", wordsPerMinute = 200): string {
+export function getReadingTime(
+  body: string,
+  locale = "en",
+  wordsPerMinute = 200
+): string {
   // Strip frontmatter
   const withoutFrontmatter = body.replace(/^---[\s\S]*?---\n?/, "");
 

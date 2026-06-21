@@ -43,20 +43,26 @@ const t = useTranslations(locale as any);
 const tagOgImage = `/tags/${tag}/og.png`;
 
 // Prevent duplicate metadata in tag pagination pages
-const metaTitle = page.currentPage > 1
-  ? `${t("tags.tag")}: ${tagName} (${t("tags.page")} ${page.currentPage} ${t("tags.of")} ${page.lastPage}) | ${SITE.title}`
-  : `${t("tags.tag")}: ${tagName} | ${SITE.title}`;
+const metaTitle =
+  page.currentPage > 1
+    ? `${t("tags.tag")}: ${tagName} (${t("tags.page")} ${page.currentPage} ${t("tags.of")} ${page.lastPage}) | ${SITE.title}`
+    : `${t("tags.tag")}: ${tagName} | ${SITE.title}`;
 
-const tagDescription = page.currentPage > 1
-  ? (locale === "es"
+const tagDescription =
+  page.currentPage > 1
+    ? locale === "es"
       ? `Todos los artículos etiquetados con "${tagName}" en ${SITE.title} (Página ${page.currentPage} de ${page.lastPage}).`
-      : `All articles tagged with "${tagName}" on ${SITE.title} (Page ${page.currentPage} of ${page.lastPage}).`)
-  : (locale === "es"
+      : `All articles tagged with "${tagName}" on ${SITE.title} (Page ${page.currentPage} of ${page.lastPage}).`
+    : locale === "es"
       ? `Todos los artículos etiquetados con "${tagName}" en ${SITE.title}.`
-      : `All articles tagged with "${tagName}" on ${SITE.title}.`);
+      : `All articles tagged with "${tagName}" on ${SITE.title}.`;
 
-const prevURL = page.url.prev ? new URL(page.url.prev, SITE.website).toString() : undefined;
-const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() : undefined;
+const prevURL = page.url.prev
+  ? new URL(page.url.prev, SITE.website).toString()
+  : undefined;
+const nextURL = page.url.next
+  ? new URL(page.url.next, SITE.website).toString()
+  : undefined;
 ---
 
 <Layout
@@ -73,13 +79,15 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
     pageDesc={`${t("tags.articlesWith")} "${tagName}".`}
   >
     <ul>
-      {page.data.map((data, index) => (
-        <Card
-          {...data}
-          loading={index < 3 ? "eager" : "lazy"}
-          fetchpriority={index < 3 ? "high" : "auto"}
-        />
-      ))}
+      {
+        page.data.map((data, index) => (
+          <Card
+            {...data}
+            loading={index < 3 ? "eager" : "lazy"}
+            fetchpriority={index < 3 ? "high" : "auto"}
+          />
+        ))
+      }
     </ul>
   </Main>
 
@@ -87,4 +95,3 @@ const nextURL = page.url.next ? new URL(page.url.next, SITE.website).toString() 
 
   <Footer noMarginTop={page.lastPage > 1} />
 </Layout>
-

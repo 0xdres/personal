@@ -90,7 +90,9 @@ const prevPost = rawPrevPost
       pubDatetime: rawPrevPost.data.pubDatetime,
       modDatetime: rawPrevPost.data.modDatetime,
       timezone: rawPrevPost.data.timezone,
-      readingTime: rawPrevPost.body ? getReadingTime(rawPrevPost.body, locale) : null,
+      readingTime: rawPrevPost.body
+        ? getReadingTime(rawPrevPost.body, locale)
+        : null,
     }
   : null;
 
@@ -129,7 +131,9 @@ const recommendedPost = rawRecommendedPost
       pubDatetime: rawRecommendedPost.data.pubDatetime,
       modDatetime: rawRecommendedPost.data.modDatetime,
       timezone: rawRecommendedPost.data.timezone,
-      readingTime: rawRecommendedPost.body ? getReadingTime(rawRecommendedPost.body, locale) : null,
+      readingTime: rawRecommendedPost.body
+        ? getReadingTime(rawRecommendedPost.body, locale)
+        : null,
     }
   : null;
 ---
@@ -254,8 +258,10 @@ const recommendedPost = rawRecommendedPost
           <!-- Read Mode Button -->
           <button
             id="read-mode-btn"
-            class="inline-flex items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 opacity-70 backdrop-blur-sm transition-all duration-200 hover:border-accent/30 hover:opacity-100 cursor-pointer"
-            title={locale === "es" ? "Alternar Modo Lectura (Atajo: r)" : "Toggle Reading Mode (Shortcut: r)"}
+            class="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-border/25 bg-muted/10 px-2.5 py-1 opacity-70 backdrop-blur-sm transition-all duration-200 hover:border-accent/30 hover:opacity-100"
+            title={locale === "es"
+              ? "Alternar Modo Lectura (Atajo: r)"
+              : "Toggle Reading Mode (Shortcut: r)"}
             aria-label={t("post.readMode")}
           >
             <svg
@@ -273,7 +279,6 @@ const recommendedPost = rawRecommendedPost
             </svg>
             <span class="text-sm">{t("post.readMode")}</span>
           </button>
-
         </div>
       </div>
     </header>
@@ -339,10 +344,7 @@ const recommendedPost = rawRecommendedPost
 
     <!-- Share links (visible on mobile, or on desktop when there is no TOC) -->
     <div
-      class:list={[
-        "mt-6 mb-8 flex justify-center",
-        { "lg:hidden": hasToc },
-      ]}
+      class:list={["mt-6 mb-8 flex justify-center", { "lg:hidden": hasToc }]}
     >
       <ShareLinks />
     </div>
@@ -392,13 +394,16 @@ const recommendedPost = rawRecommendedPost
                 pubDatetime={prevPost.pubDatetime}
                 modDatetime={prevPost.modDatetime}
                 timezone={prevPost.timezone}
-                class="text-xs [&>svg]:size-3.5 [&>svg]:min-w-3.5 [&>svg]:text-accent/60 [&>time]:text-xs text-foreground/45"
+                class="text-xs text-foreground/45 [&>svg]:size-3.5 [&>svg]:min-w-3.5 [&>svg]:text-accent/60 [&>time]:text-xs"
               />
               {prevPost.readingTime && (
                 <>
                   <span class="opacity-30 select-none">•</span>
                   <span class="flex items-center gap-1.5 whitespace-nowrap">
-                    <IconClock class="size-3.5 text-accent/60 shrink-0" aria-hidden="true" />
+                    <IconClock
+                      class="size-3.5 shrink-0 text-accent/60"
+                      aria-hidden="true"
+                    />
                     <span>{prevPost.readingTime}</span>
                   </span>
                 </>
@@ -412,14 +417,19 @@ const recommendedPost = rawRecommendedPost
       {
         recommendedPost && (
           <a
-            href={prefix + getPath(recommendedPost.id, recommendedPost.filePath)}
+            href={
+              prefix + getPath(recommendedPost.id, recommendedPost.filePath)
+            }
             class="post-nav-link group relative flex flex-col items-end gap-1.5 rounded-2xl border border-border/20 px-5 py-4 text-end transition-all duration-300 hover:border-accent/30 hover:shadow-lg hover:shadow-accent/5"
           >
             <div class="post-nav-bg" />
             <div class="flex items-center gap-1.5">
               {isRecommended ? (
-                <span class="font-firacode text-[9px] font-bold tracking-widest text-accent uppercase flex items-center gap-1.5 bg-accent/8 border border-accent/20 px-2 py-0.5 rounded-full select-none transition-colors duration-300 group-hover:bg-accent/15">
-                  <svg class="size-3 fill-accent text-accent animate-pulse" viewBox="0 0 24 24">
+                <span class="flex items-center gap-1.5 rounded-full border border-accent/20 bg-accent/8 px-2 py-0.5 font-firacode text-[9px] font-bold tracking-widest text-accent uppercase transition-colors duration-300 select-none group-hover:bg-accent/15">
+                  <svg
+                    class="size-3 animate-pulse fill-accent text-accent"
+                    viewBox="0 0 24 24"
+                  >
                     <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                   </svg>
                   {t("post.recommended")}
@@ -450,13 +460,16 @@ const recommendedPost = rawRecommendedPost
                 pubDatetime={recommendedPost.pubDatetime}
                 modDatetime={recommendedPost.modDatetime}
                 timezone={recommendedPost.timezone}
-                class="text-xs [&>svg]:size-3.5 [&>svg]:min-w-3.5 [&>svg]:text-accent/60 [&>time]:text-xs text-foreground/45"
+                class="text-xs text-foreground/45 [&>svg]:size-3.5 [&>svg]:min-w-3.5 [&>svg]:text-accent/60 [&>time]:text-xs"
               />
               {recommendedPost.readingTime && (
                 <>
                   <span class="opacity-30 select-none">•</span>
                   <span class="flex items-center gap-1.5 whitespace-nowrap">
-                    <IconClock class="size-3.5 text-accent/60 shrink-0" aria-hidden="true" />
+                    <IconClock
+                      class="size-3.5 shrink-0 text-accent/60"
+                      aria-hidden="true"
+                    />
                     <span>{recommendedPost.readingTime}</span>
                   </span>
                 </>
@@ -471,23 +484,26 @@ const recommendedPost = rawRecommendedPost
   <!-- Reading Mode Floating Controls -->
   <div
     id="reading-controls-pill"
-    class="fixed bottom-6 left-1/2 -translate-x-1/2 z-100 flex items-center gap-4 rounded-full border border-accent/20 bg-background/85 px-6 py-3 shadow-2xl backdrop-blur-md transition-all duration-300 opacity-0 translate-y-10 scale-95 pointer-events-none hover:border-accent/40"
+    class="pointer-events-none fixed bottom-6 left-1/2 z-100 flex -translate-x-1/2 translate-y-10 scale-95 items-center gap-4 rounded-full border border-accent/20 bg-background/85 px-6 py-3 opacity-0 shadow-2xl backdrop-blur-md transition-all duration-300 hover:border-accent/40"
   >
     <!-- Accent Halo / Glow behind the pill -->
-    <div class="absolute -inset-1.5 -z-10 rounded-full bg-accent/20 blur-md pointer-events-none animate-reading-halo"></div>
+    <div
+      class="animate-reading-halo pointer-events-none absolute -inset-1.5 -z-10 rounded-full bg-accent/20 blur-md"
+    >
+    </div>
 
     <!-- Font style toggle (Sans / Serif) -->
     <div class="flex items-center gap-1.5">
       <button
         id="reading-font-sans"
-        class="px-2.5 py-1 rounded-full text-xs font-medium bg-accent text-background transition-colors hover:bg-accent/80 cursor-pointer"
+        class="cursor-pointer rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-background transition-colors hover:bg-accent/80"
         title={locale === "es" ? "Tipografía Sans Serif" : "Sans Serif Font"}
       >
         Sans
       </button>
       <button
         id="reading-font-serif"
-        class="px-2.5 py-1 rounded-full text-xs font-medium text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
+        class="cursor-pointer rounded-full px-2.5 py-1 text-xs font-medium text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
         title={locale === "es" ? "Tipografía Serif" : "Serif Font"}
       >
         Serif
@@ -500,24 +516,51 @@ const recommendedPost = rawRecommendedPost
     <div class="flex items-center gap-2">
       <button
         id="reading-size-dec"
-        class="p-1 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
-        title={locale === "es" ? "Disminuir tamaño de fuente" : "Decrease Font Size"}
-        aria-label={locale === "es" ? "Disminuir tamaño de fuente" : "Decrease Font Size"}
+        class="cursor-pointer rounded-full p-1 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+        title={locale === "es"
+          ? "Disminuir tamaño de fuente"
+          : "Decrease Font Size"}
+        aria-label={locale === "es"
+          ? "Disminuir tamaño de fuente"
+          : "Decrease Font Size"}
       >
-        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          class="size-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
       </button>
-      
-      <span id="reading-size-display" class="text-xs font-mono font-medium min-w-[3ch] text-center">100%</span>
+
+      <span
+        id="reading-size-display"
+        class="min-w-[3ch] text-center font-mono text-xs font-medium">100%</span
+      >
 
       <button
         id="reading-size-inc"
-        class="p-1 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition-colors cursor-pointer"
-        title={locale === "es" ? "Aumentar tamaño de fuente" : "Increase Font Size"}
-        aria-label={locale === "es" ? "Aumentar tamaño de fuente" : "Increase Font Size"}
+        class="cursor-pointer rounded-full p-1 text-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+        title={locale === "es"
+          ? "Aumentar tamaño de fuente"
+          : "Increase Font Size"}
+        aria-label={locale === "es"
+          ? "Aumentar tamaño de fuente"
+          : "Increase Font Size"}
       >
-        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg
+          class="size-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
           <line x1="12" y1="5" x2="12" y2="19"></line>
           <line x1="5" y1="12" x2="19" y2="12"></line>
         </svg>
@@ -529,11 +572,16 @@ const recommendedPost = rawRecommendedPost
     <!-- Exit reading mode button -->
     <button
       id="reading-exit-btn"
-      class="flex items-center gap-1.5 px-3 py-1 bg-foreground/10 text-foreground rounded-full text-xs font-semibold hover:bg-foreground/15 transition-colors cursor-pointer"
-      title={locale === "es" ? "Salir de Modo Lectura (Atajo: r)" : "Exit Reading Mode (Shortcut: r)"}
+      class="flex cursor-pointer items-center gap-1.5 rounded-full bg-foreground/10 px-3 py-1 text-xs font-semibold text-foreground transition-colors hover:bg-foreground/15"
+      title={locale === "es"
+        ? "Salir de Modo Lectura (Atajo: r)"
+        : "Exit Reading Mode (Shortcut: r)"}
     >
       <span>{t("post.exit")}</span>
-      <kbd class="hidden sm:inline-block text-[9px] px-1.5 py-0.5 rounded border border-foreground/20 bg-foreground/5 opacity-60">R</kbd>
+      <kbd
+        class="hidden rounded border border-foreground/20 bg-foreground/5 px-1.5 py-0.5 text-[9px] opacity-60 sm:inline-block"
+        >R</kbd
+      >
     </button>
   </div>
 
@@ -605,7 +653,7 @@ const recommendedPost = rawRecommendedPost
     );
     for (const heading of headings) {
       if (heading.querySelector(".heading-link")) continue; // Idempotent check
-      
+
       heading.classList.add("group");
       const link = document.createElement("a");
       link.className =
@@ -626,7 +674,9 @@ const recommendedPost = rawRecommendedPost
   function attachCopyButtons() {
     const copyButtonLabel = "Copy";
     const codeBlocks = Array.from(document.querySelectorAll("pre"));
-    const unattachedCodeBlocks = codeBlocks.filter(cb => !cb.querySelector(".copy-code"));
+    const unattachedCodeBlocks = codeBlocks.filter(
+      cb => !cb.querySelector(".copy-code")
+    );
     if (unattachedCodeBlocks.length === 0) return;
 
     // Pass 1: read all computed styles before touching the DOM
@@ -745,18 +795,26 @@ const recommendedPost = rawRecommendedPost
 
     const currentScroll = window.scrollY;
     // Only show toast if saved position is significant (> 100px) and user is not already there
-    if (saved && saved.scrollY > 100 && Math.abs(currentScroll - saved.scrollY) > 150) {
+    if (
+      saved &&
+      saved.scrollY > 100 &&
+      Math.abs(currentScroll - saved.scrollY) > 150
+    ) {
       if (document.body) {
         const mainEl = document.querySelector("#main-content");
-        const resumeQuestion = mainEl?.getAttribute("data-resume-question") || "Continue reading from where you left off?";
-        const resumeBtnText = mainEl?.getAttribute("data-resume-btn") || "Resume";
+        const resumeQuestion =
+          mainEl?.getAttribute("data-resume-question") ||
+          "Continue reading from where you left off?";
+        const resumeBtnText =
+          mainEl?.getAttribute("data-resume-btn") || "Resume";
 
         const lang = document.documentElement.lang || "en";
         const orText = lang === "es" ? "o" : "or";
         const dismissLabel = lang === "es" ? "Descartar" : "Dismiss";
 
         toast = document.createElement("div");
-        toast.className = "fixed top-6 left-1/2 -translate-x-1/2 z-100 flex items-center gap-3.5 rounded-full border border-accent/20 bg-background/85 px-5 py-2 shadow-2xl backdrop-blur-md transition-all duration-300 pointer-events-auto select-none opacity-0 -translate-y-4 scale-95 hover:border-accent/40";
+        toast.className =
+          "fixed top-6 left-1/2 -translate-x-1/2 z-100 flex items-center gap-3.5 rounded-full border border-accent/20 bg-background/85 px-5 py-2 shadow-2xl backdrop-blur-md transition-all duration-300 pointer-events-auto select-none opacity-0 -translate-y-4 scale-95 hover:border-accent/40";
         toast.id = "reading-resume-modal";
         toast.innerHTML = `
           <!-- Accent Halo / Glow behind the pill -->
@@ -848,7 +906,8 @@ const recommendedPost = rawRecommendedPost
 
       if (saveTimeout) clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
-        const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollHeight =
+          document.documentElement.scrollHeight - window.innerHeight;
         if (scrollHeight <= 0) return;
 
         const scrollPercent = (window.scrollY / scrollHeight) * 100;
@@ -867,7 +926,7 @@ const recommendedPost = rawRecommendedPost
               JSON.stringify({
                 scrollY: window.scrollY,
                 percentage: scrollPercent,
-                timestamp: Date.now()
+                timestamp: Date.now(),
               })
             );
           } catch {
@@ -912,30 +971,37 @@ const recommendedPost = rawRecommendedPost
 
     // Scale mappings
     const SCALE_CLASSES = [
-      'font-scale-1',
-      'font-scale-2',
-      'font-scale-3',
-      'font-scale-4',
-      'font-scale-5',
-      'font-scale-6',
-      'font-scale-7',
-      'font-scale-8'
+      "font-scale-1",
+      "font-scale-2",
+      "font-scale-3",
+      "font-scale-4",
+      "font-scale-5",
+      "font-scale-6",
+      "font-scale-7",
+      "font-scale-8",
     ];
     const SCALE_LABELS = [
-      '80%',
-      '90%',
-      '100%',
-      '110%',
-      '120%',
-      '130%',
-      '140%',
-      '150%'
+      "80%",
+      "90%",
+      "100%",
+      "110%",
+      "120%",
+      "130%",
+      "140%",
+      "150%",
     ];
 
     // Load initial settings from localStorage
     let activeFont = localStorage.getItem("reading-mode-font") || "sans"; // "sans" or "serif"
-    let activeScaleIndex = parseInt(localStorage.getItem("reading-mode-scale") || "2", 10); // default: 2 (100% in 0-indexed SCALE_CLASSES)
-    if (isNaN(activeScaleIndex) || activeScaleIndex < 0 || activeScaleIndex >= SCALE_CLASSES.length) {
+    let activeScaleIndex = parseInt(
+      localStorage.getItem("reading-mode-scale") || "2",
+      10
+    ); // default: 2 (100% in 0-indexed SCALE_CLASSES)
+    if (
+      isNaN(activeScaleIndex) ||
+      activeScaleIndex < 0 ||
+      activeScaleIndex >= SCALE_CLASSES.length
+    ) {
       activeScaleIndex = 2;
     }
 
@@ -946,16 +1012,28 @@ const recommendedPost = rawRecommendedPost
     function applyFontPreferences() {
       if (activeFont === "serif") {
         document.body.classList.add("font-serif-active");
-        fontSerifBtn?.classList.remove("text-foreground/60", "hover:bg-foreground/5");
+        fontSerifBtn?.classList.remove(
+          "text-foreground/60",
+          "hover:bg-foreground/5"
+        );
         fontSerifBtn?.classList.add("bg-accent", "text-background");
         fontSansBtn?.classList.remove("bg-accent", "text-background");
-        fontSansBtn?.classList.add("text-foreground/60", "hover:bg-foreground/5");
+        fontSansBtn?.classList.add(
+          "text-foreground/60",
+          "hover:bg-foreground/5"
+        );
       } else {
         document.body.classList.remove("font-serif-active");
-        fontSansBtn?.classList.remove("text-foreground/60", "hover:bg-foreground/5");
+        fontSansBtn?.classList.remove(
+          "text-foreground/60",
+          "hover:bg-foreground/5"
+        );
         fontSansBtn?.classList.add("bg-accent", "text-background");
         fontSerifBtn?.classList.remove("bg-accent", "text-background");
-        fontSerifBtn?.classList.add("text-foreground/60", "hover:bg-foreground/5");
+        fontSerifBtn?.classList.add(
+          "text-foreground/60",
+          "hover:bg-foreground/5"
+        );
       }
     }
 
@@ -973,15 +1051,29 @@ const recommendedPost = rawRecommendedPost
     function toggleReadingMode() {
       if (!controlsPill) return;
       const isActive = document.body.classList.toggle("reading-mode-active");
-      
+
       if (isActive) {
         // Show pill
-        controlsPill.classList.remove("opacity-0", "translate-y-10", "scale-95", "pointer-events-none");
+        controlsPill.classList.remove(
+          "opacity-0",
+          "translate-y-10",
+          "scale-95",
+          "pointer-events-none"
+        );
         controlsPill.classList.add("opacity-100", "translate-y-0", "scale-100");
       } else {
         // Hide pill
-        controlsPill.classList.remove("opacity-100", "translate-y-0", "scale-100");
-        controlsPill.classList.add("opacity-0", "translate-y-10", "scale-95", "pointer-events-none");
+        controlsPill.classList.remove(
+          "opacity-100",
+          "translate-y-0",
+          "scale-100"
+        );
+        controlsPill.classList.add(
+          "opacity-0",
+          "translate-y-10",
+          "scale-95",
+          "pointer-events-none"
+        );
       }
     }
 
@@ -1032,7 +1124,10 @@ const recommendedPost = rawRecommendedPost
       if (e.key.toLowerCase() === "r") {
         e.preventDefault();
         toggleReadingMode();
-      } else if (e.key === "Escape" && document.body.classList.contains("reading-mode-active")) {
+      } else if (
+        e.key === "Escape" &&
+        document.body.classList.contains("reading-mode-active")
+      ) {
         e.preventDefault();
         toggleReadingMode();
       }
@@ -1055,19 +1150,33 @@ const recommendedPost = rawRecommendedPost
     if (!isPostPage) {
       // Clean up previous event listeners if we navigated away from a post page
       if (typeof window.cleanupReadingPosition === "function") {
-        try { window.cleanupReadingPosition(); } catch {}
+        try {
+          window.cleanupReadingPosition();
+        } catch {}
       }
       if (typeof window.cleanupReadingMode === "function") {
-        try { window.cleanupReadingMode(); } catch {}
+        try {
+          window.cleanupReadingMode();
+        } catch {}
       }
       return;
     }
 
-    try { initProgressBarFallback(); } catch {}
-    try { addHeadingLinks(); } catch {}
-    try { attachCopyButtons(); } catch {}
-    try { initReadingPosition(); } catch {}
-    try { initReadingMode(); } catch {}
+    try {
+      initProgressBarFallback();
+    } catch {}
+    try {
+      addHeadingLinks();
+    } catch {}
+    try {
+      attachCopyButtons();
+    } catch {}
+    try {
+      initReadingPosition();
+    } catch {}
+    try {
+      initReadingMode();
+    } catch {}
   });
 </script>
 
@@ -1252,7 +1361,8 @@ const recommendedPost = rawRecommendedPost
 
   /* Reading Resume Modal breathing pulse animations */
   @keyframes reading-halo-pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 0.35;
       transform: scale(0.97);
     }
@@ -1263,15 +1373,16 @@ const recommendedPost = rawRecommendedPost
   }
 
   @keyframes reading-border-pulse {
-    0%, 100% {
+    0%,
+    100% {
       border-color: color-mix(in srgb, var(--accent) 18%, transparent);
-      box-shadow: 
+      box-shadow:
         0 10px 30px -10px rgba(0, 0, 0, 0.3),
         0 0 15px -3px color-mix(in srgb, var(--accent) 8%, transparent);
     }
     50% {
       border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-      box-shadow: 
+      box-shadow:
         0 10px 35px -8px rgba(0, 0, 0, 0.35),
         0 0 20px 0px color-mix(in srgb, var(--accent) 16%, transparent);
     }
@@ -1298,7 +1409,10 @@ const recommendedPost = rawRecommendedPost
   :global(body.reading-mode-active .giscus-wrapper),
   :global(body.reading-mode-active [data-pagefind-ignore]),
   :global(body.reading-mode-active .progress-container),
-  :global(body.reading-mode-active div.relative.mt-12.mb-8.flex.items-center.justify-center.gap-4),
+  :global(
+    body.reading-mode-active
+      div.relative.mt-12.mb-8.flex.items-center.justify-center.gap-4
+  ),
   :global(body.reading-mode-active div.my-6.flex.items-center.gap-3),
   :global(body.reading-mode-active .site-cursor-glow) {
     display: none !important;
@@ -1339,14 +1453,30 @@ const recommendedPost = rawRecommendedPost
   :global(body.reading-mode-active) {
     --reading-font-scale: 1;
   }
-  :global(body.reading-mode-active.font-scale-1) { --reading-font-scale: 0.8; }
-  :global(body.reading-mode-active.font-scale-2) { --reading-font-scale: 0.9; }
-  :global(body.reading-mode-active.font-scale-3) { --reading-font-scale: 1.0; }
-  :global(body.reading-mode-active.font-scale-4) { --reading-font-scale: 1.1; }
-  :global(body.reading-mode-active.font-scale-5) { --reading-font-scale: 1.2; }
-  :global(body.reading-mode-active.font-scale-6) { --reading-font-scale: 1.3; }
-  :global(body.reading-mode-active.font-scale-7) { --reading-font-scale: 1.4; }
-  :global(body.reading-mode-active.font-scale-8) { --reading-font-scale: 1.5; }
+  :global(body.reading-mode-active.font-scale-1) {
+    --reading-font-scale: 0.8;
+  }
+  :global(body.reading-mode-active.font-scale-2) {
+    --reading-font-scale: 0.9;
+  }
+  :global(body.reading-mode-active.font-scale-3) {
+    --reading-font-scale: 1;
+  }
+  :global(body.reading-mode-active.font-scale-4) {
+    --reading-font-scale: 1.1;
+  }
+  :global(body.reading-mode-active.font-scale-5) {
+    --reading-font-scale: 1.2;
+  }
+  :global(body.reading-mode-active.font-scale-6) {
+    --reading-font-scale: 1.3;
+  }
+  :global(body.reading-mode-active.font-scale-7) {
+    --reading-font-scale: 1.4;
+  }
+  :global(body.reading-mode-active.font-scale-8) {
+    --reading-font-scale: 1.5;
+  }
 
   /* Apply typography enhancements to article content in Reading Mode */
   :global(body.reading-mode-active #article) {
@@ -1360,10 +1490,22 @@ const recommendedPost = rawRecommendedPost
     line-height: 1.85 !important;
   }
 
-  :global(body.reading-mode-active #article h1) { font-size: 2.25em !important; line-height: 1.25 !important; }
-  :global(body.reading-mode-active #article h2) { font-size: 1.75em !important; line-height: 1.3 !important; }
-  :global(body.reading-mode-active #article h3) { font-size: 1.5em !important; line-height: 1.35 !important; }
-  :global(body.reading-mode-active #article h4) { font-size: 1.25em !important; line-height: 1.4 !important; }
+  :global(body.reading-mode-active #article h1) {
+    font-size: 2.25em !important;
+    line-height: 1.25 !important;
+  }
+  :global(body.reading-mode-active #article h2) {
+    font-size: 1.75em !important;
+    line-height: 1.3 !important;
+  }
+  :global(body.reading-mode-active #article h3) {
+    font-size: 1.5em !important;
+    line-height: 1.35 !important;
+  }
+  :global(body.reading-mode-active #article h4) {
+    font-size: 1.25em !important;
+    line-height: 1.4 !important;
+  }
 
   /* Serif typography toggled on */
   :global(body.reading-mode-active.font-serif-active #article),

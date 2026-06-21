@@ -39,8 +39,7 @@ import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
     <!-- 2: Button Background, leaves 3px of the ring visible -->
     <span
       aria-hidden="true"
-      class="absolute inset-[3px] z-10 rounded-full bg-background/95"
-    ></span>
+      class="absolute inset-[3px] z-10 rounded-full bg-background/95"></span>
     <!-- 3: Content (icon + label) -->
     <IconArrowNarrowUp
       aria-hidden="true"
@@ -64,9 +63,8 @@ import IconArrowNarrowUp from "@/assets/icons/IconArrowNarrowUp.svg";
     const { signal } = backToTopCleanup;
 
     const rootElement = document.documentElement;
-    const btnContainer = document.querySelector<HTMLElement>(
-      "#btt-btn-container"
-    );
+    const btnContainer =
+      document.querySelector<HTMLElement>("#btt-btn-container");
     const backToTopBtn = document.querySelector<HTMLButtonElement>(
       "[data-button='back-to-top']"
     );

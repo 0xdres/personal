@@ -51,14 +51,14 @@ fn print_vec(v: &Vec<i32>) { // receives reference, not ownership // [!code high
 
 ## Tipos: de `any` al sistema más seguro del mundo
 
-| JavaScript/TypeScript | Equivalente en Rust |
-| --- | --- |
-| `number` | `i32`, `u32`, `f64`, … |
-| `string` | `String` (heap) / `&str` (slice) |
-| `T \| null` | `Option<T>` |
-| `T \| Error` | `Result<T, E>` |
-| `any[]` | `Vec<T>` |
-| `{ [key: string]: T }` | `HashMap<String, T>` |
+| JavaScript/TypeScript  | Equivalente en Rust              |
+| ---------------------- | -------------------------------- |
+| `number`               | `i32`, `u32`, `f64`, …           |
+| `string`               | `String` (heap) / `&str` (slice) |
+| `T \| null`            | `Option<T>`                      |
+| `T \| Error`           | `Result<T, E>`                   |
+| `any[]`                | `Vec<T>`                         |
+| `{ [key: string]: T }` | `HashMap<String, T>`             |
 
 ```rust file=types.rs
 fn divide(a: f64, b: f64) -> Option<f64> {

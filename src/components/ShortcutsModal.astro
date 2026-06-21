@@ -83,8 +83,19 @@ const t = useTranslations(locale as any);
     <div class="shortcuts-modal-body">
       <!-- Mobile Warning Banner -->
       <div class="shortcuts-mobile-warning">
-        <svg class="size-4 shrink-0 text-amber-500 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <svg
+          class="size-4 shrink-0 text-amber-500 dark:text-amber-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          stroke-width="2"
+          aria-hidden="true"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+          ></path>
         </svg>
         <span>{t("shortcuts.mobileWarning")}</span>
       </div>
@@ -145,7 +156,8 @@ const t = useTranslations(locale as any);
         <!-- Group 3: Go To Pages -->
         <div class="shortcuts-group md:col-span-2">
           <h3 class="group-title">
-            {t("shortcuts.group.goto")} {t("shortcuts.group.gotoHelp").replace("{g}", "g")}
+            {t("shortcuts.group.goto")}
+            {t("shortcuts.group.gotoHelp").replace("{g}", "g")}
           </h3>
           <ul class="shortcuts-list grid grid-cols-1 gap-x-8 md:grid-cols-2">
             <li>
@@ -167,7 +179,9 @@ const t = useTranslations(locale as any);
               >
             </li>
             <li>
-              <span class="action-desc">{t("shortcuts.action.gotoGalleries")}</span>
+              <span class="action-desc"
+                >{t("shortcuts.action.gotoGalleries")}</span
+              >
               <span class="key-combo"
                 ><kbd class="kbd-key">g</kbd> <kbd class="kbd-key">g</kbd></span
               >
@@ -198,15 +212,26 @@ const t = useTranslations(locale as any);
     const modal = document.getElementById("shortcuts-modal");
     if (!modal) return;
 
-    const toastOpened = modal.getAttribute("data-toast-opened") || "Shortcuts panel opened";
-    const toastClosed = modal.getAttribute("data-toast-closed") || "Shortcuts panel closed";
-    const toastSearchClosed = modal.getAttribute("data-toast-search-closed") || "Search modal closed";
-    const toastGotoHome = modal.getAttribute("data-toast-goto-home") || "Navigating to Home...";
-    const toastGotoPosts = modal.getAttribute("data-toast-goto-posts") || "Navigating to Articles...";
-    const toastGotoTags = modal.getAttribute("data-toast-goto-tags") || "Navigating to Tags...";
-    const toastGotoGalleries = modal.getAttribute("data-toast-goto-galleries") || "Navigating to Galleries...";
-    const toastTheme = modal.getAttribute("data-toast-theme") || "Theme changed to";
-    const toastLang = modal.getAttribute("data-toast-lang") || "Switching language...";
+    const toastOpened =
+      modal.getAttribute("data-toast-opened") || "Shortcuts panel opened";
+    const toastClosed =
+      modal.getAttribute("data-toast-closed") || "Shortcuts panel closed";
+    const toastSearchClosed =
+      modal.getAttribute("data-toast-search-closed") || "Search modal closed";
+    const toastGotoHome =
+      modal.getAttribute("data-toast-goto-home") || "Navigating to Home...";
+    const toastGotoPosts =
+      modal.getAttribute("data-toast-goto-posts") ||
+      "Navigating to Articles...";
+    const toastGotoTags =
+      modal.getAttribute("data-toast-goto-tags") || "Navigating to Tags...";
+    const toastGotoGalleries =
+      modal.getAttribute("data-toast-goto-galleries") ||
+      "Navigating to Galleries...";
+    const toastTheme =
+      modal.getAttribute("data-toast-theme") || "Theme changed to";
+    const toastLang =
+      modal.getAttribute("data-toast-lang") || "Switching language...";
 
     const card = modal.querySelector("[data-modal-card]") as HTMLElement;
     const glow = modal.querySelector("[data-modal-glow]") as HTMLElement;
@@ -379,7 +404,7 @@ const t = useTranslations(locale as any);
 
           if (key === "h" || key === "H") {
             e.preventDefault();
-             showToast(["g", "h"], toastGotoHome);
+            showToast(["g", "h"], toastGotoHome);
             setTimeout(() => {
               navigate("/");
             }, 150);
@@ -387,7 +412,7 @@ const t = useTranslations(locale as any);
           }
           if (key === "p" || key === "P") {
             e.preventDefault();
-             showToast(["g", "p"], toastGotoPosts);
+            showToast(["g", "p"], toastGotoPosts);
             setTimeout(() => {
               navigate("/posts");
             }, 150);
@@ -395,7 +420,7 @@ const t = useTranslations(locale as any);
           }
           if (key === "t" || key === "T") {
             e.preventDefault();
-             showToast(["g", "t"], toastGotoTags);
+            showToast(["g", "t"], toastGotoTags);
             setTimeout(() => {
               navigate("/tags");
             }, 150);
@@ -403,7 +428,7 @@ const t = useTranslations(locale as any);
           }
           if (key === "g" || key === "G") {
             e.preventDefault();
-             showToast(["g", "g"], toastGotoGalleries);
+            showToast(["g", "g"], toastGotoGalleries);
             setTimeout(() => {
               navigate("/galleries");
             }, 150);
@@ -454,7 +479,9 @@ const t = useTranslations(locale as any);
         // [l] Key -> Toggle Language
         if (key === "l" || key === "L") {
           e.preventDefault();
-          const langToggle = document.querySelector("[data-lang-toggle]") as HTMLElement | null;
+          const langToggle = document.querySelector(
+            "[data-lang-toggle]"
+          ) as HTMLElement | null;
           if (langToggle) {
             showToast(["l"], toastLang);
             setTimeout(() => {

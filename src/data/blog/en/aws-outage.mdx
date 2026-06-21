@@ -1,5 +1,5 @@
 ---
-title: "What Happens When \"Half the Internet\" Goes Down? Lessons from the Critical AWS US-EAST-1 Outage"
+title: 'What Happens When "Half the Internet" Goes Down? Lessons from the Critical AWS US-EAST-1 Outage'
 description: A DNS failure in the N. Virginia region (US-EAST-1) exposed the global reliance on the AWS control plane, affecting banking and e-commerce services.
 pubDatetime: 2025-10-21T06:00:00.000Z
 tags:
@@ -20,7 +20,7 @@ Experts described the event as a "network amnesia" or a moment when "half the in
 The incident began in the late hours of October 19 with elevated error rates and latencies. The root cause, identified at 12:26 AM PDT, was a **DNS resolution** issue that affected the endpoints of the regional **DynamoDB** service.
 
 **Why was a DNS failure so severe?**
-DynamoDB is not just a customer database; it is a fundamental component used by the AWS *control plane* to manage the state, configuration, and authentication of nearly all other services. When DynamoDB's DNS failed, it was as if the systems temporarily lost their memory, unable to find critical data to operate.
+DynamoDB is not just a customer database; it is a fundamental component used by the AWS _control plane_ to manage the state, configuration, and authentication of nearly all other services. When DynamoDB's DNS failed, it was as if the systems temporarily lost their memory, unable to find critical data to operate.
 
 As one expert described it, Amazon still had the data, but for hours, "no one could find it," temporarily separating applications from their data.
 
@@ -28,9 +28,9 @@ As one expert described it, Amazon still had the data, but for hours, "no one co
 
 Although the initial DNS issue was resolved at 2:24 AM PDT, the system did not recover immediately. The failure in the state service triggered a complex chain of cascading effects:
 
-*   **EC2 Failure:** An internal EC2 subsystem (the service that launches virtual machine instances) experienced degradation due to its underlying dependency on DynamoDB.
-*   **Network Issues:** Health checks for Network Load Balancers (NLBs) were also affected. This connectivity failure impacted essential services such as Lambda, DynamoDB, and CloudWatch.
-*   **Scaled Recovery:** To prevent a massive overload, AWS implemented a key control measure: temporary *throttling*. This restricted high-demand operations, such as launching new EC2 instances and asynchronous Lambda invocations.
+- **EC2 Failure:** An internal EC2 subsystem (the service that launches virtual machine instances) experienced degradation due to its underlying dependency on DynamoDB.
+- **Network Issues:** Health checks for Network Load Balancers (NLBs) were also affected. This connectivity failure impacted essential services such as Lambda, DynamoDB, and CloudWatch.
+- **Scaled Recovery:** To prevent a massive overload, AWS implemented a key control measure: temporary _throttling_. This restricted high-demand operations, such as launching new EC2 instances and asynchronous Lambda invocations.
 
 The full recovery of all AWS operations was not declared until **3:01 PM PDT** on October 20, resulting in nearly 16 hours of disruption or instability for the global digital ecosystem.
 
@@ -38,8 +38,8 @@ The full recovery of all AWS operations was not declared until **3:01 PM PDT** o
 
 The global reliance on US-EAST-1 translated into tangible failures for users and businesses:
 
-*   **Financial Sector:** In Colombia, major banks, **Bancolombia and Davivienda**, experienced intermittent issues or failures on their websites and mobile apps. In total, at least 16 financial institutions issued statements regarding problems with their channels. The disruptions on these banking platforms persisted until approximately 6:00 PM local time, hours after AWS announced the recovery.
-*   **Commerce and Essential Services:** High-volume e-commerce sites like **Mercado Libre** reported issues with the storage and performance of their services. Even essential public services, such as the Electrificadora de Santander (ESSA), had their customer service channels (phone lines and WhatsApp) compromised due to the outage.
+- **Financial Sector:** In Colombia, major banks, **Bancolombia and Davivienda**, experienced intermittent issues or failures on their websites and mobile apps. In total, at least 16 financial institutions issued statements regarding problems with their channels. The disruptions on these banking platforms persisted until approximately 6:00 PM local time, hours after AWS announced the recovery.
+- **Commerce and Essential Services:** High-volume e-commerce sites like **Mercado Libre** reported issues with the storage and performance of their services. Even essential public services, such as the Electrificadora de Santander (ESSA), had their customer service channels (phone lines and WhatsApp) compromised due to the outage.
 
 ## The Strategic Lesson: Beyond Multi-AZ
 
