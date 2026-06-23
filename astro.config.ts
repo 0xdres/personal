@@ -4,6 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import sitemap from "@astrojs/sitemap";
 import remarkToc from "remark-toc";
 import remarkCollapse from "remark-collapse";
+import { unified } from "@astrojs/markdown-remark";
 import {
   transformerNotationDiff,
   transformerNotationHighlight,
@@ -35,6 +36,7 @@ export default defineConfig({
     }),
   ],
   markdown: {
+    processor: unified(),
     remarkPlugins: [remarkToc, [remarkCollapse, { test: "Table of contents" }]],
     shikiConfig: {
       // For more themes, visit https://shiki.style/themes
