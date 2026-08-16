@@ -1121,6 +1121,9 @@ const recommendedPost = rawRecommendedPost
         return;
       }
 
+      // Ignore if modifier keys are pressed to avoid interfering with browser shortcuts
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
       if (e.key.toLowerCase() === "r") {
         e.preventDefault();
         toggleReadingMode();
