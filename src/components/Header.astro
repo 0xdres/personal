@@ -87,6 +87,32 @@ const isActive = (path: string) => {
 
         <!-- Nav area -->
         <nav id="nav-menu" class="flex shrink-0 items-center gap-1.5 lg:gap-1">
+          <!-- Mobile language switcher chip (visible only on screens < 1024px) -->
+          <a
+            href={targetLanguageUrl}
+            class="nav-lang-chip lg:!hidden"
+            title={langToggleTitle}
+            aria-label={langToggleLabel}
+            data-lang-toggle={targetLocale}
+          >
+            <svg
+              class="nav-lang-chip-icon size-3.5 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8"
+              aria-hidden="true"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5c-.03.077-.07.154-.114.23-.9 1.54-2.11 3.05-3.535 4.5M6.412 9a14.95 14.95 0 003.535 4.5m0 0a14.973 14.973 0 01-3.298 3.19M6.412 9H3.9M15 9h-2.5"
+              ></path>
+            </svg>
+            <span class="nav-lang-chip-label">{targetLocale.toUpperCase()}</span
+            >
+          </a>
+
           <!-- Mobile search button (visible only on screens < 1024px) -->
           <button
             data-search-trigger
@@ -149,6 +175,40 @@ const isActive = (path: string) => {
                 <IconSearch class="size-4" />
                 <kbd class="nav-kbd">⌘K</kbd>
               </button>
+            </li>
+
+            <!-- Separator -->
+            <li class="flex items-center px-1" aria-hidden="true">
+              <div class="h-4 w-px bg-border/30"></div>
+            </li>
+
+            <!-- Language switcher chip -->
+            <li class="flex items-center">
+              <a
+                href={targetLanguageUrl}
+                class="nav-lang-chip"
+                title={langToggleTitle}
+                aria-label={langToggleLabel}
+                data-lang-toggle={targetLocale}
+              >
+                <svg
+                  class="nav-lang-chip-icon size-3.5 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5c-.03.077-.07.154-.114.23-.9 1.54-2.11 3.05-3.535 4.5M6.412 9a14.95 14.95 0 003.535 4.5m0 0a14.973 14.973 0 01-3.298 3.19M6.412 9H3.9M15 9h-2.5"
+                  ></path>
+                </svg>
+                <span class="nav-lang-chip-label"
+                  >{targetLocale.toUpperCase()}</span
+                >
+              </a>
             </li>
 
             <!-- Separator -->
@@ -297,36 +357,6 @@ const isActive = (path: string) => {
                         </div>
                       )
                     }
-
-                    <!-- Language toggle row -->
-                    <div class="popover-row">
-                      <div class="popover-row-label">
-                        <svg
-                          class="size-3.5 shrink-0"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          stroke-width="1.8"
-                          aria-hidden="true"
-                        >
-                          <path
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5c-.03.077-.07.154-.114.23-.9 1.54-2.11 3.05-3.535 4.5M6.412 9a14.95 14.95 0 003.535 4.5m0 0a14.973 14.973 0 01-3.298 3.19M6.412 9H3.9M15 9h-2.5"
-                          ></path>
-                        </svg>
-                        {locale === "es" ? "Idioma" : "Language"}
-                      </div>
-                      <a
-                        href={targetLanguageUrl}
-                        class="lang-pill font-firacode"
-                        title={langToggleTitle}
-                        aria-label={langToggleLabel}
-                        data-lang-toggle={targetLocale}
-                      >
-                        {locale === "es" ? "EN" : "ES"}
-                      </a>
-                    </div>
 
                     <!-- Accent color row -->
                     <div class="popover-row popover-row--accent">
@@ -627,6 +657,64 @@ const isActive = (path: string) => {
     color: var(--accent);
   }
 
+  /* ─── Header Language Chip ─── */
+  .nav-lang-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--muted-foreground);
+    border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--muted) 40%, transparent);
+    text-decoration: none;
+    cursor: pointer;
+    line-height: 1;
+    transition:
+      color 0.2s ease,
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.15s ease;
+    user-select: none;
+  }
+
+  .nav-lang-chip:hover {
+    color: var(--accent);
+    border-color: color-mix(in srgb, var(--accent) 30%, transparent);
+    background: color-mix(in srgb, var(--accent) 8%, transparent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 8%, transparent);
+  }
+
+  .nav-lang-chip:active {
+    transform: scale(0.95);
+  }
+
+  .nav-lang-chip:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 50%, transparent);
+  }
+
+  .nav-lang-chip-icon {
+    transition:
+      transform 0.25s ease,
+      color 0.2s ease;
+  }
+
+  .nav-lang-chip:hover .nav-lang-chip-icon {
+    transform: scale(1.1);
+    color: var(--accent);
+  }
+
+  .nav-lang-chip-label {
+    font-family: var(--font-firacode, monospace);
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+
   /* ─── More (···) Popover ─── */
   .more-btn-container {
     position: relative;
@@ -820,32 +908,6 @@ const isActive = (path: string) => {
     display: flex;
     align-items: center;
     gap: 0.3rem;
-  }
-
-  /* Language pill */
-  .lang-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.2rem 0.5rem;
-    font-size: 0.6875rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    border-radius: 999px;
-    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
-    background: color-mix(in srgb, var(--muted) 50%, transparent);
-    color: var(--foreground);
-    text-decoration: none;
-    transition:
-      color 0.2s ease,
-      background-color 0.2s ease,
-      border-color 0.2s ease;
-  }
-
-  .lang-pill:hover {
-    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
-    background: color-mix(in srgb, var(--accent) 10%, transparent);
-    color: var(--accent);
   }
 
   /* Accent swatches inside popover */
