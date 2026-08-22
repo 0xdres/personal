@@ -41,7 +41,7 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
       class="flex flex-col items-center gap-6 sm:flex-row sm:items-start sm:justify-between"
     >
       <!-- Brand column -->
-      <div class="flex flex-col items-center gap-3 sm:items-start">
+      <div class="flex flex-col items-center sm:items-start">
         <a
           href={locale === "es" ? "/es" : "/"}
           aria-label={locale === "es"
@@ -55,7 +55,7 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
           <span class="sr-only">{SITE.title}</span>
         </a>
         <p
-          class="max-w-xs text-center font-firacode text-[11px] leading-relaxed tracking-wide text-foreground/55 sm:text-start"
+          class="max-w-xs text-center font-firacode text-[12px] leading-relaxed tracking-wide text-foreground/55 sm:text-start"
         >
           {t("footer.desc")}
         </p>
@@ -95,12 +95,12 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
     </div>
 
     <!-- Bottom bar -->
-    <div class="mt-8 flex items-center gap-3" aria-hidden="true">
+    <!-- <div class="mt-8 flex items-center gap-3" aria-hidden="true">
       <div
         class="h-px flex-1 bg-linear-to-r from-transparent via-border/25 to-transparent"
       >
       </div>
-    </div>
+    </div> -->
 
     <div
       class="mt-4 flex flex-col items-center justify-between gap-2 sm:flex-row"
