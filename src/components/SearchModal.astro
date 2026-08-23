@@ -131,6 +131,8 @@ const t = useTranslations(locale as any);
 </div>
 
 <script>
+  import { soundFx } from "@/utils/soundFx";
+
   let cleanupHelper: AbortController | null = null;
 
   function initSearchModal() {
@@ -178,6 +180,8 @@ const t = useTranslations(locale as any);
     function openModal() {
       modal!.classList.add("active");
       document.body.style.overflow = "hidden";
+      // Trigger tactile micro-sound when opening search dialog
+      soundFx.playTap();
 
       if (!pagefindLoaded) {
         loadPagefind();

@@ -1,3 +1,5 @@
+import { soundFx } from "@/utils/soundFx";
+
 // Constants
 const THEME = "theme";
 const LIGHT = "light";
@@ -29,10 +31,33 @@ function setPreference(): void {
   reflectPreference();
 }
 
+/**
+ * Resolves the currently active theme accent color.
+ * If the secret 'arcade' 80s theme was unlocked via the Konami Code,
+ * checks if the 24-hour expiration window (86,400,000 ms) has passed.
+ * Automatically reverts to default 'blue' once expired to incentivize retention.
+ */
+function getValidAccent(): string {
+  let accent = localStorage.getItem("theme-accent") || "blue";
+  if (accent === "arcade") {
+    const unlockedAtStr = localStorage.getItem("konami-unlocked-at");
+    if (unlockedAtStr) {
+      const unlockedAt = Number(unlockedAtStr);
+      // Revert after 24 hours (86,400,000 ms)
+      if (Date.now() - unlockedAt > 86400000) {
+        accent = "blue";
+        localStorage.setItem("theme-accent", "blue");
+        localStorage.removeItem("konami-unlocked-at");
+      }
+    }
+  }
+  return accent;
+}
+
 function reflectPreference(): void {
   document.firstElementChild?.setAttribute("data-theme", themeValue);
 
-  const currentAccent = localStorage.getItem("theme-accent") || "blue";
+  const currentAccent = getValidAccent();
   document.firstElementChild?.setAttribute("data-accent", currentAccent);
 
   document.querySelector("#theme-btn")?.setAttribute("aria-label", themeValue);
@@ -87,6 +112,7 @@ function setThemeFeature(): void {
   // now this script can find and listen for clicks on the control
   const toggleTheme = () => {
     themeValue = themeValue === LIGHT ? DARK : LIGHT;
+    soundFx.playSwitch();
     window.theme?.setTheme(themeValue);
     setPreference();
   };

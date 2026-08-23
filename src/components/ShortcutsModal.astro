@@ -20,6 +20,9 @@ const t = useTranslations(locale as any);
   data-toast-goto-galleries={t("shortcuts.toast.gotoGalleries")}
   data-toast-theme={t("shortcuts.toast.themeChanged")}
   data-toast-lang={t("shortcuts.toast.lang")}
+  data-toast-sound-enabled={t("shortcuts.toast.soundFxEnabled")}
+  data-toast-sound-muted={t("shortcuts.toast.soundFxMuted")}
+  data-toast-konami={t("shortcuts.toast.konami")}
 >
   <div class="shortcuts-modal-backdrop" data-shortcuts-close></div>
   <div class="shortcuts-modal-container" data-modal-card>
@@ -136,6 +139,11 @@ const t = useTranslations(locale as any);
               <span class="action-desc">{t("shortcuts.action.terminal")}</span>
               <span class="key-combo"><kbd class="kbd-key">c</kbd></span>
             </li>
+            <!-- Sound Effects Toggle (Key: 'X') -->
+            <li>
+              <span class="action-desc">{t("shortcuts.action.soundFx")}</span>
+              <span class="key-combo"><kbd class="kbd-key">x</kbd></span>
+            </li>
           </ul>
         </div>
 
@@ -195,6 +203,37 @@ const t = useTranslations(locale as any);
         </div>
       </div>
     </div>
+
+    <!-- Full-Width Footer / Konami Easter Egg Hint Bar -->
+    <div class="shortcuts-modal-footer">
+      <div class="konami-hint-wrap">
+        <span class="konami-hint-icon">🕹️</span>
+        <span class="konami-hint-text">{t("shortcuts.hint.konami")}</span>
+      </div>
+      <span class="konami-hint-badge">Retro 80s Mode</span>
+    </div>
+  </div>
+</div>
+
+<!-- Centered Viewport Konami Celebration Modal with Confetti -->
+<div id="konami-celebration-modal" class="konami-celebration-overlay hidden" aria-hidden="true">
+  <canvas id="konami-confetti-canvas" class="konami-confetti-canvas"></canvas>
+  <div class="konami-celebration-backdrop" id="konami-celebration-backdrop"></div>
+  <div class="konami-celebration-card" data-konami-card>
+    <div class="konami-card-glow" aria-hidden="true"></div>
+    <div class="konami-trophy-icon">🕹️✨</div>
+    <h3 class="konami-title">30 LIVES UNLOCKED!</h3>
+    <p class="konami-desc">
+      {locale === "es"
+        ? "¡Código Konami activado con éxito! Has desbloqueado el tema secreto 'Arcade 80s' y efectos retro ✨"
+        : "Konami Code successfully activated! Secret 'Arcade 80s' neon theme & retro visual FX unlocked ✨"}
+    </p>
+    <div class="konami-keys-badge">
+      <span>↑</span><span>↑</span><span>↓</span><span>↓</span><span>←</span><span>→</span><span>←</span><span>→</span><span>B</span><span>A</span>
+    </div>
+    <button id="konami-close-btn" type="button" class="konami-action-btn">
+      {locale === "es" ? "¡A Jugar! 🚀" : "Let's Play! 🚀"}
+    </button>
   </div>
 </div>
 
@@ -204,6 +243,7 @@ const t = useTranslations(locale as any);
 
 <script>
   import { navigate } from "astro:transitions/client";
+  import { soundFx } from "@/utils/soundFx";
 
   let shortcutsCleanup: AbortController | null = null;
   let gPressed = false;
@@ -237,6 +277,13 @@ const t = useTranslations(locale as any);
       modal.getAttribute("data-toast-theme") || "Theme changed to";
     const toastLang =
       modal.getAttribute("data-toast-lang") || "Switching language...";
+    const toastSoundEnabled =
+      modal.getAttribute("data-toast-sound-enabled") || "Sound effects enabled 🔊";
+    const toastSoundMuted =
+      modal.getAttribute("data-toast-sound-muted") || "Sound effects muted 🔇";
+    const toastKonami =
+      modal.getAttribute("data-toast-konami") ||
+      "🎮 30 LIVES UNLOCKED! Konami Code Activated!";
 
     const card = modal.querySelector("[data-modal-card]") as HTMLElement;
     const glow = modal.querySelector("[data-modal-glow]") as HTMLElement;
@@ -274,6 +321,7 @@ const t = useTranslations(locale as any);
 
       modal!.classList.add("active");
       document.body.style.overflow = "hidden";
+      soundFx.playTap();
       showToast(["?"], toastOpened);
     }
 
@@ -342,26 +390,80 @@ const t = useTranslations(locale as any);
     }
 
     // Keyboard event listener
-    document.addEventListener(
-      "keydown",
-      (e: KeyboardEvent) => {
-        // Discard auto-repeat events
-        if (e.repeat) return;
+    let konamiIndex = 0;
+    let konamiTimeout: number | null = null;
+    const KONAMI_SEQUENCE = [
+      "ArrowUp",
+      "ArrowUp",
+      "ArrowDown",
+      "ArrowDown",
+      "ArrowLeft",
+      "ArrowRight",
+      "ArrowLeft",
+      "ArrowRight",
+      "b",
+      "a",
+    ];
 
-        // Ignore in form fields/editable elements
-        const activeTag = document.activeElement?.tagName;
-        const isEditable =
-          document.activeElement?.hasAttribute("contenteditable") ||
-          activeTag === "INPUT" ||
-          activeTag === "TEXTAREA" ||
-          activeTag === "SELECT";
+    document.addEventListener("keydown", (e: KeyboardEvent) => {
+      // Discard auto-repeat events
+      if (e.repeat) return;
 
-        if (isEditable) return;
+      // Ignore in form fields/editable elements
+      const activeTag = document.activeElement?.tagName;
+      const isEditable =
+        document.activeElement?.hasAttribute("contenteditable") ||
+        activeTag === "INPUT" ||
+        activeTag === "TEXTAREA" ||
+        activeTag === "SELECT";
 
-        // Ignore if modifier keys are pressed to avoid interfering with browser shortcuts
-        if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (isEditable) return;
 
-        const key = e.key;
+      // Ignore if modifier keys are pressed to avoid interfering with browser shortcuts
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+
+      const key = e.key;
+
+      // 0. Check Konami Code sequence
+      const normalizedKey = key.length === 1 ? key.toLowerCase() : key;
+      const targetKonamiKey = KONAMI_SEQUENCE[konamiIndex];
+      const normalizedTarget =
+        targetKonamiKey.length === 1 ? targetKonamiKey.toLowerCase() : targetKonamiKey;
+
+      if (normalizedKey === normalizedTarget) {
+        konamiIndex++;
+        if (konamiTimeout) clearTimeout(konamiTimeout);
+        konamiTimeout = window.setTimeout(() => {
+          konamiIndex = 0;
+        }, 2500);
+
+        if (konamiIndex === KONAMI_SEQUENCE.length) {
+          konamiIndex = 0;
+          if (konamiTimeout) clearTimeout(konamiTimeout);
+
+          e.preventDefault();
+          soundFx.play8BitFanfare();
+
+          // Unlock arcade 80s accent theme and save 24h expiration timestamp
+          document.documentElement.setAttribute("data-accent", "arcade");
+          localStorage.setItem("theme-accent", "arcade");
+          localStorage.setItem("konami-unlocked-at", String(Date.now()));
+
+          showKonamiCelebration();
+          return;
+        }
+      } else {
+        konamiIndex = 0;
+      }
+
+      // Close Konami modal on ESC
+      if (key === "Escape") {
+        const konamiModal = document.getElementById("konami-celebration-modal");
+        if (konamiModal && !konamiModal.classList.contains("hidden")) {
+          closeKonamiCelebration();
+          return;
+        }
+      }
 
         // 1. ESC key -> Close search or shortcuts modals
         if (key === "Escape") {
@@ -491,6 +593,7 @@ const t = useTranslations(locale as any);
             "[data-lang-toggle]"
           ) as HTMLElement | null;
           if (langToggle) {
+            soundFx.playSwitch();
             showToast(["l"], toastLang);
             setTimeout(() => {
               langToggle.click();
@@ -499,20 +602,148 @@ const t = useTranslations(locale as any);
           return;
         }
 
+        // [x] Key -> Toggle Sound Effects
+        if (key === "x" || key === "X") {
+          e.preventDefault();
+          const newState = soundFx.toggle();
+          showToast(["x"], newState ? toastSoundEnabled : toastSoundMuted);
+          return;
+        }
+
         // Vim navigation [j] / [k]
         if (key === "j" || key === "J") {
           e.preventDefault();
           navigateCards(1);
+          soundFx.playTap(1400);
           return;
         }
         if (key === "k" || key === "K") {
           e.preventDefault();
           navigateCards(-1);
+          soundFx.playTap(1400);
           return;
         }
       },
       { signal }
     );
+
+    // ===== Konami Celebration Modal & Confetti =====
+    const konamiModal = document.getElementById("konami-celebration-modal");
+    const konamiCloseBtn = document.getElementById("konami-close-btn");
+    const konamiBackdrop = document.getElementById("konami-celebration-backdrop");
+    const konamiCanvas = document.getElementById("konami-confetti-canvas") as HTMLCanvasElement | null;
+    let konamiAnimFrame: number | null = null;
+
+    /**
+     * Spawns a full-screen canvas confetti celebration with physics (gravity, velocity, drag, rotation)
+     * using the vibrant retro neon color palette of the Arcade 80s theme.
+     */
+    function launchKonamiConfetti() {
+      if (!konamiCanvas) return;
+      const ctx = konamiCanvas.getContext("2d");
+      if (!ctx) return;
+
+      konamiCanvas.width = window.innerWidth;
+      konamiCanvas.height = window.innerHeight;
+
+      const colors = ["#00f0ff", "#ff007f", "#ffe600", "#a855f7", "#ffffff"];
+      interface ConfettiParticle {
+        x: number;
+        y: number;
+        vx: number;
+        vy: number;
+        size: number;
+        color: string;
+        alpha: number;
+        rotation: number;
+        vRot: number;
+      }
+
+      const particles: ConfettiParticle[] = [];
+      const count = 75;
+      const originX = window.innerWidth / 2;
+      const originY = window.innerHeight / 2 - 50;
+
+      for (let i = 0; i < count; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 4 + Math.random() * 9;
+        particles.push({
+          x: originX,
+          y: originY,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 3,
+          size: 4 + Math.random() * 5,
+          color: colors[Math.floor(Math.random() * colors.length)] || "#00f0ff",
+          alpha: 1,
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12,
+        });
+      }
+
+      const start = performance.now();
+      const duration = 3000;
+
+      function render(now: number) {
+        if (!ctx || !konamiCanvas) return;
+        const elapsed = now - start;
+        const progress = Math.min(1, elapsed / duration);
+
+        ctx.clearRect(0, 0, konamiCanvas.width, konamiCanvas.height);
+
+        particles.forEach(p => {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.vy += 0.22; // gravity
+          p.vx *= 0.985;
+          p.rotation += p.vRot;
+          p.alpha = Math.max(0, 1 - Math.pow(progress, 1.5));
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate((p.rotation * Math.PI) / 180);
+          ctx.globalAlpha = p.alpha;
+          ctx.fillStyle = p.color;
+          ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 1.5);
+          ctx.restore();
+        });
+
+        if (progress < 1) {
+          konamiAnimFrame = requestAnimationFrame(render);
+        } else {
+          ctx.clearRect(0, 0, konamiCanvas.width, konamiCanvas.height);
+        }
+      }
+
+      if (konamiAnimFrame) cancelAnimationFrame(konamiAnimFrame);
+      konamiAnimFrame = requestAnimationFrame(render);
+    }
+
+    /**
+     * Displays the centered viewport Konami celebration card and fires the confetti shower.
+     * Auto-dismisses safely after 6 seconds if not closed earlier by user interaction.
+     */
+    function showKonamiCelebration() {
+      if (!konamiModal) return;
+      konamiModal.classList.remove("hidden");
+      launchKonamiConfetti();
+
+      // Auto-dismiss after 6 seconds
+      setTimeout(() => {
+        closeKonamiCelebration();
+      }, 6000);
+    }
+
+    /**
+     * Hides the Konami celebration modal and cleans up active canvas render frames.
+     */
+    function closeKonamiCelebration() {
+      if (!konamiModal) return;
+      konamiModal.classList.add("hidden");
+      if (konamiAnimFrame) cancelAnimationFrame(konamiAnimFrame);
+    }
+
+    konamiCloseBtn?.addEventListener("click", closeKonamiCelebration, { signal });
+    konamiBackdrop?.addEventListener("click", closeKonamiCelebration, { signal });
 
     // Vim navigation implementation
     function navigateCards(direction: number) {
@@ -855,6 +1086,204 @@ const t = useTranslations(locale as any);
     box-shadow:
       0 1px 0 color-mix(in srgb, var(--foreground) 10%, transparent),
       0 2px 4px color-mix(in srgb, var(--background) 50%, transparent);
+  }
+
+  /* ===== Modal Full-Width Footer Hint Bar ===== */
+  .shortcuts-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0.65rem 1.25rem;
+    border-top: 1px dashed color-mix(in srgb, var(--border) 25%, transparent);
+    background: color-mix(in srgb, var(--foreground) 2%, transparent);
+    font-family: var(--font-firacode, monospace);
+    font-size: 0.725rem;
+    color: color-mix(in srgb, var(--foreground) 65%, transparent);
+    box-sizing: border-box;
+  }
+
+  .konami-hint-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .konami-hint-icon {
+    font-size: 0.85rem;
+  }
+
+  .konami-hint-text {
+    font-weight: 500;
+  }
+
+  .konami-hint-badge {
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 0.15rem 0.4rem;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+    color: var(--accent);
+    border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent);
+    white-space: nowrap;
+    margin-left: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  /* ===== Centered Konami Celebration Modal ===== */
+  .konami-celebration-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 250;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    animation: konami-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .konami-celebration-overlay.hidden {
+    display: none;
+  }
+
+  .konami-confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 255;
+  }
+
+  .konami-celebration-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 251;
+  }
+
+  .konami-celebration-card {
+    position: relative;
+    z-index: 260;
+    width: 100%;
+    max-width: 440px;
+    text-align: center;
+    border-radius: 1.5rem;
+    border: 2px solid var(--accent);
+    background: color-mix(in srgb, var(--background) 96%, transparent);
+    padding: 2.25rem 1.75rem;
+    box-shadow:
+      0 0 35px color-mix(in srgb, var(--accent) 35%, transparent),
+      0 0 60px color-mix(in srgb, var(--border) 25%, transparent),
+      inset 0 0 20px color-mix(in srgb, var(--accent) 10%, transparent);
+    animation: card-float 4s ease-in-out infinite alternate;
+  }
+
+  .konami-trophy-icon {
+    font-size: 3rem;
+    margin-bottom: 0.75rem;
+    animation: icon-bounce 1.5s ease-in-out infinite alternate;
+  }
+
+  .konami-title {
+    font-family: var(--font-firacode), monospace;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 40%, transparent);
+    margin-bottom: 0.6rem;
+  }
+
+  .konami-desc {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: color-mix(in srgb, var(--foreground) 85%, transparent);
+    margin-bottom: 1.25rem;
+  }
+
+  .konami-keys-badge {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    margin-bottom: 1.5rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.5rem;
+    background: color-mix(in srgb, var(--foreground) 5%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    font-family: var(--font-firacode), monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+
+  .konami-keys-badge span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.2rem;
+    height: 1.2rem;
+    border-radius: 0.2rem;
+    background: color-mix(in srgb, var(--foreground) 6%, transparent);
+  }
+
+  .konami-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.75rem;
+    border-radius: 999px;
+    font-family: var(--font-firacode), monospace;
+    font-size: 0.825rem;
+    font-weight: 700;
+    color: #ffffff;
+    background: linear-gradient(135deg, var(--accent), var(--border));
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 45%, transparent);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .konami-action-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 25px color-mix(in srgb, var(--accent) 65%, transparent);
+  }
+
+  @keyframes konami-pop {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes card-float {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes icon-bounce {
+    from {
+      transform: scale(1) rotate(-4deg);
+    }
+    to {
+      transform: scale(1.15) rotate(4deg);
+    }
   }
 </style>
 

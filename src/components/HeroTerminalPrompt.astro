@@ -111,7 +111,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
     <!-- Terminal Window Container -->
     <div
       id="terminal-card"
-      class="terminal-card relative z-10 flex flex-col w-full max-w-xl max-h-[85vh] overflow-hidden rounded-2xl border border-border/50 bg-[#0d1117]/95 text-[#e6edf3] p-0 shadow-2xl backdrop-blur-xl transition-all duration-300 font-firacode"
+      class="terminal-card relative z-10 flex flex-col w-full max-w-xl max-h-[85vh] overflow-hidden rounded-2xl border border-border/50 bg-background/95 text-foreground p-0 shadow-2xl backdrop-blur-xl transition-all duration-300 font-firacode"
     >
       <!-- Terminal Header / Titlebar -->
       <div class="flex items-center justify-between px-4 py-3 border-b border-border/30 bg-muted/20 select-none">
@@ -167,6 +167,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
       <div class="px-4 py-2 border-t border-border/20 bg-muted/10 flex flex-wrap items-center gap-1.5 select-none">
         <span class="text-[10px] text-foreground/45 uppercase tracking-wider font-bold mr-1">Quick:</span>
         <button type="button" class="term-chip" data-cmd="help"><span class="opacity-70">&gt;_</span> help</button>
+        <button type="button" class="term-chip" data-cmd="neofetch"><span>🖥️</span> neofetch</button>
         <button type="button" class="term-chip" data-cmd="matrix"><span>🕶️</span> matrix</button>
         <button type="button" class="term-chip" data-cmd="random"><span>🎲</span> random</button>
         <button type="button" class="term-chip" data-cmd="quote"><span>💬</span> quote</button>
@@ -238,6 +239,24 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
     min-height: 180px;
   }
 
+  .terminal-card {
+    background: color-mix(in srgb, var(--background) 96%, transparent);
+    color: var(--foreground);
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+    box-shadow:
+      0 20px 50px -10px color-mix(in srgb, var(--foreground) 10%, transparent),
+      0 0 25px -5px color-mix(in srgb, var(--accent) 15%, transparent);
+  }
+
+  /* Light mode terminal card polish */
+  :global(html[data-theme="light"]) .terminal-card {
+    background: rgba(255, 255, 255, 0.97);
+    border-color: rgba(203, 213, 225, 0.85);
+    box-shadow:
+      0 20px 45px -10px rgba(15, 23, 42, 0.14),
+      0 4px 12px rgba(15, 23, 42, 0.05);
+  }
+
   .term-chip {
     display: inline-flex;
     align-items: center;
@@ -247,17 +266,17 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
     font-family: var(--font-firacode, monospace);
     font-weight: 600;
     color: var(--foreground);
-    background: color-mix(in srgb, var(--accent) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent);
     border-radius: 0.5rem;
     cursor: pointer;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .term-chip:hover {
     color: var(--accent);
-    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    background: color-mix(in srgb, var(--accent) 20%, transparent);
     border-color: var(--accent);
     transform: translateY(-1px);
     box-shadow: 0 3px 8px color-mix(in srgb, var(--accent) 25%, transparent);
@@ -267,7 +286,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
     transform: scale(0.95);
   }
 
-  /* Custom terminal output line styles */
+  /* High-contrast semantic terminal output styles for light & dark themes */
   :global(.term-line) {
     display: flex;
     flex-direction: column;
@@ -280,31 +299,65 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
   }
 
   :global(.term-res-success) {
-    color: #4ade80; /* green */
+    color: #16a34a; /* high-contrast emerald in light mode */
+  }
+  :global(html[data-theme="dark"] .term-res-success) {
+    color: #4ade80; /* bright green in dark mode */
   }
 
   :global(.term-res-info) {
-    color: #38bdf8; /* light blue */
+    color: #0284c7; /* deep sky blue in light mode */
+  }
+  :global(html[data-theme="dark"] .term-res-info) {
+    color: #38bdf8; /* bright cyan in dark mode */
   }
 
   :global(.term-res-warn) {
-    color: #fbbf24; /* amber */
+    color: #d97706; /* amber in light mode */
+  }
+  :global(html[data-theme="dark"] .term-res-warn) {
+    color: #fbbf24; /* bright amber in dark mode */
   }
 
   :global(.term-res-error) {
-    color: #f87171; /* red */
+    color: #dc2626; /* red in light mode */
+  }
+  :global(html[data-theme="dark"] .term-res-error) {
+    color: #f87171; /* bright red in dark mode */
   }
 
   :global(.term-res-quote) {
-    color: #e879f9; /* purple/pink */
+    color: #9333ea;
     font-style: italic;
-    border-left: 2px solid #e879f9;
+    border-left: 2px solid #9333ea;
     padding-left: 0.5rem;
     margin: 0.25rem 0;
+  }
+  :global(html[data-theme="dark"] .term-res-quote) {
+    color: #e879f9;
+    border-left-color: #e879f9;
+  }
+
+  :global(.term-cyan-text) {
+    color: #0284c7;
+    font-weight: 700;
+  }
+  :global(html[data-theme="dark"] .term-cyan-text) {
+    color: #38bdf8;
+    font-weight: 700;
+  }
+
+  :global(.term-green-text) {
+    color: #16a34a;
+  }
+  :global(html[data-theme="dark"] .term-green-text) {
+    color: #4ade80;
   }
 </style>
 
 <script>
+  import { soundFx } from "@/utils/soundFx";
+
   // Quotes collection in English and Spanish
   const DEV_QUOTES = {
     en: [
@@ -331,71 +384,6 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
 
   const ACCENTS = ["blue", "green", "purple", "amber", "rose"] as const;
 
-  // Sound synthesizer for keypress clicks and feedback
-  class TerminalAudio {
-    private ctx: AudioContext | null = null;
-
-    private getContext(): AudioContext | null {
-      if (typeof window === "undefined") return null;
-      if (!this.ctx) {
-        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-        if (AudioCtx) {
-          this.ctx = new AudioCtx();
-        }
-      }
-      if (this.ctx && this.ctx.state === "suspended") {
-        this.ctx.resume().catch(() => {});
-      }
-      return this.ctx;
-    }
-
-    playKeyClick() {
-      try {
-        const ctx = this.getContext();
-        if (!ctx) return;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(1200 + Math.random() * 300, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(400, ctx.currentTime + 0.015);
-
-        gain.gain.setValueAtTime(0.04, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.015);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start();
-        osc.stop(ctx.currentTime + 0.018);
-      } catch (_) {}
-    }
-
-    playExecute() {
-      try {
-        const ctx = this.getContext();
-        if (!ctx) return;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = "triangle";
-        osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
-        osc.frequency.setValueAtTime(880, ctx.currentTime + 0.04); // A5
-
-        gain.gain.setValueAtTime(0.06, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start();
-        osc.stop(ctx.currentTime + 0.16);
-      } catch (_) {}
-    }
-  }
-
-  const termAudio = new TerminalAudio();
-
   // Full-Screen Matrix Rain Canvas Animation
   let matrixAnimationId: number | null = null;
   let matrixTimeoutId: number | null = null;
@@ -420,12 +408,16 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
     const columns = Math.floor(canvas.width / fontSize);
     const drops: number[] = Array.from({ length: columns }).fill(1) as number[];
 
+    const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+    const bgFade = isDark ? "rgba(10, 15, 25, 0.08)" : "rgba(255, 255, 255, 0.14)";
+    const textColor = isDark ? "#00ff66" : "#059669";
+
     function draw() {
       if (!ctx || !canvas) return;
-      ctx.fillStyle = "rgba(10, 15, 25, 0.08)";
+      ctx.fillStyle = bgFade;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = "#00ff66";
+      ctx.fillStyle = textColor;
       ctx.font = `${fontSize}px monospace`;
 
       for (let i = 0; i < drops.length; i++) {
@@ -505,7 +497,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
       const cmd = (parts[0] || "").toLowerCase();
       const args = parts.slice(1).join(" ").trim();
 
-      termAudio.playExecute();
+      soundFx.playExecute();
 
       // Echo command line
       appendOutput(`<span class="term-prompt-echo">guest@devosfera:~$ ${trimmed}</span>`);
@@ -518,17 +510,17 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
           appendOutput(`
             <div class="space-y-1">
               <div class="text-accent font-bold">${isEs ? "Comandos disponibles:" : "Available commands:"}</div>
-              <div><span class="text-[#38bdf8] font-bold">matrix</span>    - ${isEs ? "Lluvia de código Matrix digital (4.5s)" : "Trigger Matrix digital rain stream"}</div>
-              <div><span class="text-[#38bdf8] font-bold">random</span>    - ${isEs ? "Lanza la ruleta de artículos aleatorios" : "Pick a random post with roulette"}</div>
-              <div><span class="text-[#38bdf8] font-bold">quote</span>     - ${isEs ? "Muestra una frase/consejo dev al azar" : "Display a witty dev quote"}</div>
-              <div><span class="text-[#38bdf8] font-bold">theme</span>     - ${isEs ? "Cicla entre colores de acento cromático" : "Cycle through accent theme colors"}</div>
-              <div><span class="text-[#38bdf8] font-bold">ping</span>      - ${isEs ? "Prueba de latencia y estado (ej: ping google.com)" : "Test latency & stats (e.g. ping google.com)"}</div>
-              <div><span class="text-[#38bdf8] font-bold">cat</span>       - ${isEs ? "Gatito ASCII o lectura de archivos (ej: cat .env)" : "ASCII kitty or inspect files (e.g. cat .env)"}</div>
-              <div><span class="text-[#38bdf8] font-bold">neofetch</span>  - ${isEs ? "Información del sistema y blog" : "System and blog status summary"}</div>
-              <div><span class="text-[#38bdf8] font-bold">audio</span>     - ${isEs ? "Alterna reproducción Lo-Fi" : "Toggle Lo-Fi audio stream"}</div>
-              <div><span class="text-[#38bdf8] font-bold">whoami</span>    - ${isEs ? "Información sobre el autor y el blog" : "About author & blog info"}</div>
-              <div><span class="text-[#38bdf8] font-bold">clear</span>     - ${isEs ? "Limpia la pantalla" : "Clear terminal screen"}</div>
-              <div><span class="text-[#38bdf8] font-bold">exit</span>      - ${isEs ? "Cierra la terminal" : "Close terminal"}</div>
+              <div><span class="term-cyan-text">matrix</span>    - ${isEs ? "Lluvia de código Matrix digital (4.5s)" : "Trigger Matrix digital rain stream"}</div>
+              <div><span class="term-cyan-text">random</span>    - ${isEs ? "Lanza la ruleta de artículos aleatorios" : "Pick a random post with roulette"}</div>
+              <div><span class="term-cyan-text">quote</span>     - ${isEs ? "Muestra una frase/consejo dev al azar" : "Display a witty dev quote"}</div>
+              <div><span class="term-cyan-text">theme</span>     - ${isEs ? "Cicla entre colores de acento cromático" : "Cycle through accent theme colors"}</div>
+              <div><span class="term-cyan-text">ping</span>      - ${isEs ? "Prueba de latencia y estado (ej: ping google.com)" : "Test latency & stats (e.g. ping google.com)"}</div>
+              <div><span class="term-cyan-text">cat</span>       - ${isEs ? "Gatito ASCII o lectura de archivos (ej: cat .env)" : "ASCII kitty or inspect files (e.g. cat .env)"}</div>
+              <div><span class="term-cyan-text">neofetch</span>  - ${isEs ? "Información del sistema y blog" : "System and blog status summary"}</div>
+              <div><span class="term-cyan-text">audio</span>     - ${isEs ? "Alterna reproducción Lo-Fi" : "Toggle Lo-Fi audio stream"}</div>
+              <div><span class="term-cyan-text">whoami</span>    - ${isEs ? "Información sobre el autor y el blog" : "About author & blog info"}</div>
+              <div><span class="term-cyan-text">clear</span>     - ${isEs ? "Limpia la pantalla" : "Clear terminal screen"}</div>
+              <div><span class="term-cyan-text">exit</span>      - ${isEs ? "Cierra la terminal" : "Close terminal"}</div>
             </div>
           `);
           break;
@@ -561,6 +553,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
 
           localStorage.setItem("theme-accent", nextAccent);
           document.firstElementChild?.setAttribute("data-accent", nextAccent);
+          soundFx.playPop(nextAccent);
 
           appendOutput(`<div>${isEs ? "Tema de acento cambiado a:" : "Theme accent changed to:"} <strong class="text-accent uppercase">${nextAccent}</strong> ✨</div>`, "term-res-success");
           break;
@@ -574,13 +567,13 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
           const avg = (((+ms1) + (+ms2) + (+ms3)) / 3).toFixed(3);
           appendOutput(`
             <div class="space-y-0.5">
-              <div class="text-[#38bdf8]">PING ${target} (127.0.0.1): 56 data bytes</div>
+              <div class="term-cyan-text">PING ${target} (127.0.0.1): 56 data bytes</div>
               <div>64 bytes from 127.0.0.1: icmp_seq=1 ttl=64 time=${ms1} ms</div>
               <div>64 bytes from 127.0.0.1: icmp_seq=2 ttl=64 time=${ms2} ms</div>
               <div>64 bytes from 127.0.0.1: icmp_seq=3 ttl=64 time=${ms3} ms</div>
               <div class="text-accent font-semibold pt-1">--- ${target} ping statistics ---</div>
               <div>3 packets transmitted, 3 packets received, 0.0% packet loss</div>
-              <div class="text-[#4ade80]">round-trip min/avg/max = ${Math.min(+ms1, +ms2, +ms3).toFixed(3)}/${avg}/${Math.max(+ms1, +ms2, +ms3).toFixed(3)} ms (100% good vibes 🟢)</div>
+              <div class="term-green-text">round-trip min/avg/max = ${Math.min(+ms1, +ms2, +ms3).toFixed(3)}/${avg}/${Math.max(+ms1, +ms2, +ms3).toFixed(3)} ms (100% good vibes 🟢)</div>
             </div>
           `);
           break;
@@ -590,7 +583,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
           const target = args.toLowerCase();
           if (!target || target === "cat" || target === "kitty" || target === "miau" || target === "meow") {
             appendOutput(`
-              <pre class="text-[#4ade80] font-mono leading-tight whitespace-pre">
+              <pre class="term-green-text font-mono leading-tight whitespace-pre">
  /\\_/\\  
 ( o.o )  ${isEs ? "¡Miau! La curiosidad no mató al gato, lo hizo programar." : "Meow! Curiosity didn't kill this cat, it made it code."}
  > ^ &lt;   ${isEs ? "Tip: ¡Prueba 'matrix', 'ping' o 'quote' para más diversión!" : "Tip: Try 'matrix', 'ping' or 'quote' for more fun!"}
@@ -611,7 +604,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
         case "cowsay": {
           const msg = args || (isEs ? "¡Sigue programando con pasión!" : "Keep shipping awesome code!");
           appendOutput(`
-            <pre class="text-[#38bdf8] font-mono leading-tight whitespace-pre">
+            <pre class="term-cyan-text font-mono leading-tight whitespace-pre">
  &lt; ${msg} &gt;
         \\   ^__^
          \\  (oo)\\_______
@@ -638,12 +631,13 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
               <div class="text-xs space-y-0.5 font-mono">
                 <div><span class="text-accent font-bold">guest@devosfera</span></div>
                 <div class="text-foreground/40">-----------------</div>
-                <div><strong class="text-[#38bdf8]">OS:</strong> Web / Astro 5.x</div>
-                <div><strong class="text-[#38bdf8]">Host:</strong> Devosfera Personal Space</div>
-                <div><strong class="text-[#38bdf8]">Uptime:</strong> 24/7 curiosity</div>
-                <div><strong class="text-[#38bdf8]">Shell:</strong> bash (devosfera-sh)</div>
-                <div><strong class="text-[#38bdf8]">Theme:</strong> ${accent.toUpperCase()}</div>
-                <div><strong class="text-[#38bdf8]">Stack:</strong> Tailwind + TypeScript + Pagefind</div>
+                <div><strong class="term-cyan-text">OS:</strong> Web / Astro 5.x</div>
+                <div><strong class="term-cyan-text">Host:</strong> Devosfera Personal Space</div>
+                <div><strong class="term-cyan-text">Uptime:</strong> 24/7 curiosity</div>
+                <div><strong class="term-cyan-text">Shell:</strong> bash (devosfera-sh)</div>
+                <div><strong class="term-cyan-text">Theme:</strong> ${accent.toUpperCase()}</div>
+                <div><strong class="term-cyan-text">Cheat:</strong> ↑ ↑ ↓ ↓ ← → ← → B A (Arcade 80s)</div>
+                <div><strong class="term-cyan-text">Stack:</strong> Tailwind + TypeScript + Pagefind</div>
               </div>
             </div>
           `);
@@ -713,7 +707,7 @@ const { prefix, path, suffix } = SITE.heroTerminalPrompt;
     });
 
     input.addEventListener("input", () => {
-      termAudio.playKeyClick();
+      soundFx.playKeyClick();
     });
 
     input.addEventListener("keydown", (e: KeyboardEvent) => {

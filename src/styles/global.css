@@ -55,6 +55,13 @@ html[data-accent="rose"] {
   --featured-color: #1158d1; /* Blue */
   --gallery-color: #0d7a5f; /* Green */
 }
+/* Secret Arcade 80s Theme (Unlocked via Konami Code) — Light mode */
+html[data-accent="arcade"] {
+  --accent: #c026d3; /* Electric fuchsia with high contrast on white/light backgrounds */
+  --border: #0284c7; /* Sky blue retro border */
+  --featured-color: #d97706; /* Retro gold */
+  --gallery-color: #7c3aed; /* Synthwave violet */
+}
 
 /* Accent presets — Dark mode */
 html[data-accent="blue"][data-theme="dark"] {
@@ -87,6 +94,12 @@ html[data-accent="rose"][data-theme="dark"] {
   --featured-color: #008fec; /* Blue */
   --gallery-color: #10b981; /* Green */
 }
+html[data-accent="arcade"][data-theme="dark"] {
+  --accent: #00f0ff;
+  --border: #f706cf;
+  --featured-color: #ff007f;
+  --gallery-color: #ffe600;
+}
 
 /* Active indicator for accent picker buttons */
 html[data-accent="blue"] [data-accent-color="blue"]::after,
@@ -100,6 +113,19 @@ html[data-accent="rose"] [data-accent-color="rose"]::after {
   border: 1.5px solid var(--accent);
   border-radius: 50%;
   box-shadow: 0 0 4px var(--accent);
+}
+
+/* Arcade 80s Neon Polish & Synthwave Glow effects */
+html[data-accent="arcade"] .card-glow:hover {
+  box-shadow: 0 0 25px -5px rgba(192, 38, 211, 0.25), 0 0 15px -3px rgba(2, 132, 199, 0.2);
+}
+
+html[data-accent="arcade"][data-theme="dark"] .card-glow:hover {
+  box-shadow: 0 0 25px -5px rgba(0, 240, 255, 0.35), 0 0 15px -3px rgba(247, 6, 207, 0.25);
+}
+
+html[data-accent="arcade"] .active-center .wheel-slot-text {
+  text-shadow: 0 0 14px var(--accent), 0 0 28px var(--border) !important;
 }
 
 @theme inline {

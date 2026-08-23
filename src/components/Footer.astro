@@ -129,6 +129,18 @@ const { noMarginTop = false, class: className, ...attrs } = Astro.props;
           <kbd class="font-sans font-bold">?</kbd>
           {t("footer.shortcuts")}
         </button>
+        <span class="opacity-30">|</span>
+        <!-- Easter Egg: Subtle Arcade icon providing a hover tooltip clue for the Konami Code sequence -->
+        <button
+          id="konami-footer-hint"
+          type="button"
+          class="inline-flex cursor-pointer items-center gap-1 rounded border border-border/20 bg-muted/10 px-1.5 py-0.5 text-[10px] text-foreground/50 transition-all duration-200 hover:border-accent/40 hover:bg-accent/5 hover:text-accent focus-visible:ring-1 focus-visible:ring-accent focus-visible:outline-none"
+          title={t("easteregg.konamiHint")}
+          aria-label={t("easteregg.konamiHint")}
+        >
+          <span class="text-[11px]" aria-hidden="true">🕹️</span>
+          <span class="hidden sm:inline opacity-75">30 Lives?</span>
+        </button>
       </div>
     </div>
   </div>

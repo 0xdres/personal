@@ -165,6 +165,7 @@ const isStream = streamOverride ?? /^https?:\/\//i.test(src);
     INTRO_AUDIO_STATE_EVENT,
     type IntroAudioState,
   } from "@/utils/introAudioStore";
+  import { soundFx } from "@/utils/soundFx";
 
   const pad = (n: number) => String(n).padStart(2, "0");
   const fmt = (secs: number) => {
@@ -229,6 +230,8 @@ const isStream = streamOverride ?? /^https?:\/\//i.test(src);
     };
 
     btn.addEventListener("click", () => {
+      // Trigger tactile audio feedback on compact player toggle
+      soundFx.playTap();
       if (store.audio.paused) {
         void store.audio.play().catch(() => {
           /* playback blocked by browser */

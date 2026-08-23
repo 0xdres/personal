@@ -320,6 +320,7 @@ const formattedDuration = `${Math.floor(duration / 60)}:${String(duration % 60).
     INTRO_AUDIO_STATE_EVENT,
     type IntroAudioState,
   } from "@/utils/introAudioStore";
+  import { soundFx } from "@/utils/soundFx";
 
   const pad = (n: number) => String(n).padStart(2, "0");
   const fmt = (secs: number) => {
@@ -410,6 +411,8 @@ const formattedDuration = `${Math.floor(duration / 60)}:${String(duration % 60).
     };
 
     btn.addEventListener("click", () => {
+      // Trigger tactile audio feedback on play/pause interaction
+      soundFx.playTap();
       if (store.audio.paused) {
         store.audio.play().catch(() => {
           /* playback blocked by browser */

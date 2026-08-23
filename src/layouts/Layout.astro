@@ -297,8 +297,18 @@ const showGrain = SITE.backdropEffects.grain;
         // Set theme immediately to prevent flash
         document.firstElementChild?.setAttribute("data-theme", themeValue);
 
-        // Set accent immediately to prevent FOUC
-        const currentAccent = localStorage.getItem("theme-accent") || "blue";
+        // Set accent color immediately to prevent FOUC.
+        // If the secret 'arcade' 80s theme was unlocked via Konami code, check its 24-hour expiration window.
+        // Reverts automatically to default 'blue' after 24 hours (86,400,000 ms) to incentivize memory retention.
+        let currentAccent = localStorage.getItem("theme-accent") || "blue";
+        if (currentAccent === "arcade") {
+          const unlockedAt = Number(localStorage.getItem("konami-unlocked-at") || "0");
+          if (Date.now() - unlockedAt > 86400000) {
+            currentAccent = "blue";
+            localStorage.setItem("theme-accent", "blue");
+            localStorage.removeItem("konami-unlocked-at");
+          }
+        }
         document.firstElementChild?.setAttribute("data-accent", currentAccent);
 
         // Export minimal API for external script

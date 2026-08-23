@@ -424,6 +424,7 @@ const postsJson = JSON.stringify(posts);
 
 <script>
   import { navigate } from "astro:transitions/client";
+  import { soundFx } from "@/utils/soundFx";
 
   interface PostItem {
     title: string;
@@ -432,85 +433,6 @@ const postsJson = JSON.stringify(posts);
     readingTime?: string;
     description?: string;
   }
-
-  // Pure Web Audio Synthesizer (0 external network requests, ultra responsive)
-  class SoundEffects {
-    private ctx: AudioContext | null = null;
-
-    private getContext(): AudioContext | null {
-      if (typeof window === "undefined") return null;
-      if (!this.ctx) {
-        const AudioCtx =
-          window.AudioContext ||
-          (window as unknown as { webkitAudioContext: typeof AudioContext })
-            .webkitAudioContext;
-        if (AudioCtx) {
-          this.ctx = new AudioCtx();
-        }
-      }
-      if (this.ctx && this.ctx.state === "suspended") {
-        this.ctx.resume().catch(() => {});
-      }
-      return this.ctx;
-    }
-
-    // Mechanical tick click (sound pitch varies with rotational velocity)
-    playTick(pitch = 950) {
-      try {
-        const ctx = this.getContext();
-        if (!ctx) return;
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(pitch, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(
-          pitch * 0.45,
-          ctx.currentTime + 0.018
-        );
-
-        gain.gain.setValueAtTime(0.055, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.018);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start();
-        osc.stop(ctx.currentTime + 0.02);
-      } catch (_) {}
-    }
-
-    // Triumphant landing chord (C5 - E5 - G5 - C6 chime)
-    playChime() {
-      try {
-        const ctx = this.getContext();
-        if (!ctx) return;
-
-        const freqs = [523.25, 659.25, 783.99, 1046.5];
-        freqs.forEach((freq, i) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-
-          osc.type = "triangle";
-          osc.frequency.setValueAtTime(freq, ctx.currentTime + i * 0.04);
-
-          gain.gain.setValueAtTime(0.08, ctx.currentTime + i * 0.04);
-          gain.gain.exponentialRampToValueAtTime(
-            0.0001,
-            ctx.currentTime + i * 0.04 + 0.6
-          );
-
-          osc.connect(gain);
-          gain.connect(ctx.destination);
-
-          osc.start(ctx.currentTime + i * 0.04);
-          osc.stop(ctx.currentTime + i * 0.04 + 0.65);
-        });
-      } catch (_) {}
-    }
-  }
-
-  const sfx = new SoundEffects();
 
   // Accent-colored Particle Confetti System
   function launchConfetti(canvas: HTMLCanvasElement | null) {
@@ -797,7 +719,7 @@ const postsJson = JSON.stringify(posts);
           lastTickStep = currentStep;
           // Pitch slightly modulates during spin
           const velocity = 1 - progress;
-          sfx.playTick(600 + velocity * 450);
+          soundFx.playTick(600 + velocity * 450);
         }
 
         if (progress < 1) {
@@ -820,7 +742,7 @@ const postsJson = JSON.stringify(posts);
       isSpinning = false;
 
       // SFX chime & confetti
-      sfx.playChime();
+      soundFx.playChime();
       launchConfetti(confettiCanvas);
 
       // Update text
