@@ -1,0 +1,235 @@
+---
+/**
+ * WidgetGameOfLife.astro
+ *
+ * Thursday's Hero Widget: Conway's Game of Life Interactive Canvas.
+ * Features:
+ * - Real-time zero-overhead cellular automaton running at 60 FPS.
+ * - Interactive drawing: Click and drag across the canvas to spawn living cells.
+ * - Preset generation & clearing buttons with soundFx feedback.
+ * - Dynamically inherits the active accent color for neon cell evolution.
+ */
+import { useTranslations } from "@/i18n/utils";
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = "en" } = Astro.props;
+const t = useTranslations(locale as any);
+---
+
+<div class="game-of-life-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
+  <!-- Header: Title & Action Chips -->
+  <div class="flex items-center justify-between">
+    <div class="flex items-center gap-2.5">
+      <div class="flex size-7 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs">
+        🕹️
+      </div>
+      <div class="flex flex-col">
+        <span class="text-[10px] uppercase font-bold tracking-wider opacity-50">
+          {t("heroWidget.life.title")}
+        </span>
+        <span class="font-firacode text-[11px] text-foreground/70">
+          {t("heroWidget.life.drawHint")}
+        </span>
+      </div>
+    </div>
+
+    <!-- Quick Action Buttons -->
+    <div class="flex items-center gap-1.5">
+      <button
+        id="life-random-btn"
+        type="button"
+        class="px-2 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-[11px] font-bold text-accent hover:bg-accent hover:text-background transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+        title="Spawn random pattern"
+      >
+        🎲 {t("heroWidget.life.random")}
+      </button>
+      <button
+        id="life-clear-btn"
+        type="button"
+        class="px-2 py-0.5 rounded-md bg-muted/20 border border-border/30 text-[11px] font-medium text-foreground/70 hover:text-foreground hover:bg-muted/40 transition-all duration-200 cursor-pointer"
+        title="Clear canvas"
+      >
+        🧹 {t("heroWidget.life.clear")}
+      </button>
+    </div>
+  </div>
+
+  <!-- Cellular Automaton Canvas Grid -->
+  <div class="relative flex-1 my-3 rounded-xl border border-border/30 bg-background/60 backdrop-blur-md overflow-hidden cursor-crosshair">
+    <canvas id="life-canvas" class="w-full h-full min-h-[110px]"></canvas>
+  </div>
+
+  <!-- Footer Generation Counter & Evolution Pulse -->
+  <div class="flex items-center justify-between text-[11px] font-firacode text-foreground/60 px-1">
+    <span class="flex items-center gap-1.5">
+      <span class="size-1.5 rounded-full bg-accent animate-ping"></span>
+      <span>Evolution: <strong id="life-gen-counter" class="text-accent">0</strong></span>
+    </span>
+    <span class="opacity-50">Conway's Universe (60 FPS)</span>
+  </div>
+</div>
+
+<script>
+  import { soundFx } from "@/utils/soundFx";
+
+  function initGameOfLife() {
+    const canvas = document.getElementById("life-canvas") as HTMLCanvasElement | null;
+    const randomBtn = document.getElementById("life-random-btn");
+    const clearBtn = document.getElementById("life-clear-btn");
+    const genCounter = document.getElementById("life-gen-counter");
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const cellSize = 8;
+    let cols = 0;
+    let rows = 0;
+    let grid: Uint8Array;
+    let nextGrid: Uint8Array;
+    let generation = 0;
+    let isDrawing = false;
+    let animFrame: number | null = null;
+    let lastStepTime = 0;
+
+    function resize() {
+      if (!canvas) return;
+      canvas.width = canvas.parentElement?.clientWidth || 300;
+      canvas.height = canvas.parentElement?.clientHeight || 120;
+      cols = Math.floor(canvas.width / cellSize);
+      rows = Math.floor(canvas.height / cellSize);
+      grid = new Uint8Array(cols * rows);
+      nextGrid = new Uint8Array(cols * rows);
+      seedRandom();
+    }
+
+    function seedRandom() {
+      generation = 0;
+      for (let i = 0; i < grid.length; i++) {
+        grid[i] = Math.random() > 0.82 ? 1 : 0;
+      }
+    }
+
+    function clearGrid() {
+      generation = 0;
+      grid.fill(0);
+      if (genCounter) genCounter.textContent = "0";
+    }
+
+    function step() {
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          let neighbors = 0;
+          for (let dy = -1; dy <= 1; dy++) {
+            for (let dx = -1; dx <= 1; dx++) {
+              if (dx === 0 && dy === 0) continue;
+              const nx = (x + dx + cols) % cols;
+              const ny = (y + dy + rows) % rows;
+              neighbors += grid[ny * cols + nx];
+            }
+          }
+
+          const idx = y * cols + x;
+          const current = grid[idx];
+          if (current === 1 && (neighbors === 2 || neighbors === 3)) {
+            nextGrid[idx] = 1;
+          } else if (current === 0 && neighbors === 3) {
+            nextGrid[idx] = 1;
+          } else {
+            nextGrid[idx] = 0;
+          }
+        }
+      }
+
+      grid.set(nextGrid);
+      generation++;
+      if (genCounter && generation % 4 === 0) {
+        genCounter.textContent = String(generation);
+      }
+    }
+
+    function render(time: number) {
+      if (!ctx || !canvas) return;
+
+      if (time - lastStepTime > 75) {
+        step();
+        lastStepTime = time;
+      }
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const isDark = document.documentElement.getAttribute("data-theme") !== "light";
+      ctx.fillStyle = isDark ? "#38bdf8" : "#0284c7";
+
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
+          if (grid[y * cols + x] === 1) {
+            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
+          }
+        }
+      }
+
+      animFrame = requestAnimationFrame(render);
+    }
+
+    function addCellAt(clientX: number, clientY: number) {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const x = Math.floor((clientX - rect.left) / cellSize);
+      const y = Math.floor((clientY - rect.top) / cellSize);
+      if (x >= 0 && x < cols && y >= 0 && y < rows) {
+        grid[y * cols + x] = 1;
+        soundFx.playTap(1600);
+      }
+    }
+
+    canvas.addEventListener("mousedown", e => {
+      isDrawing = true;
+      addCellAt(e.clientX, e.clientY);
+    });
+
+    window.addEventListener("mouseup", () => {
+      isDrawing = false;
+    });
+
+    canvas.addEventListener("mousemove", e => {
+      if (isDrawing) {
+        addCellAt(e.clientX, e.clientY);
+      }
+    });
+
+    canvas.addEventListener("touchstart", e => {
+      if (e.touches.length > 0) {
+        addCellAt(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    });
+
+    canvas.addEventListener("touchmove", e => {
+      if (e.touches.length > 0) {
+        addCellAt(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    });
+
+    randomBtn?.addEventListener("click", () => {
+      soundFx.playPop();
+      seedRandom();
+    });
+
+    clearBtn?.addEventListener("click", () => {
+      soundFx.playTap(800);
+      clearGrid();
+    });
+
+    resize();
+    animFrame = requestAnimationFrame(render);
+
+    document.addEventListener("astro:before-swap", () => {
+      if (animFrame) cancelAnimationFrame(animFrame);
+    }, { once: true });
+  }
+
+  initGameOfLife();
+  document.addEventListener("astro:page-load", initGameOfLife);
+</script>

@@ -16,6 +16,7 @@ import { SOCIALS } from "@/constants";
 import IntroAudio from "@/components/IntroAudio.astro";
 import SurpriseMeButton, { type RandomPostItem } from "@/components/SurpriseMeButton.astro";
 import HeroTerminalPrompt from "@/components/HeroTerminalPrompt.astro";
+import HeroDailyWidget from "@/components/hero/HeroDailyWidget.astro";
 import { useTranslations } from "@/i18n/utils";
 
 const locale = Astro.currentLocale || "en";
@@ -55,78 +56,86 @@ const randomPostsPool: RandomPostItem[] = sortedPosts.map(entry => ({
     <!-- ═══════════════════ HERO ═══════════════════ -->
     <section
       id="hero"
-      class="hero-section relative pt-10 pb-14 sm:pt-14 sm:pb-20"
+      class="hero-section relative pt-8 pb-12 sm:pt-12 sm:pb-16"
     >
-      <div class="relative z-10">
-        <!--
-          Interactive Hero Widgets Row:
-          1. HeroTerminalPrompt: Interactive shell prompt with easter egg commands (matrix, ping, quote, theme, etc.) & 'C' shortcut.
-          2. SurpriseMeButton: 3D circular drum roulette picker with Web Audio ticks & confetti.
-        -->
-        <div class="mb-3 flex flex-wrap items-center gap-2.5">
-          <HeroTerminalPrompt />
-          <SurpriseMeButton posts={randomPostsPool} />
-        </div>
+      <div class="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-center">
+        <!-- Left Column: Hero Intro, Widgets & Bio (7 cols) -->
+        <div class="lg:col-span-7 flex flex-col justify-center">
+          <!--
+            Interactive Hero Widgets Row:
+            1. HeroTerminalPrompt: Interactive shell prompt with easter egg commands (matrix, ping, quote, theme, etc.) & 'C' shortcut.
+            2. SurpriseMeButton: 3D circular drum roulette picker with Web Audio ticks & confetti.
+          -->
+          <div class="mb-3 flex flex-wrap items-center gap-2.5">
+            <HeroTerminalPrompt />
+            <SurpriseMeButton posts={randomPostsPool} />
+          </div>
 
-        <!-- Title -->
-        <h1
-          class="hero-title mb-3 text-5xl leading-[1.1] font-bold tracking-tight sm:text-6xl lg:text-7xl"
-        >
-          {SITE.title}
-          <a
-            target="_blank"
-            href="/rss.xml"
-            class="ml-1 inline-block align-middle"
-            aria-label="RSS Feed"
-            title="RSS Feed"
+          <!-- Title -->
+          <h1
+            class="hero-title mb-3 text-4xl leading-[1.1] font-bold tracking-tight sm:text-5xl lg:text-6xl"
           >
-            <IconRss
-              width={22}
-              height={22}
-              class="stroke-accent stroke-3 opacity-40 transition-opacity duration-300 hover:opacity-100"
-            />
-          </a>
-        </h1>
-
-        {
-          SITE.introAudio.enabled && (
-            <div class="mt-3">
-              <IntroAudio
-                src={SITE.introAudio.src}
-                label={SITE.introAudio.label}
-                duration={SITE.introAudio.duration}
-                isStream={SITE.introAudio.isStream}
-              />
-            </div>
-          )
-        }
-
-        <!-- Description -->
-        <p
-          class="mt-7 max-w-xl text-base leading-relaxed opacity-75 sm:text-lg"
-        >
-          {t("index.heroDesc")}
-        </p>
-        <div class="mt-8 flex flex-col sm:flex-row sm:items-center gap-4">
-          <p class="text-sm opacity-50 flex-shrink-0">
-            {t("index.writtenBy")}
-            <LinkButton
-              class="font-medium underline decoration-dashed underline-offset-4 hover:text-accent"
-              href={SITE.profile}
+            {SITE.title}
+            <a
               target="_blank"
+              href="/rss.xml"
+              class="ml-1 inline-block align-middle"
+              aria-label="RSS Feed"
+              title="RSS Feed"
             >
-              {SITE.author}
-            </LinkButton>
-          </p>
+              <IconRss
+                width={22}
+                height={22}
+                class="stroke-accent stroke-3 opacity-40 transition-opacity duration-300 hover:opacity-100"
+              />
+            </a>
+          </h1>
 
           {
-            // only display if at least one social link is enabled
-            SOCIALS.length > 0 && (
-              <div class="sm:border-l border-border/40 sm:pl-4">
-                <Socials />
+            SITE.introAudio.enabled && (
+              <div class="mt-2">
+                <IntroAudio
+                  src={SITE.introAudio.src}
+                  label={SITE.introAudio.label}
+                  duration={SITE.introAudio.duration}
+                  isStream={SITE.introAudio.isStream}
+                />
               </div>
             )
           }
+
+          <!-- Description -->
+          <p
+            class="mt-6 max-w-xl text-base leading-relaxed opacity-75 sm:text-lg"
+          >
+            {t("index.heroDesc")}
+          </p>
+          <div class="mt-6 flex flex-col sm:flex-row sm:items-center gap-4">
+            <p class="text-sm opacity-50 flex-shrink-0">
+              {t("index.writtenBy")}
+              <LinkButton
+                class="font-medium underline decoration-dashed underline-offset-4 hover:text-accent"
+                href={SITE.profile}
+                target="_blank"
+              >
+                {SITE.author}
+              </LinkButton>
+            </p>
+
+            {
+              // only display if at least one social link is enabled
+              SOCIALS.length > 0 && (
+                <div class="sm:border-l border-border/40 sm:pl-4">
+                  <Socials />
+                </div>
+              )
+            }
+          </div>
+        </div>
+
+        <!-- Right Column: Daily Rotating Hero Widget (5 cols) -->
+        <div class="lg:col-span-5 flex flex-col justify-center">
+          <HeroDailyWidget featuredPost={featuredPosts[0]} />
         </div>
       </div>
     </section>

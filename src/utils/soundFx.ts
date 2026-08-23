@@ -484,6 +484,118 @@ class SoundFxEngine {
   }
 
   /**
+   * Launchpad Pad Synthesizer:
+   * Plays a distinct musical tone from a 16-note Pentatonic scale.
+   * - Mechanical: Warm acoustic celesta / marimba tone with organic resonant decay.
+   * - Sci-Fi: Neon synth wave with frequency modulated sub-harmonics and shimmer.
+   *
+   * @param padIndex Index from 0 to 15 corresponding to the 4x4 Launchpad grid.
+   */
+  public playPentatonicPad(padIndex: number): void {
+    if (!this.isEnabled()) return;
+    this.vibrate(8);
+
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+
+      const profile = this.getProfile();
+      const PENTATONIC_FREQS = [
+        261.63, 293.66, 329.63, 392.00, 440.00, // C4, D4, E4, G4, A4
+        523.25, 587.33, 659.25, 783.99, 880.00, // C5, D5, E5, G5, A5
+        1046.50, 1174.66, 1318.51, 1567.98, 1760.00, 2093.00, // C6, D6, E6, G6, A6, C7
+      ];
+      const freq = PENTATONIC_FREQS[padIndex % PENTATONIC_FREQS.length] || 440;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      if (profile === "scifi") {
+        osc.type = "triangle";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        // Subtle octave chirp
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.02, ctx.currentTime + 0.04);
+        osc.frequency.exponentialRampToValueAtTime(freq, ctx.currentTime + 0.15);
+
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.28);
+      } else {
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+        gain.gain.setValueAtTime(0.09, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+      }
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.3);
+    } catch (_) {}
+  }
+
+  /**
+   * Quiz Correct Answer Feedback:
+   * Upward harmonic major triad chord.
+   */
+  public playQuizSuccess(): void {
+    if (!this.isEnabled()) return;
+    this.vibrate([15, 30, 45]);
+
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+
+      const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+      notes.forEach((freq, idx) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.06);
+
+        gain.gain.setValueAtTime(0.06, ctx.currentTime + idx * 0.06);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + idx * 0.06 + 0.2);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(ctx.currentTime + idx * 0.06);
+        osc.stop(ctx.currentTime + idx * 0.06 + 0.22);
+      });
+    } catch (_) {}
+  }
+
+  /**
+   * Quiz Incorrect Answer Feedback:
+   * Low descending buzzer tone.
+   */
+  public playQuizError(): void {
+    if (!this.isEnabled()) return;
+    this.vibrate([40, 20, 40]);
+
+    try {
+      const ctx = this.getContext();
+      if (!ctx) return;
+
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = "sawtooth";
+      osc.frequency.setValueAtTime(180, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(90, ctx.currentTime + 0.18);
+
+      gain.gain.setValueAtTime(0.05, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.18);
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.2);
+    } catch (_) {}
+  }
+
+  /**
    * Mute Alert Feedback:
    * - Mechanical: Latch snap lock/unlock.
    * - Sci-Fi: Shield power-up / power-down grid tone.

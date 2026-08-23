@@ -1,0 +1,123 @@
+---
+/**
+ * WidgetSpotlightCard.astro
+ *
+ * Friday's Hero Widget: 3D Spotlight Card for Featured Post.
+ * Features:
+ * - 3D Parallax Tilt effect following mouse cursor with specular sheen.
+ * - Highlight badge "RECOMMENDED FOR YOU" with gold aura.
+ * - Dynamic post title, reading time, and primary tags.
+ * - Magnetic action button with tactile click feedback.
+ */
+import { useTranslations } from "@/i18n/utils";
+import type { ContentEntry } from "@/utils/contentEntry";
+
+interface Props {
+  locale?: string;
+  featuredPost?: ContentEntry;
+}
+
+const { locale = "en", featuredPost } = Astro.props;
+const t = useTranslations(locale as any);
+const prefix = locale === "es" ? "/es" : "";
+
+const title = featuredPost?.data.title || "Vibe Coding: programming with AI at the speed of thought";
+const description = featuredPost?.data.description || "Vibe coding is high-level design executed at high speed. It amplifies technical judgment.";
+const href = featuredPost ? `${prefix}/posts/${featuredPost.id.replace(/^[a-z]{2}\//, "").replace(/\.md$/, "")}` : `${prefix}/posts/vibe-coding-new-era`;
+---
+
+<div class="spotlight-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none" data-spotlight-card>
+  <!-- Card Header: Featured Badge & Stars -->
+  <div class="flex items-center justify-between">
+    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-[10px] font-bold text-amber-500 tracking-wider">
+      <span>⭐</span>
+      <span>{t("heroWidget.spotlight.badge")}</span>
+    </span>
+    <span class="text-xs opacity-60">FRIDAY DROP ✨</span>
+  </div>
+
+  <!-- Main Article Teaser Card with 3D Tilt -->
+  <div class="spotlight-card-inner relative flex flex-col justify-between my-2 p-3.5 rounded-xl border border-accent/30 bg-background/75 backdrop-blur-md shadow-lg overflow-hidden transition-all duration-300">
+    <!-- Specular Glow Layer -->
+    <div class="spotlight-glow pointer-events-none absolute -inset-full opacity-0 transition-opacity duration-300" aria-hidden="true"></div>
+
+    <div class="space-y-1.5 relative z-10">
+      <h3 class="text-sm sm:text-base font-bold text-foreground line-clamp-2 leading-snug group-hover:text-accent">
+        {title}
+      </h3>
+      <p class="text-xs text-foreground/70 line-clamp-2 leading-relaxed">
+        {description}
+      </p>
+    </div>
+
+    <!-- Tags & Reading Time Row -->
+    <div class="flex items-center justify-between mt-3 pt-2 border-t border-border/30 text-[11px] relative z-10 font-firacode">
+      <span class="px-2 py-0.5 rounded bg-accent/10 text-accent font-semibold">
+        #ai #productivity
+      </span>
+      <span class="opacity-60 flex items-center gap-1">
+        <span>⏱️</span>
+        <span>4 min read</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Read Action Button -->
+  <a
+    href={href}
+    class="spotlight-read-btn flex items-center justify-center gap-2 w-full py-2 rounded-lg bg-accent text-background font-bold text-xs hover:brightness-110 transition-all duration-200 shadow-md shadow-accent/20 active:scale-98"
+  >
+    <span>{t("heroWidget.spotlight.read")}</span>
+    <span>→</span>
+  </a>
+</div>
+
+<style>
+  .spotlight-card-inner {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+  }
+</style>
+
+<script>
+  import { soundFx } from "@/utils/soundFx";
+
+  function initSpotlightWidget() {
+    const card = document.querySelector("[data-spotlight-card]") as HTMLElement | null;
+    const inner = card?.querySelector(".spotlight-card-inner") as HTMLElement | null;
+    const glow = card?.querySelector(".spotlight-glow") as HTMLElement | null;
+    const readBtn = card?.querySelector(".spotlight-read-btn");
+
+    if (!card || !inner) return;
+
+    card.addEventListener("mousemove", (e: MouseEvent) => {
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const rotateX = ((y - centerY) / centerY) * -10;
+      const rotateY = ((x - centerX) / centerX) * 10;
+
+      inner.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+      if (glow) {
+        glow.style.opacity = "0.2";
+        glow.style.background = `radial-gradient(circle at ${x}px ${y}px, var(--accent) 0%, transparent 60%)`;
+      }
+    });
+
+    card.addEventListener("mouseleave", () => {
+      inner.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+      if (glow) glow.style.opacity = "0";
+    });
+
+    readBtn?.addEventListener("click", () => {
+      soundFx.playTap(1500);
+    });
+  }
+
+  initSpotlightWidget();
+  document.addEventListener("astro:page-load", initSpotlightWidget);
+</script>

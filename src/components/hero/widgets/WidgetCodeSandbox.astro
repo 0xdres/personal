@@ -1,0 +1,226 @@
+---
+/**
+ * WidgetCodeSandbox.astro
+ *
+ * Tuesday's Hero Widget: Live Interactive Code Sandbox.
+ * Features:
+ * - VS Code / Raycast aesthetic with traffic light window controls.
+ * - Interactive tabs switching between TypeScript, CSS, and AI Prompt snippets.
+ * - Animated Typewriter simulation in idle.
+ * - Interactive "Run" button synthesizing execution chimes and showing output stream.
+ * - Copy code action with soundFx feedback.
+ */
+import { useTranslations } from "@/i18n/utils";
+
+interface Props {
+  locale?: string;
+}
+
+const { locale = "en" } = Astro.props;
+const t = useTranslations(locale as any);
+
+const SNIPPETS = [
+  {
+    id: "agent",
+    filename: "agent.ts",
+    icon: "⚡",
+    code: `async function createVibeAgent(prompt: string) {
+  const model = new AI.Assistant({ model: "gemini-2.5" });
+  const result = await model.execute({
+    task: prompt,
+    speed: "exponential",
+    vibe: 100
+  });
+  return result.ship();
+}`,
+    output: "✨ Agent deployed: High precision, 0% fluff, 100% vibe.",
+  },
+  {
+    id: "theme",
+    filename: "theme.css",
+    icon: "🎨",
+    code: `:root[data-accent="arcade"] {
+  --accent: #00f0ff;
+  --border: #f706cf;
+  --glow: 0 0 25px #00f0ff;
+  animation: retroShimmer 2s infinite;
+}`,
+    output: "🎨 Synthwave Neon Bloom injected into DOM root.",
+  },
+  {
+    id: "vibe",
+    filename: "vibe.ts",
+    icon: "🚀",
+    code: `// The Vibe Coding Theorem
+const build = (intent: Intent): Software => {
+  const draft = AI.generate(intent);
+  return reviewAndDirect(draft);
+};`,
+    output: "🚀 Software compiled at the speed of thought.",
+  },
+];
+---
+
+<div class="code-sandbox-widget flex flex-col h-full rounded-xl overflow-hidden font-firacode select-none">
+  <!-- Code Editor Header -->
+  <div class="flex items-center justify-between px-3 py-2 border-b border-border/40 bg-muted/25">
+    <!-- Traffic lights -->
+    <div class="flex items-center gap-1.5" aria-hidden="true">
+      <span class="size-2.5 rounded-full bg-[#ff5f56]/80"></span>
+      <span class="size-2.5 rounded-full bg-[#ffbd2e]/80"></span>
+      <span class="size-2.5 rounded-full bg-[#27c93f]/80"></span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex items-center gap-1">
+      {
+        SNIPPETS.map((s, idx) => (
+          <button
+            type="button"
+            class:list={[
+              "sandbox-tab px-2.5 py-1 rounded-md text-[11px] font-medium transition-all duration-200 cursor-pointer flex items-center gap-1",
+              idx === 0 ? "bg-background text-accent border border-accent/30 shadow-xs active" : "text-foreground/60 hover:text-foreground hover:bg-muted/30",
+            ]}
+            data-snippet-id={s.id}
+          >
+            <span>{s.icon}</span>
+            <span>{s.filename}</span>
+          </button>
+        ))
+      }
+    </div>
+
+    <!-- Run Action Button -->
+    <button
+      id="sandbox-run-btn"
+      type="button"
+      class="flex items-center gap-1 px-2 py-1 rounded-md bg-accent/15 border border-accent/30 text-[11px] font-bold text-accent hover:bg-accent hover:text-background hover:border-accent transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+      title="Execute code snippet"
+    >
+      <span>▶</span>
+      <span>{t("heroWidget.code.run")}</span>
+    </button>
+  </div>
+
+  <!-- Code Body with Syntax Highlighting Mockup -->
+  <div class="relative flex-1 p-3.5 bg-background/60 backdrop-blur-md overflow-hidden text-xs leading-relaxed">
+    <pre id="sandbox-code-display" class="font-firacode text-foreground/90 whitespace-pre-wrap transition-opacity duration-200">{SNIPPETS[0].code}</pre>
+
+    <!-- Execution Output Drawer -->
+    <div
+      id="sandbox-output-drawer"
+      class="hidden absolute inset-x-0 bottom-0 p-3 border-t border-accent/40 bg-background/95 backdrop-blur-xl shadow-lg transition-all duration-300"
+    >
+      <div class="flex items-center justify-between text-[10px] uppercase font-bold text-accent mb-1">
+        <span>{t("heroWidget.code.output")}</span>
+        <button id="sandbox-close-output" type="button" class="text-foreground/50 hover:text-foreground cursor-pointer">✕</button>
+      </div>
+      <div id="sandbox-output-text" class="text-xs text-foreground font-firacode">
+        {SNIPPETS[0].output}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .sandbox-tab.active {
+    background: color-mix(in srgb, var(--accent) 15%, var(--background));
+    border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  import { soundFx } from "@/utils/soundFx";
+
+  function initCodeSandbox() {
+    const SNIPPETS_DATA = [
+      {
+        id: "agent",
+        code: `async function createVibeAgent(prompt: string) {
+  const model = new AI.Assistant({ model: "gemini-2.5" });
+  const result = await model.execute({
+    task: prompt,
+    speed: "exponential",
+    vibe: 100
+  });
+  return result.ship();
+}`,
+        output: "✨ Agent deployed: High precision, 0% fluff, 100% vibe.",
+      },
+      {
+        id: "theme",
+        code: `:root[data-accent="arcade"] {
+  --accent: #00f0ff;
+  --border: #f706cf;
+  --glow: 0 0 25px #00f0ff;
+  animation: retroShimmer 2s infinite;
+}`,
+        output: "🎨 Synthwave Neon Bloom injected into DOM root.",
+      },
+      {
+        id: "vibe",
+        code: `// The Vibe Coding Theorem
+const build = (intent: Intent): Software => {
+  const draft = AI.generate(intent);
+  return reviewAndDirect(draft);
+};`,
+        output: "🚀 Software compiled at the speed of thought.",
+      },
+    ];
+
+    let currentSnippet = SNIPPETS_DATA[0];
+    const display = document.getElementById("sandbox-code-display");
+    const outputDrawer = document.getElementById("sandbox-output-drawer");
+    const outputText = document.getElementById("sandbox-output-text");
+    const runBtn = document.getElementById("sandbox-run-btn");
+    const closeOutputBtn = document.getElementById("sandbox-close-output");
+    const tabs = document.querySelectorAll(".sandbox-tab");
+
+    // Tab Switching
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        const id = tab.getAttribute("data-snippet-id");
+        const found = SNIPPETS_DATA.find(s => s.id === id);
+        if (!found) return;
+
+        soundFx.playTap(1300);
+        currentSnippet = found;
+
+        tabs.forEach(t => {
+          t.classList.remove("active", "bg-background", "text-accent", "border", "border-accent/30", "shadow-xs");
+          t.classList.add("text-foreground/60");
+        });
+        tab.classList.add("active", "bg-background", "text-accent", "border", "border-accent/30", "shadow-xs");
+        tab.classList.remove("text-foreground/60");
+
+        if (display) {
+          display.style.opacity = "0";
+          setTimeout(() => {
+            display.textContent = currentSnippet.code;
+            display.style.opacity = "1";
+          }, 100);
+        }
+
+        outputDrawer?.classList.add("hidden");
+      });
+    });
+
+    // Run action
+    runBtn?.addEventListener("click", () => {
+      soundFx.playExecute();
+      if (outputDrawer && outputText) {
+        outputText.textContent = currentSnippet.output;
+        outputDrawer.classList.remove("hidden");
+      }
+    });
+
+    closeOutputBtn?.addEventListener("click", () => {
+      soundFx.playTap(900);
+      outputDrawer?.classList.add("hidden");
+    });
+  }
+
+  initCodeSandbox();
+  document.addEventListener("astro:page-load", initCodeSandbox);
+</script>

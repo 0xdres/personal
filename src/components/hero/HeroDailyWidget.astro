@@ -1,0 +1,216 @@
+---
+/**
+ * HeroDailyWidget.astro
+ *
+ * Master Orchestrator Component for the 50% Right Column of the Hero Section.
+ * Features:
+ * - Automatically displays the active widget corresponding to the current day of the week (0 = Sunday .. 6 = Saturday).
+ * - Glassmorphism 3D container with subtle neon border bloom.
+ * - Explorer Mode: Locked by default; unlocked via Quiz modal to freely shuffle widgets.
+ * - Dev Mode Toolbar (import.meta.env.DEV): Instant day switcher for rapid iteration.
+ * - Event-driven architecture with smooth crossfade panel transitions.
+ */
+import { useTranslations } from "@/i18n/utils";
+import type { ContentEntry } from "@/utils/contentEntry";
+
+import WidgetBento from "./widgets/WidgetBento.astro";
+import WidgetCodeSandbox from "./widgets/WidgetCodeSandbox.astro";
+import WidgetAudioDeck from "./widgets/WidgetAudioDeck.astro";
+import WidgetGameOfLife from "./widgets/WidgetGameOfLife.astro";
+import WidgetSpotlightCard from "./widgets/WidgetSpotlightCard.astro";
+import WidgetLaunchpad from "./widgets/WidgetLaunchpad.astro";
+import WidgetDevRadar from "./widgets/WidgetDevRadar.astro";
+import WidgetQuizModal from "./WidgetQuizModal.astro";
+import WidgetDevToolbar from "./WidgetDevToolbar.astro";
+
+interface Props {
+  class?: string;
+  featuredPost?: ContentEntry;
+}
+
+const { class: className = "", featuredPost } = Astro.props;
+const locale = Astro.currentLocale || "en";
+const t = useTranslations(locale as any);
+---
+
+<div class:list={["hero-daily-widget-wrapper relative w-full flex flex-col justify-center", className]}>
+  <!-- Main 3D Glassmorphism Frame -->
+  <div class="hero-widget-card relative flex flex-col w-full h-[360px] sm:h-[380px] rounded-2xl border border-border/60 bg-background/85 text-foreground shadow-2xl backdrop-blur-xl transition-all duration-300 overflow-hidden">
+    <!-- Top Header Bar -->
+    <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-border/40 bg-muted/20 select-none">
+      <!-- Active Day Badge -->
+      <div class="flex items-center gap-2">
+        <span class="size-2 rounded-full bg-accent animate-pulse"></span>
+        <span id="hero-widget-day-label" class="font-firacode text-xs font-bold text-foreground">
+          {t("heroWidget.badgeToday")}
+        </span>
+      </div>
+
+      <!-- Explorer Lock / Shuffle Button -->
+      <div class="flex items-center gap-1.5">
+        <button
+          id="hero-explorer-btn"
+          type="button"
+          class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-bold text-accent hover:bg-accent hover:text-background transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+          data-locked="true"
+        >
+          <span id="hero-explorer-icon">🔒</span>
+          <span id="hero-explorer-text">{t("heroWidget.explorerLocked")}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Widgets Panels Container -->
+    <div class="relative flex-1 w-full overflow-hidden">
+      <!-- 1: Monday (Bento Dev Deck) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300" data-panel-day="1">
+        <WidgetBento locale={locale} />
+      </div>
+
+      <!-- 2: Tuesday (Live Code Sandbox) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="2">
+        <WidgetCodeSandbox locale={locale} />
+      </div>
+
+      <!-- 3: Wednesday (Cyber Lo-Fi Deck) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="3">
+        <WidgetAudioDeck locale={locale} />
+      </div>
+
+      <!-- 4: Thursday (Game of Life) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="4">
+        <WidgetGameOfLife locale={locale} />
+      </div>
+
+      <!-- 5: Friday (3D Spotlight Card) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="5">
+        <WidgetSpotlightCard locale={locale} featuredPost={featuredPost} />
+      </div>
+
+      <!-- 6: Saturday (Mini Launchpad) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="6">
+        <WidgetLaunchpad locale={locale} />
+      </div>
+
+      <!-- 0: Sunday (Dev Radar) -->
+      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="0">
+        <WidgetDevRadar locale={locale} />
+      </div>
+    </div>
+  </div>
+
+  <!-- DEV Toolbar (Rendered in dev mode only) -->
+  {import.meta.env.DEV && <WidgetDevToolbar locale={locale} />}
+
+  <!-- Quiz Unlocker Modal -->
+  <WidgetQuizModal locale={locale} />
+</div>
+
+<style>
+  .hero-widget-card {
+    border-color: color-mix(in srgb, var(--border) 60%, transparent);
+    box-shadow:
+      0 20px 50px -10px color-mix(in srgb, var(--foreground) 6%, transparent),
+      0 0 25px -5px color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+
+  .hero-widget-card:hover {
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+    box-shadow:
+      0 25px 60px -10px color-mix(in srgb, var(--foreground) 10%, transparent),
+      0 0 35px -5px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+</style>
+
+<script>
+  import { soundFx } from "@/utils/soundFx";
+
+  function initHeroDailyWidget() {
+    const panels = document.querySelectorAll(".widget-panel");
+    const dayLabel = document.getElementById("hero-widget-day-label");
+    const explorerBtn = document.getElementById("hero-explorer-btn");
+    const explorerIcon = document.getElementById("hero-explorer-icon");
+    const explorerText = document.getElementById("hero-explorer-text");
+
+    const DAY_NAMES: Record<number, string> = {
+      1: "Monday • Bento Deck",
+      2: "Tuesday • Code Sandbox",
+      3: "Wednesday • Cyber Lo-Fi",
+      4: "Thursday • Game of Life",
+      5: "Friday • Spotlight Card",
+      6: "Saturday • Launchpad",
+      0: "Sunday • Dev Radar",
+    };
+
+    // Determine initial day (current day of week: 0 to 6)
+    const today = new Date().getDay();
+    let currentDay = today;
+
+    function activatePanel(day: number) {
+      currentDay = day;
+      panels.forEach(panel => {
+        const pDay = Number(panel.getAttribute("data-panel-day"));
+        if (pDay === day) {
+          panel.classList.remove("hidden");
+          setTimeout(() => {
+            panel.classList.remove("opacity-0");
+          }, 10);
+        } else {
+          panel.classList.add("opacity-0");
+          setTimeout(() => {
+            panel.classList.add("hidden");
+          }, 250);
+        }
+      });
+
+      if (dayLabel) {
+        dayLabel.textContent = DAY_NAMES[day] || "Daily Widget";
+      }
+    }
+
+    function checkExplorerUnlock() {
+      const isUnlocked = localStorage.getItem("hero-explorer-unlocked") === "true";
+      if (isUnlocked && explorerBtn && explorerIcon && explorerText) {
+        explorerBtn.setAttribute("data-locked", "false");
+        explorerIcon.textContent = "🔀";
+        explorerText.textContent = "Shuffle";
+      }
+    }
+
+    // Explorer button click handler
+    explorerBtn?.addEventListener("click", () => {
+      const isLocked = explorerBtn.getAttribute("data-locked") === "true";
+      if (isLocked) {
+        soundFx.playTap(1100);
+        window.dispatchEvent(new CustomEvent("hero-quiz:open"));
+      } else {
+        // Shuffle to next day
+        soundFx.playPop();
+        const nextDay = (currentDay + 1) % 7;
+        activatePanel(nextDay);
+      }
+    });
+
+    // Listen for custom change events (from dev toolbar or terminal shell)
+    window.addEventListener("herowidget:change", (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail && typeof detail.day === "number") {
+        activatePanel(detail.day);
+      }
+    });
+
+    // Listen for quiz unlock event
+    window.addEventListener("hero-explorer:unlocked", () => {
+      checkExplorerUnlock();
+    });
+
+    // Initialize with persisted dev day or today's default widget
+    const savedDevDay = localStorage.getItem("hero-dev-selected-day");
+    const initialDay = savedDevDay !== null ? Number(savedDevDay) : today;
+    activatePanel(initialDay);
+    checkExplorerUnlock();
+  }
+
+  initHeroDailyWidget();
+  document.addEventListener("astro:page-load", initHeroDailyWidget);
+</script>
