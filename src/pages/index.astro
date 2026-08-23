@@ -15,6 +15,7 @@ import { SITE } from "@/config";
 import { SOCIALS } from "@/constants";
 import IntroAudio from "@/components/IntroAudio.astro";
 import SurpriseMeButton, { type RandomPostItem } from "@/components/SurpriseMeButton.astro";
+import HeroTerminalPrompt from "@/components/HeroTerminalPrompt.astro";
 import { useTranslations } from "@/i18n/utils";
 
 const locale = Astro.currentLocale || "en";
@@ -33,7 +34,11 @@ const sortedPosts = getSortedPosts(posts);
 const featuredPosts = sortedPosts.filter(({ data }) => "featured" in data && data.featured);
 const recentPosts = sortedPosts.filter(({ data }) => !("featured" in data && data.featured));
 
-// Pool of posts for the Surprise Me roulette
+/**
+ * Lightweight pool of posts passed to the "Surprise Me" 3D Roulette picker.
+ * Maps only essential metadata (title, localized URL, primary tag, reading time, description)
+ * to keep the client-side JSON footprint minimal (~1.5 KB).
+ */
 const randomPostsPool: RandomPostItem[] = sortedPosts.map(entry => ({
   title: entry.data.title,
   href: prefix + getEntryPath({ collection: entry.collection, id: entry.id, filePath: entry.filePath }),
@@ -53,24 +58,13 @@ const randomPostsPool: RandomPostItem[] = sortedPosts.map(entry => ({
       class="hero-section relative pt-10 pb-14 sm:pt-14 sm:pb-20"
     >
       <div class="relative z-10">
-        <!-- Terminal prompt badge & Surprise Me row -->
+        <!--
+          Interactive Hero Widgets Row:
+          1. HeroTerminalPrompt: Interactive shell prompt with easter egg commands (matrix, ping, quote, theme, etc.) & 'C' shortcut.
+          2. SurpriseMeButton: 3D circular drum roulette picker with Web Audio ticks & confetti.
+        -->
         <div class="mb-3 flex flex-wrap items-center gap-2.5">
-          <div
-            class="inline-flex items-center gap-2 rounded-full border border-border/40 bg-muted/20 px-3.5 py-1.5 font-sans text-xs sm:text-sm"
-            style="font-weight: 500; font-stretch: 125%;"
-          >
-            <span class="relative flex h-2 w-2">
-              <span
-                class="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60"
-              ></span>
-              <span class="relative inline-flex h-2 w-2 rounded-full bg-accent"
-              ></span>
-            </span>
-              <span class="text-accent">{SITE.heroTerminalPrompt.prefix}</span>
-              {SITE.heroTerminalPrompt.path}
-              <span class="opacity-40">{SITE.heroTerminalPrompt.suffix}</span>
-          </div>
-
+          <HeroTerminalPrompt />
           <SurpriseMeButton posts={randomPostsPool} />
         </div>
 

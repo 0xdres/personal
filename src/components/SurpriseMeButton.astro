@@ -1,4 +1,16 @@
 ---
+/**
+ * SurpriseMeButton.astro
+ *
+ * An interactive gamified "Surprise Me" roulette button that selects a random blog post.
+ * Features:
+ * - 3D Cylindrical drum picker (iOS date-picker style) with infinite modular looping
+ * - Real-time Web Audio API mechanical tick clicks & landing chord (zero external audio assets)
+ * - Dynamic accent-colored canvas confetti burst on post selection
+ * - Smooth Quartic Ease-Out physics for realistic mechanical wheel deceleration
+ * - Clean Left-to-Right (LTR) text alignment with strict ellipsis bounds
+ * - Full accessibility with keyboard escape, focus management, and localized strings
+ */
 import { useTranslations } from "@/i18n/utils";
 
 export interface RandomPostItem {
@@ -18,7 +30,7 @@ const { posts, class: className = "" } = Astro.props;
 const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
 
-// Serialize posts safely for client script
+// Serialize posts safely for the client-side JavaScript engine
 const postsJson = JSON.stringify(posts);
 ---
 
