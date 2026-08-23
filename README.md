@@ -41,7 +41,7 @@ Heavily customized version of the [AstroPaper](https://github.com/satnaing/astro
 
 ### Modern design
 
-- Hero with animated prompt configurable from `heroTerminalPrompt` in `src/config.ts` (default: `~/ready-to-go $`)
+- Hero with animated prompt configurable from `heroTerminalPrompt` in `src/config.ts` (default: `~/open-terminal $`)
 - Global backdrop: grid + cursor glow + noise texture (all pages) optional and configurable from `src/config.ts`
 - Glassmorphism on navbar, cards and modals
 

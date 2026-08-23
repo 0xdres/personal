@@ -7,7 +7,6 @@ tags:
   - agentes
   - llm
   - python
-featured: true
 draft: false
 ---
 

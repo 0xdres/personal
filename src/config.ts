@@ -18,7 +18,7 @@ export const SITE = {
   indexPostsGrid: false, // show recent/featured posts in grid layout on the home page (like /posts page)
   heroTerminalPrompt: {
     prefix: "~", // highlighted part on the left
-    path: "/ready-to-go", // central prompt text
+    path: "/open-terminal", // central prompt text (suggestive interactive command)
     suffix: "$", // terminal symbol on the right
   },
   backdropEffects: {

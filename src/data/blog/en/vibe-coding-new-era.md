@@ -7,6 +7,7 @@ tags:
   - productivity
   - reflection
   - dev
+featured: true
 draft: false
 ---
 
