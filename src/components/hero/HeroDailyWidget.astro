@@ -15,7 +15,7 @@ import type { ContentEntry } from "@/utils/contentEntry";
 
 import WidgetBento from "./widgets/WidgetBento.astro";
 import WidgetCodeSandbox from "./widgets/WidgetCodeSandbox.astro";
-import WidgetAudioDeck from "./widgets/WidgetAudioDeck.astro";
+import WidgetPhysicsLab from "./widgets/WidgetPhysicsLab.astro";
 import WidgetGameOfLife from "./widgets/WidgetGameOfLife.astro";
 import WidgetSpotlightCard from "./widgets/WidgetSpotlightCard.astro";
 import WidgetLaunchpad from "./widgets/WidgetLaunchpad.astro";
@@ -72,9 +72,9 @@ const t = useTranslations(locale as any);
         <WidgetCodeSandbox locale={locale} />
       </div>
 
-      <!-- 3: Wednesday (Cyber Lo-Fi Deck) -->
+      <!-- 3: Wednesday (Quantum Physics & Gravity Lab) -->
       <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="3">
-        <WidgetAudioDeck locale={locale} />
+        <WidgetPhysicsLab locale={locale} />
       </div>
 
       <!-- 4: Thursday (Game of Life) -->

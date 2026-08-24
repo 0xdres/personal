@@ -3,8 +3,9 @@
  * WidgetGameOfLife.astro
  *
  * Thursday's Hero Widget: Conway's Game of Life Interactive Canvas.
- * Features:
+ * Features & Optimizations:
  * - Real-time zero-overhead cellular automaton running at 60 FPS.
+ * - 100% Zero-overhead background pause via IntersectionObserver, document.visibilityState and Panel Active Guard.
  * - Interactive drawing: Click and drag across the canvas to spawn living cells.
  * - Preset generation & clearing buttons with soundFx feedback.
  * - Dynamically inherits the active accent color for neon cell evolution.
@@ -19,7 +20,7 @@ const { locale = "en" } = Astro.props;
 const t = useTranslations(locale as any);
 ---
 
-<div class="game-of-life-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
+<div id="life-widget-root" class="game-of-life-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
   <!-- Header: Title & Action Chips -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2.5">
@@ -76,11 +77,12 @@ const t = useTranslations(locale as any);
   import { soundFx } from "@/utils/soundFx";
 
   function initGameOfLife() {
+    const rootEl = document.getElementById("life-widget-root");
     const canvas = document.getElementById("life-canvas") as HTMLCanvasElement | null;
     const randomBtn = document.getElementById("life-random-btn");
     const clearBtn = document.getElementById("life-clear-btn");
     const genCounter = document.getElementById("life-gen-counter");
-    if (!canvas) return;
+    if (!canvas || !rootEl) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -95,6 +97,10 @@ const t = useTranslations(locale as any);
     let animFrame: number | null = null;
     let lastStepTime = 0;
 
+    let isRunning = false;
+    let isInViewport = true;
+    let isPanelActive = true;
+
     function resize() {
       if (!canvas) return;
       canvas.width = canvas.parentElement?.clientWidth || 300;
@@ -106,8 +112,46 @@ const t = useTranslations(locale as any);
       seedRandom();
     }
 
+    function evaluateExecution() {
+      const shouldRun = isInViewport && isPanelActive && document.visibilityState === "visible";
+      if (shouldRun && !isRunning) {
+        isRunning = true;
+        animFrame = requestAnimationFrame(render);
+      } else if (!shouldRun && isRunning) {
+        isRunning = false;
+        if (animFrame) {
+          cancelAnimationFrame(animFrame);
+          animFrame = null;
+        }
+      }
+    }
+
+    // 1. Intersection Observer: Pauses when scrolled out of view
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          isInViewport = entry.isIntersecting;
+          evaluateExecution();
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(rootEl);
+
+    // 2. Page Visibility: Pauses immediately on background tab
+    document.addEventListener("visibilitychange", evaluateExecution);
+
+    // 3. Panel Active Guard: Listens to hero widget changes (Day 4 = Thursday)
+    window.addEventListener("herowidget:change", (e: Event) => {
+      const day = (e as CustomEvent).detail?.day;
+      isPanelActive = day === 4;
+      if (isPanelActive) setTimeout(resize, 60);
+      evaluateExecution();
+    });
+
     function seedRandom() {
       generation = 0;
+      if (!grid) return;
       for (let i = 0; i < grid.length; i++) {
         grid[i] = Math.random() > 0.82 ? 1 : 0;
       }
@@ -115,11 +159,12 @@ const t = useTranslations(locale as any);
 
     function clearGrid() {
       generation = 0;
-      grid.fill(0);
+      if (grid) grid.fill(0);
       if (genCounter) genCounter.textContent = "0";
     }
 
     function step() {
+      if (!grid || !nextGrid) return;
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
           let neighbors = 0;
@@ -152,7 +197,7 @@ const t = useTranslations(locale as any);
     }
 
     function render(time: number) {
-      if (!ctx || !canvas) return;
+      if (!ctx || !canvas || !isRunning) return;
 
       if (time - lastStepTime > 75) {
         step();
@@ -163,19 +208,23 @@ const t = useTranslations(locale as any);
       const isDark = document.documentElement.getAttribute("data-theme") !== "light";
       ctx.fillStyle = isDark ? "#38bdf8" : "#0284c7";
 
-      for (let y = 0; y < rows; y++) {
-        for (let x = 0; x < cols; x++) {
-          if (grid[y * cols + x] === 1) {
-            ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
+      if (grid) {
+        for (let y = 0; y < rows; y++) {
+          for (let x = 0; x < cols; x++) {
+            if (grid[y * cols + x] === 1) {
+              ctx.fillRect(x * cellSize, y * cellSize, cellSize - 1, cellSize - 1);
+            }
           }
         }
       }
 
-      animFrame = requestAnimationFrame(render);
+      if (isRunning) {
+        animFrame = requestAnimationFrame(render);
+      }
     }
 
     function addCellAt(clientX: number, clientY: number) {
-      if (!canvas) return;
+      if (!canvas || !grid) return;
       const rect = canvas.getBoundingClientRect();
       const x = Math.floor((clientX - rect.left) / cellSize);
       const y = Math.floor((clientY - rect.top) / cellSize);
@@ -223,9 +272,14 @@ const t = useTranslations(locale as any);
     });
 
     resize();
-    animFrame = requestAnimationFrame(render);
+
+    const panel = rootEl.closest(".widget-panel");
+    if (panel) isPanelActive = !panel.classList.contains("hidden");
+    evaluateExecution();
 
     document.addEventListener("astro:before-swap", () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", evaluateExecution);
       if (animFrame) cancelAnimationFrame(animFrame);
     }, { once: true });
   }

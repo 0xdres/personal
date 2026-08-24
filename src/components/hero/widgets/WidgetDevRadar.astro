@@ -3,8 +3,9 @@
  * WidgetDevRadar.astro
  *
  * Sunday's Hero Widget: Dev Radar & Tech Pulse.
- * Features:
+ * Features & Optimizations:
  * - HTML5 Canvas sweeping radar with glowing circular range rings.
+ * - 100% Zero-overhead background pause via IntersectionObserver, document.visibilityState and Panel Active Guard.
  * - Orbiting satellite nodes representing modern engineering domains.
  * - Interactive hover on nodes with metrics tooltip and soundFx feedback.
  * - Dynamic pulse wave animation.
@@ -19,7 +20,7 @@ const { locale = "en" } = Astro.props;
 const t = useTranslations(locale as any);
 ---
 
-<div class="radar-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
+<div id="radar-widget-root" class="radar-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
   <!-- Header -->
   <div class="flex items-center justify-between">
     <div class="flex items-center gap-2.5">
@@ -58,8 +59,9 @@ const t = useTranslations(locale as any);
 
 <script>
   function initDevRadar() {
+    const rootEl = document.getElementById("radar-widget-root");
     const canvas = document.getElementById("dev-radar-canvas") as HTMLCanvasElement | null;
-    if (!canvas) return;
+    if (!canvas || !rootEl) return;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -68,6 +70,9 @@ const t = useTranslations(locale as any);
     canvas.height = canvas.parentElement?.clientHeight || 120;
 
     let animFrame: number | null = null;
+    let isRunning = false;
+    let isInViewport = true;
+    let isPanelActive = true;
     let angle = 0;
 
     const targets = [
@@ -78,8 +83,44 @@ const t = useTranslations(locale as any);
       { label: "Tailwind", r: 50, a: 1.4, color: "#38bdf8" },
     ];
 
+    function evaluateExecution() {
+      const shouldRun = isInViewport && isPanelActive && document.visibilityState === "visible";
+      if (shouldRun && !isRunning) {
+        isRunning = true;
+        animFrame = requestAnimationFrame(render);
+      } else if (!shouldRun && isRunning) {
+        isRunning = false;
+        if (animFrame) {
+          cancelAnimationFrame(animFrame);
+          animFrame = null;
+        }
+      }
+    }
+
+    // 1. Intersection Observer: Pauses when scrolled away
+    const observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          isInViewport = entry.isIntersecting;
+          evaluateExecution();
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(rootEl);
+
+    // 2. Page Visibility: Pauses immediately on background tab
+    document.addEventListener("visibilitychange", evaluateExecution);
+
+    // 3. Panel Active Guard: Listens to hero widget changes (Day 0 = Sunday)
+    window.addEventListener("herowidget:change", (e: Event) => {
+      const day = (e as CustomEvent).detail?.day;
+      isPanelActive = day === 0;
+      evaluateExecution();
+    });
+
     function render() {
-      if (!ctx || !canvas) return;
+      if (!ctx || !canvas || !isRunning) return;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       const centerX = canvas.width / 2;
@@ -146,12 +187,18 @@ const t = useTranslations(locale as any);
       });
 
       angle += 0.035;
-      animFrame = requestAnimationFrame(render);
+      if (isRunning) {
+        animFrame = requestAnimationFrame(render);
+      }
     }
 
-    animFrame = requestAnimationFrame(render);
+    const panel = rootEl.closest(".widget-panel");
+    if (panel) isPanelActive = !panel.classList.contains("hidden");
+    evaluateExecution();
 
     document.addEventListener("astro:before-swap", () => {
+      observer.disconnect();
+      document.removeEventListener("visibilitychange", evaluateExecution);
       if (animFrame) cancelAnimationFrame(animFrame);
     }, { once: true });
   }
