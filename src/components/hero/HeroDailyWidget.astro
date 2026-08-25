@@ -153,43 +153,15 @@ const DAY_NAMES_SSR: Record<number, string> = {
       color-mix(in srgb, var(--accent) 8%, transparent) 45%,
       transparent 70%
     );
-    animation: auroraBreathe 7s ease-in-out infinite alternate;
+    opacity: 0.65;
   }
 
-  @keyframes auroraBreathe {
-    0% {
-      transform: scale(0.95) translate3d(0, 0, 0);
-      opacity: 0.5;
-    }
-    50% {
-      transform: scale(1.06) translate3d(0, -4px, 0);
-      opacity: 0.8;
-    }
-    100% {
-      transform: scale(1) translate3d(0, 2px, 0);
-      opacity: 0.6;
-    }
-  }
-
-  /* 100% Translucent Seamless Canvas Frame */
+  /* 100% Translucent Seamless Canvas Frame (Fixed without floating) */
   .hero-widget-card {
     background: transparent;
     border: none;
     outline: none;
     box-shadow: none;
-    animation: etherealLevitate 6s ease-in-out infinite alternate;
-  }
-
-  @keyframes etherealLevitate {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-4px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
   }
 </style>
 
