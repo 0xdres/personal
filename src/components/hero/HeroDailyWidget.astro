@@ -51,26 +51,30 @@ const DAY_NAMES_SSR: Record<number, string> = {
   <!-- Ambient Ethereal Backlight Aura (Radial breathing glow) -->
   <div class="hero-aurora-glow pointer-events-none absolute -inset-3 sm:-inset-5 -z-10 rounded-3xl opacity-75 blur-2xl sm:blur-3xl transition-all duration-700" aria-hidden="true"></div>
 
-  <!-- Synchronous Inline Guard to prevent FOUC when a dev override day is persisted -->
-  <script is:inline>
-    (function () {
-      try {
-        var saved = localStorage.getItem("hero-dev-selected-day");
-        if (saved !== null) {
-          var targetDay = Number(saved);
-          var panels = document.querySelectorAll(".widget-panel");
-          panels.forEach(function (p) {
-            var pDay = Number(p.getAttribute("data-panel-day"));
-            if (pDay === targetDay) {
-              p.classList.remove("hidden", "opacity-0");
-            } else {
-              p.classList.add("hidden", "opacity-0");
+  <!-- Synchronous Inline Guard to prevent FOUC when a dev override day is persisted (Dev mode only) -->
+  {
+    import.meta.env.DEV && (
+      <script is:inline>
+        (function () {
+          try {
+            var saved = localStorage.getItem("hero-dev-selected-day");
+            if (saved !== null) {
+              var targetDay = Number(saved);
+              var panels = document.querySelectorAll(".widget-panel");
+              panels.forEach(function (p) {
+                var pDay = Number(p.getAttribute("data-panel-day"));
+                if (pDay === targetDay) {
+                  p.classList.remove("hidden", "opacity-0");
+                } else {
+                  p.classList.add("hidden", "opacity-0");
+                }
+              });
             }
-          });
-        }
-      } catch (e) {}
-    })();
-  </script>
+          } catch (e) {}
+        })();
+      </script>
+    )
+  }
 
   <!-- Main Borderless Ethereal Canvas Frame -->
   <div class="hero-widget-card relative flex flex-col w-full h-[360px] sm:h-[380px] rounded-3xl text-foreground transition-all duration-500">

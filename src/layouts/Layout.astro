@@ -318,24 +318,29 @@ const showGrain = SITE.backdropEffects.grain;
       })();
     </script>
 
-    <!-- Service Worker Cleanup / Unregistration -->
+    <!-- Service Worker Cleanup / Unregistration (deferred to idle time so it doesn't block parsing) -->
     <script is:inline>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.getRegistrations().then(registrations => {
-          for (const registration of registrations) {
-            registration.unregister();
+      window.addEventListener('load', function() {
+        var cleanup = function() {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(function(regs) {
+              for (var i = 0; i < regs.length; i++) regs[i].unregister();
+            }).catch(function() {});
           }
-        }).catch(() => {});
-      }
-      if ('caches' in window) {
-        caches.keys().then(keys => {
-          for (const key of keys) {
-            if (key.startsWith('devosfera-')) {
-              caches.delete(key);
-            }
+          if ('caches' in window) {
+            caches.keys().then(function(keys) {
+              for (var i = 0; i < keys.length; i++) {
+                if (keys[i].startsWith('devosfera-')) caches.delete(keys[i]);
+              }
+            }).catch(function() {});
           }
-        }).catch(() => {});
-      }
+        };
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(cleanup);
+        } else {
+          setTimeout(cleanup, 1000);
+        }
+      });
     </script>
   </head>
   <body>
