@@ -135,7 +135,7 @@ const randomPostsPool: RandomPostItem[] = sortedPosts.map(entry => ({
 
         <!-- Right Column: Daily Rotating Hero Widget (5 cols) -->
         <div class="lg:col-span-5 flex flex-col justify-center">
-          <HeroDailyWidget featuredPost={featuredPosts[0]} />
+          <HeroDailyWidget featuredPost={featuredPosts[0] || sortedPosts[0]} />
         </div>
       </div>
     </section>

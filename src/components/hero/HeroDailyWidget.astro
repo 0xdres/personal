@@ -48,6 +48,9 @@ const DAY_NAMES_SSR: Record<number, string> = {
 ---
 
 <div class:list={["hero-daily-widget-wrapper relative w-full flex flex-col justify-center", className]}>
+  <!-- Ambient Ethereal Backlight Aura (Radial breathing glow) -->
+  <div class="hero-aurora-glow pointer-events-none absolute -inset-3 sm:-inset-5 -z-10 rounded-3xl opacity-75 blur-2xl sm:blur-3xl transition-all duration-700" aria-hidden="true"></div>
+
   <!-- Synchronous Inline Guard to prevent FOUC when a dev override day is persisted -->
   <script is:inline>
     (function () {
@@ -69,14 +72,14 @@ const DAY_NAMES_SSR: Record<number, string> = {
     })();
   </script>
 
-  <!-- Main 3D Glassmorphism Frame -->
-  <div class="hero-widget-card relative flex flex-col w-full h-[360px] sm:h-[380px] rounded-2xl border border-border/60 bg-background/85 text-foreground shadow-2xl backdrop-blur-xl transition-all duration-300 overflow-hidden">
-    <!-- Top Header Bar -->
-    <div class="flex items-center justify-between px-3.5 py-2.5 border-b border-border/40 bg-muted/20 select-none">
-      <!-- Active Day Badge -->
-      <div class="flex items-center gap-2">
-        <span class="size-2 rounded-full bg-accent animate-pulse"></span>
-        <span id="hero-widget-day-label" class="font-firacode text-xs font-bold text-foreground">
+  <!-- Main Borderless Ethereal Canvas Frame -->
+  <div class="hero-widget-card relative flex flex-col w-full h-[360px] sm:h-[380px] rounded-3xl text-foreground transition-all duration-500">
+    <!-- Top Ethereal Floating Header (Seamless, floating badges) -->
+    <div class="flex items-center justify-between px-2 pt-2 pb-1 select-none z-10">
+      <!-- Active Day Floating Pill -->
+      <div class="flex items-center gap-2 px-3 py-1 rounded-full bg-accent/8 border border-accent/20 backdrop-blur-md shadow-2xs">
+        <span class="size-2 rounded-full bg-accent animate-pulse shadow-sm shadow-accent/50"></span>
+        <span id="hero-widget-day-label" class="font-firacode text-[11px] font-bold text-foreground/90 tracking-tight">
           {DAY_NAMES_SSR[serverDay] || t("heroWidget.badgeToday")}
         </span>
       </div>
@@ -86,7 +89,7 @@ const DAY_NAMES_SSR: Record<number, string> = {
         <button
           id="hero-explorer-btn"
           type="button"
-          class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/10 border border-accent/25 text-[11px] font-bold text-accent hover:bg-accent hover:text-background transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+          class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-accent/12 border border-accent/25 text-[11px] font-bold text-accent hover:bg-accent hover:text-background transition-all duration-200 cursor-pointer shadow-xs active:scale-95 backdrop-blur-md"
           data-locked="true"
         >
           <span id="hero-explorer-icon">🔒</span>
@@ -96,7 +99,7 @@ const DAY_NAMES_SSR: Record<number, string> = {
     </div>
 
     <!-- Widgets Panels Container -->
-    <div class="relative flex-1 w-full overflow-hidden">
+    <div class="relative flex-1 w-full">
       <!-- 1: Monday (Bento Dev Deck) -->
       <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 1 !== serverDay && "hidden opacity-0"]} data-panel-day="1">
         <WidgetBento locale={locale} />
@@ -142,18 +145,51 @@ const DAY_NAMES_SSR: Record<number, string> = {
 </div>
 
 <style>
-  .hero-widget-card {
-    border-color: color-mix(in srgb, var(--border) 60%, transparent);
-    box-shadow:
-      0 20px 50px -10px color-mix(in srgb, var(--foreground) 6%, transparent),
-      0 0 25px -5px color-mix(in srgb, var(--accent) 12%, transparent);
+  /* Ambient Aurora Backlight (Ultra soft ambient glow) */
+  .hero-aurora-glow {
+    background: radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--accent) 22%, transparent) 0%,
+      color-mix(in srgb, var(--accent) 8%, transparent) 45%,
+      transparent 70%
+    );
+    animation: auroraBreathe 7s ease-in-out infinite alternate;
   }
 
-  .hero-widget-card:hover {
-    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
-    box-shadow:
-      0 25px 60px -10px color-mix(in srgb, var(--foreground) 10%, transparent),
-      0 0 35px -5px color-mix(in srgb, var(--accent) 20%, transparent);
+  @keyframes auroraBreathe {
+    0% {
+      transform: scale(0.95) translate3d(0, 0, 0);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.06) translate3d(0, -4px, 0);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1) translate3d(0, 2px, 0);
+      opacity: 0.6;
+    }
+  }
+
+  /* 100% Translucent Seamless Canvas Frame */
+  .hero-widget-card {
+    background: transparent;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    animation: etherealLevitate 6s ease-in-out infinite alternate;
+  }
+
+  @keyframes etherealLevitate {
+    0% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-4px);
+    }
+    100% {
+      transform: translateY(0px);
+    }
   }
 </style>
 

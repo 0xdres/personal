@@ -4,11 +4,10 @@
  *
  * Tuesday's Hero Widget: Interactive Live Code Sandbox.
  * Features:
- * - 4 interactive code snippets with deep real-time browser dynamics:
+ * - 3 interactive code snippets with deep real-time browser dynamics:
  *   1. synth.ts: Real-time scale synthesis (C - D - E - F - G) with fast inline colored text stream.
  *   2. particles.ts: Kinetic 60 FPS Particle Physics Burst + Interactive cursor mouse trail.
  *   3. shake.ts: Juicy JELLY wobble physics animation on the widget container.
- *   4. fractal.ts: Compact 4-generation animated Wolfram Rule 30 with zero duplication.
  * - 100% Bilingual localization (EN/ES) for comments, titles, and real-time logs.
  * - Clean modern header (macOS traffic lights removed for maximum tab space).
  * - IDE-grade syntax highlighting with tokenized keywords, types, strings, numbers & comments.
@@ -76,31 +75,15 @@ const SNIPPETS = [
 }`,
     outputTitle: isEs ? "Física Elástica (Jelly)" : "Jelly Wobble Physics",
   },
-  {
-    id: "fractal",
-    filename: "fractal.ts",
-    icon: "🧬",
-    codeHtml: `<span class="syn-comment">${isEs ? "// 🧬 Autómata celular Wolfram Rule 30" : "// 🧬 Wolfram Rule 30 Cellular Automata"}</span>
-<span class="syn-keyword">function</span> <span class="syn-fn">stepRule30</span>(row: <span class="syn-type">number[]</span>): <span class="syn-type">number[]</span> {
-  <span class="syn-keyword">return</span> row.<span class="syn-fn">map</span>((_, i) => {
-    <span class="syn-keyword">const</span> left = row[i - <span class="syn-num">1</span>] ?? <span class="syn-num">0</span>;
-    <span class="syn-keyword">const</span> center = row[i];
-    <span class="syn-keyword">const</span> right = row[i + <span class="syn-num">1</span>] ?? <span class="syn-num">0</span>;
-    <span class="syn-keyword">const</span> rule = (left << <span class="syn-num">2</span>) | (center << <span class="syn-num">1</span>) | right;
-    <span class="syn-keyword">return</span> (<span class="syn-num">30</span> >> rule) & <span class="syn-num">1</span>; <span class="syn-comment">// Bit shift</span>
-  });
-}`,
-    outputTitle: isEs ? "Autómata Rule 30 (Fractal)" : "Rule 30 Automata (Fractal)",
-  },
 ];
 ---
 
-<div id="sandbox-widget-root" class="code-sandbox-widget relative flex flex-col h-full rounded-xl overflow-hidden font-firacode select-none bg-background/70 backdrop-blur-md">
+<div id="sandbox-widget-root" class="code-sandbox-widget relative flex flex-col h-full rounded-xl overflow-hidden font-firacode select-none">
   <!-- Interactive Particle Canvas Layer -->
   <canvas id="sandbox-particles-canvas" class="pointer-events-none absolute inset-0 z-30 w-full h-full"></canvas>
 
-  <!-- Code Editor Header Bar (Tabs + Run Button, Traffic lights removed) -->
-  <div class="flex items-center justify-between px-3 py-2 border-b border-border/40 bg-muted/20 gap-2">
+  <!-- Code Editor Header Bar (Tabs + Run Button) -->
+  <div class="flex items-center justify-between px-3.5 pt-1 pb-1.5 gap-2">
     <!-- Tabs Row (Direct, clean modern design) -->
     <div class="flex items-center gap-1 overflow-x-auto min-w-0 flex-1 scrollbar-none">
       {
@@ -108,8 +91,8 @@ const SNIPPETS = [
           <button
             type="button"
             class:list={[
-              "sandbox-tab px-2.5 py-1 rounded-md text-[10.5px] font-semibold transition-all duration-150 cursor-pointer flex items-center gap-1 shrink-0",
-              idx === 0 ? "bg-accent/15 text-accent border border-accent/35 shadow-xs active" : "text-foreground/60 hover:text-foreground hover:bg-muted/30 border border-transparent",
+              "sandbox-tab px-2.5 py-1 rounded-md text-[10.5px] font-semibold transition-all duration-150 cursor-pointer flex items-center gap-1 shrink-0 border border-transparent text-foreground/60 hover:text-foreground hover:bg-muted/20",
+              idx === 0 && "active",
             ]}
             data-snippet-id={s.id}
           >
@@ -133,7 +116,7 @@ const SNIPPETS = [
   </div>
 
   <!-- Code Body with Line Numbers & Syntax Highlighting -->
-  <div id="sandbox-editor-body" class="relative flex-1 p-3 bg-background/50 overflow-hidden text-[11px] sm:text-[11.5px] leading-relaxed flex cursor-crosshair">
+  <div id="sandbox-editor-body" class="relative flex-1 mx-3 mb-3 p-3 rounded-xl border border-border/15 bg-transparent overflow-hidden text-[11px] sm:text-[11.5px] leading-relaxed flex cursor-crosshair">
     <!-- Line numbers gutter -->
     <div class="select-none pr-3 text-right text-foreground/30 font-firacode text-[10.5px] border-r border-border/30 flex flex-col space-y-0.5 shrink-0">
       <span>1</span>
@@ -225,6 +208,7 @@ const SNIPPETS = [
     background: color-mix(in srgb, var(--accent) 15%, transparent);
     border-color: color-mix(in srgb, var(--accent) 40%, transparent);
     color: var(--accent);
+    box-shadow: 0 1px 3px 0 color-mix(in srgb, var(--accent) 15%, transparent);
   }
 
   /* Jelly Wobble Animation */
@@ -303,19 +287,6 @@ const SNIPPETS = [
   <span class="syn-keyword">return</span> { <span class="syn-prop">physics</span>: <span class="syn-str">"elastic-squash"</span>, <span class="syn-prop">duration</span>: <span class="syn-str">"650ms"</span> };
 }`,
         title: isEs ? "Física Elástica (Jelly)" : "Jelly Wobble Physics",
-      },
-      fractal: {
-        codeHtml: `<span class="syn-comment">${isEs ? "// 🧬 Autómata celular Wolfram Rule 30" : "// 🧬 Wolfram Rule 30 Cellular Automata"}</span>
-<span class="syn-keyword">function</span> <span class="syn-fn">stepRule30</span>(row: <span class="syn-type">number[]</span>): <span class="syn-type">number[]</span> {
-  <span class="syn-keyword">return</span> row.<span class="syn-fn">map</span>((_, i) => {
-    <span class="syn-keyword">const</span> left = row[i - <span class="syn-num">1</span>] ?? <span class="syn-num">0</span>;
-    <span class="syn-keyword">const</span> center = row[i];
-    <span class="syn-keyword">const</span> right = row[i + <span class="syn-num">1</span>] ?? <span class="syn-num">0</span>;
-    <span class="syn-keyword">const</span> rule = (left << <span class="syn-num">2</span>) | (center << <span class="syn-num">1</span>) | right;
-    <span class="syn-keyword">return</span> (<span class="syn-num">30</span> >> rule) & <span class="syn-num">1</span>; <span class="syn-comment">// Bit shift</span>
-  });
-}`,
-        title: isEs ? "Autómata Rule 30 (Fractal)" : "Rule 30 Automata (Fractal)",
       },
     };
 
@@ -514,46 +485,6 @@ const SNIPPETS = [
         outputLogs.innerHTML = `
           <div class="text-[#f43f5e] font-medium text-[11px]">🧲 ${isEs ? "Efecto gelatina elástico ejecutado en 650ms ✨" : "Elastic jelly wobble executed in 650ms ✨"}</div>
         `;
-
-      } else if (activeSnippetId === "fractal") {
-        // 🧬 4. Compact 4-generation Line-by-Line Wolfram Rule 30
-        isExecuting = true;
-        const totalGens = 4;
-        const width = 15;
-        let currentRow = Array(width).fill(0);
-        currentRow[Math.floor(width / 2)] = 1; // Center seed
-
-        function stepRule30(row: number[]): number[] {
-          return row.map((_, i) => {
-            const left = row[i - 1] ?? 0;
-            const center = row[i];
-            const right = row[i + 1] ?? 0;
-            const rule = (left << 2) | (center << 1) | right;
-            return (30 >> rule) & 1;
-          });
-        }
-
-        let genIndex = 0;
-        function renderNextGen() {
-          if (genIndex < totalGens) {
-            soundFx.playTap(1400 + genIndex * 110);
-
-            const rowStr = currentRow.map(b => (b === 1 ? `<span class="text-accent font-bold">█</span>` : `<span class="opacity-25">░</span>`)).join("");
-            const line = document.createElement("div");
-            line.className = "font-firacode text-[10px] tracking-wider flex items-center gap-1.5";
-            line.innerHTML = `<span class="opacity-50 text-[9px] w-6">G${genIndex + 1}:</span><span>${rowStr}</span>`;
-
-            outputLogs?.appendChild(line);
-
-            currentRow = stepRule30(currentRow);
-            genIndex++;
-            setTimeout(renderNextGen, 110);
-          } else {
-            isExecuting = false;
-          }
-        }
-
-        renderNextGen();
       }
     });
 

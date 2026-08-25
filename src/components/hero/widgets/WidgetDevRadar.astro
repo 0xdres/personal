@@ -20,30 +20,30 @@ const { locale = "en" } = Astro.props;
 const t = useTranslations(locale as any);
 ---
 
-<div id="radar-widget-root" class="radar-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
+<div id="radar-widget-root" class="radar-widget flex flex-col justify-between px-3.5 pb-3.5 pt-1 h-full select-none">
   <!-- Header -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="flex size-7 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs">
+  <div class="flex items-center justify-between pb-1 px-0.5">
+    <div class="flex items-center gap-2">
+      <div class="flex size-6.5 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs shrink-0 shadow-xs">
         🔮
       </div>
-      <div class="flex flex-col">
-        <span class="text-[10px] uppercase font-bold tracking-wider opacity-50">
+      <div class="flex flex-col min-w-0">
+        <span class="text-[9.5px] uppercase font-bold tracking-wider opacity-50 truncate">
           {t("heroWidget.radar.title")}
         </span>
-        <span class="font-firacode text-xs font-bold text-foreground">
+        <span class="font-firacode text-xs font-bold text-foreground truncate">
           {t("heroWidget.radar.activeTech")}
         </span>
       </div>
     </div>
-    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-bold text-emerald-500">
+    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-[10px] font-bold text-emerald-500 shrink-0">
       <span class="size-1.5 rounded-full bg-emerald-500 animate-ping"></span>
       RADAR ACTIVE
     </span>
   </div>
 
   <!-- Center Radar Canvas -->
-  <div class="relative flex-1 flex items-center justify-center my-2.5 rounded-xl border border-border/30 bg-background/60 backdrop-blur-md overflow-hidden p-2">
+  <div class="relative flex-1 flex items-center justify-center my-1.5 rounded-xl border border-border/15 bg-transparent overflow-hidden p-2">
     <canvas id="dev-radar-canvas" class="w-full h-full min-h-[110px]"></canvas>
   </div>
 

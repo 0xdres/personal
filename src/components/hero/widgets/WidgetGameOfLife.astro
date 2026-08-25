@@ -20,25 +20,25 @@ const { locale = "en" } = Astro.props;
 const t = useTranslations(locale as any);
 ---
 
-<div id="life-widget-root" class="game-of-life-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
+<div id="life-widget-root" class="game-of-life-widget flex flex-col justify-between px-3.5 pb-3.5 pt-1 h-full select-none">
   <!-- Header: Title & Action Chips -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="flex size-7 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs">
+  <div class="flex items-center justify-between pb-1 px-0.5">
+    <div class="flex items-center gap-2">
+      <div class="flex size-6.5 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs shrink-0 shadow-xs">
         🕹️
       </div>
-      <div class="flex flex-col">
-        <span class="text-[10px] uppercase font-bold tracking-wider opacity-50">
+      <div class="flex flex-col min-w-0">
+        <span class="text-[9.5px] uppercase font-bold tracking-wider opacity-50 truncate">
           {t("heroWidget.life.title")}
         </span>
-        <span class="font-firacode text-[11px] text-foreground/70">
+        <span class="font-firacode text-[11px] text-foreground/75 truncate">
           {t("heroWidget.life.drawHint")}
         </span>
       </div>
     </div>
 
     <!-- Quick Action Buttons -->
-    <div class="flex items-center gap-1.5">
+    <div class="flex items-center gap-1.5 shrink-0">
       <button
         id="life-random-btn"
         type="button"
@@ -59,7 +59,7 @@ const t = useTranslations(locale as any);
   </div>
 
   <!-- Cellular Automaton Canvas Grid -->
-  <div class="relative flex-1 my-3 rounded-xl border border-border/30 bg-background/60 backdrop-blur-md overflow-hidden cursor-crosshair">
+  <div class="relative flex-1 my-1.5 rounded-xl border border-border/15 bg-transparent overflow-hidden cursor-crosshair">
     <canvas id="life-canvas" class="w-full h-full min-h-[110px]"></canvas>
   </div>
 

@@ -7,6 +7,7 @@
  * - 16 illuminated silicone pads mapped to a 3-octave Pentatonic scale.
  * - Real-time zero-latency sound synthesis via soundFx.playPentatonicPad().
  * - Auto-sequencer demo melody button.
+ * - Compact pro-audio aesthetic with optimized vertical footprint.
  * - Reactive glow feedback and mobile haptics.
  */
 import { useTranslations } from "@/i18n/utils";
@@ -26,18 +27,18 @@ const PAD_COLORS = [
 ];
 ---
 
-<div class="launchpad-widget flex flex-col justify-between p-4 sm:p-5 h-full select-none">
+<div class="launchpad-widget flex flex-col justify-between px-3.5 pb-3 pt-1 h-full select-none">
   <!-- Header: Title & Demo Trigger -->
-  <div class="flex items-center justify-between">
-    <div class="flex items-center gap-2.5">
-      <div class="flex size-7 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs">
+  <div class="flex items-center justify-between pb-1 px-0.5">
+    <div class="flex items-center gap-2">
+      <div class="flex size-6.5 items-center justify-center rounded-lg bg-accent/15 border border-accent/30 text-accent text-xs shrink-0 shadow-xs">
         🎹
       </div>
-      <div class="flex flex-col">
-        <span class="text-[10px] uppercase font-bold tracking-wider opacity-50">
+      <div class="flex flex-col min-w-0">
+        <span class="text-[9.5px] uppercase font-bold tracking-wider opacity-50 truncate">
           {t("heroWidget.launchpad.title")}
         </span>
-        <span class="font-firacode text-[11px] text-foreground/70">
+        <span class="font-firacode text-[10.5px] text-foreground/75 truncate">
           {t("heroWidget.launchpad.hint")}
         </span>
       </div>
@@ -47,33 +48,35 @@ const PAD_COLORS = [
     <button
       id="launchpad-demo-btn"
       type="button"
-      class="flex items-center gap-1 px-2 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-[11px] font-bold text-accent hover:bg-accent hover:text-background transition-all duration-200 cursor-pointer shadow-xs active:scale-95"
+      class="flex items-center gap-1 px-2.5 py-0.5 rounded-md bg-accent/10 border border-accent/25 text-[11px] font-bold text-accent hover:bg-accent hover:text-background transition-all duration-200 cursor-pointer shadow-xs active:scale-95 shrink-0"
     >
       <span>▶</span>
       <span>Demo</span>
     </button>
   </div>
 
-  <!-- 4x4 Grid of Launchpad Pads -->
-  <div class="grid grid-cols-4 gap-2 my-2.5 p-2.5 rounded-xl border border-border/30 bg-background/60 backdrop-blur-md">
-    {
-      Array.from({ length: 16 }).map((_, i) => (
-        <button
-          type="button"
-          class="launchpad-pad relative flex items-center justify-center aspect-square rounded-lg border border-border/30 bg-muted/20 hover:border-accent/60 transition-all duration-100 cursor-pointer active:scale-90"
-          data-pad-index={i}
-          style={`--pad-color: ${PAD_COLORS[i]};`}
-          title={`Pad ${i + 1}`}
-        >
-          <span class="text-[10px] font-firacode font-bold opacity-35">{i + 1}</span>
-          <span class="pad-glow pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity duration-150" aria-hidden="true"></span>
-        </button>
-      ))
-    }
+  <!-- Intermediate Balanced 4x4 Grid of Launchpad Pads -->
+  <div class="launchpad-grid-wrapper flex-1 flex items-center justify-center my-1">
+    <div class="grid grid-cols-4 gap-2 w-full max-w-[315px] sm:max-w-[340px] p-2 rounded-xl border border-border/15 bg-transparent">
+      {
+        Array.from({ length: 16 }).map((_, i) => (
+          <button
+            type="button"
+            class="launchpad-pad relative flex items-center justify-center h-10 sm:h-11 rounded-lg border border-border/25 bg-muted/15 hover:border-accent/60 transition-all duration-100 cursor-pointer active:scale-90"
+            data-pad-index={i}
+            style={`--pad-color: ${PAD_COLORS[i]};`}
+            title={`Pad ${i + 1}`}
+          >
+            <span class="text-[9.5px] font-firacode font-bold opacity-45">{i + 1}</span>
+            <span class="pad-glow pointer-events-none absolute inset-0 rounded-lg opacity-0 transition-opacity duration-150" aria-hidden="true"></span>
+          </button>
+        ))
+      }
+    </div>
   </div>
 
   <!-- Footer Info -->
-  <div class="flex items-center justify-between text-[11px] font-firacode text-foreground/60 px-1">
+  <div class="flex items-center justify-between text-[10.5px] font-firacode text-foreground/60 px-1 pt-0.5">
     <span class="flex items-center gap-1.5">
       <span class="size-1.5 rounded-full bg-accent animate-pulse"></span>
       <span>Pentatonic Synth Grid</span>
@@ -86,7 +89,7 @@ const PAD_COLORS = [
   .launchpad-pad.active {
     background: var(--pad-color) !important;
     border-color: var(--pad-color) !important;
-    box-shadow: 0 0 16px var(--pad-color);
+    box-shadow: 0 0 14px var(--pad-color);
     transform: scale(0.92);
   }
   .launchpad-pad.active span {
