@@ -11,7 +11,7 @@ import { SITE } from "@/config";
 
 import { useTranslations } from "@/i18n/utils";
 const locale = Astro.currentLocale || "en";
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const prefix = locale === "es" ? "/es" : "";
 
 const [blogPosts, galleryPosts] = await Promise.all([

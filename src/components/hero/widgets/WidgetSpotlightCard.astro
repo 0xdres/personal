@@ -21,7 +21,7 @@ interface Props {
 }
 
 const { locale = "en", featuredPost } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const prefix = locale === "es" ? "/es" : "";
 const isEs = locale === "es";
 
@@ -68,7 +68,7 @@ const formattedDate = pubDate
     <!-- Unclipped Ambient Aura Glow Field for the 3D Card -->
     <div class="spotlight-card-aura pointer-events-none absolute -inset-8 sm:-inset-12 -z-10 rounded-full opacity-65 blur-3xl transition-all duration-500" aria-hidden="true"></div>
 
-    <div class="spotlight-card-inner relative flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border border-accent/20 bg-gradient-to-br from-accent/8 via-background/30 to-accent/4 backdrop-blur-md shadow-lg transition-transform duration-100 ease-out cursor-pointer overflow-hidden group">
+    <div class="spotlight-card-inner relative flex flex-col justify-between p-3.5 sm:p-4 rounded-2xl border border-accent/20 bg-linear-to-br from-accent/8 via-background/30 to-accent/4 backdrop-blur-md shadow-lg transition-transform duration-100 ease-out cursor-pointer overflow-hidden group">
       <!-- Dynamic Specular Spotlight Sheen -->
       <div class="spotlight-glow pointer-events-none absolute -inset-full opacity-0 transition-opacity duration-300 z-0" aria-hidden="true"></div>
 

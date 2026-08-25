@@ -30,7 +30,7 @@ interface Props {
 
 const { class: className = "", featuredPost } = Astro.props;
 const locale = Astro.currentLocale || "en";
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const isEs = locale === "es";
 
 // Compute server-side day (0 = Sunday .. 6 = Saturday) for 0-latency zero-blink SSR
@@ -57,12 +57,12 @@ const DAY_NAMES_SSR: Record<number, string> = {
       <script is:inline>
         (function () {
           try {
-            var saved = localStorage.getItem("hero-dev-selected-day");
+            const saved = localStorage.getItem("hero-dev-selected-day");
             if (saved !== null) {
-              var targetDay = Number(saved);
-              var panels = document.querySelectorAll(".widget-panel");
+              const targetDay = Number(saved);
+              const panels = document.querySelectorAll(".widget-panel");
               panels.forEach(function (p) {
-                var pDay = Number(p.getAttribute("data-panel-day"));
+                const pDay = Number(p.getAttribute("data-panel-day"));
                 if (pDay === targetDay) {
                   p.classList.remove("hidden", "opacity-0");
                 } else {
@@ -70,14 +70,14 @@ const DAY_NAMES_SSR: Record<number, string> = {
                 }
               });
             }
-          } catch (e) {}
+          } catch {}
         })();
       </script>
     )
   }
 
   <!-- Main Borderless Ethereal Canvas Frame -->
-  <div class="hero-widget-card relative flex flex-col w-full h-[360px] sm:h-[380px] rounded-3xl text-foreground transition-all duration-500">
+  <div class="hero-widget-card relative flex flex-col w-full h-90 sm:h-95 rounded-3xl text-foreground transition-all duration-500">
     <!-- Top Ethereal Floating Header (Seamless, floating badges) -->
     <div class="flex items-center justify-between px-2 pt-2 pb-1 select-none z-10">
       <!-- Active Day Floating Pill -->

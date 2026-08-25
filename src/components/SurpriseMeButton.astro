@@ -28,7 +28,7 @@ interface Props {
 
 const { posts, class: className = "" } = Astro.props;
 const locale = Astro.currentLocale || "en";
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 
 // Serialize posts safely for the client-side JavaScript engine
 const postsJson = JSON.stringify(posts);
@@ -46,7 +46,7 @@ const postsJson = JSON.stringify(posts);
   >
     <!-- Glowing pulse aura -->
     <span
-      class="pointer-events-none absolute -inset-0.5 -z-10 rounded-full bg-gradient-to-r from-accent/20 to-accent/5 opacity-0 blur-xs transition-opacity duration-300 group-hover:opacity-100"
+      class="pointer-events-none absolute -inset-0.5 -z-10 rounded-full bg-linear-to-r from-accent/20 to-accent/5 opacity-0 blur-xs transition-opacity duration-300 group-hover:opacity-100"
       aria-hidden="true"></span>
 
     <!-- Animated Dice Icon -->
@@ -86,7 +86,7 @@ const postsJson = JSON.stringify(posts);
   <!-- Roulette Modal Dialog -->
   <div
     id="surprise-roulette-modal"
-    class="roulette-modal-overlay fixed inset-0 z-50 flex hidden items-center justify-center p-4"
+    class="roulette-modal-overlay fixed inset-0 z-50 hidden items-center justify-center p-4"
     role="dialog"
     aria-modal="true"
     aria-labelledby="roulette-modal-title"
@@ -193,11 +193,11 @@ const postsJson = JSON.stringify(posts);
         >
           <!-- Top & bottom fade gradients for depth -->
           <div
-            class="pointer-events-none absolute inset-x-0 top-0 z-20 h-10 bg-gradient-to-b from-background via-background/85 to-transparent"
+            class="pointer-events-none absolute inset-x-0 top-0 z-20 h-10 bg-linear-to-b from-background via-background/85 to-transparent"
           >
           </div>
           <div
-            class="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-10 bg-gradient-to-t from-background via-background/85 to-transparent"
+            class="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-10 bg-linear-to-t from-background via-background/85 to-transparent"
           >
           </div>
 
@@ -337,6 +337,7 @@ const postsJson = JSON.stringify(posts);
 
 <style>
   .roulette-modal-overlay {
+    display: flex;
     animation: modal-fade-in 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   }
 
@@ -492,7 +493,7 @@ const postsJson = JSON.stringify(posts);
 
     const activeCanvas = canvas;
     const activeCtx = ctx;
-    let start = performance.now();
+    const start = performance.now();
     function animate(time: number) {
       if (!activeCtx || !activeCanvas) return;
       const elapsed = time - start;
@@ -581,7 +582,7 @@ const postsJson = JSON.stringify(posts);
     let rawPosts: PostItem[] = [];
     try {
       rawPosts = JSON.parse(trigger.dataset.posts || "[]");
-    } catch (_) {
+    } catch {
       rawPosts = [];
     }
 

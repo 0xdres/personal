@@ -16,12 +16,12 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 ---
 
 <div
   id="quiz-modal"
-  class="quiz-modal-overlay hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4"
+  class="quiz-modal-overlay hidden fixed inset-0 z-50 items-center justify-center p-3 sm:p-4"
   role="dialog"
   aria-modal="true"
   aria-label={t("quiz.modalTitle")}
@@ -69,7 +69,7 @@ const t = useTranslations(locale as any);
       </div>
 
       <!-- Feedback / Retry Banner -->
-      <div id="quiz-error-box" class="hidden flex flex-col items-center gap-2 mt-2">
+      <div id="quiz-error-box" class="hidden flex-col items-center gap-2 mt-2">
         <span class="text-xs text-red-500 font-semibold">{t("quiz.errorMsg")}</span>
         <button
           id="quiz-retry-btn"
@@ -201,12 +201,14 @@ const t = useTranslations(locale as any);
       });
 
       errorBox?.classList.add("hidden");
+      errorBox?.classList.remove("flex");
     }
 
     function openModal() {
       qContainer?.classList.remove("hidden");
       sContainer?.classList.add("hidden");
       errorBox?.classList.add("hidden");
+      errorBox?.classList.remove("flex");
       pickRandomQuestion();
       modal?.classList.remove("hidden");
     }
@@ -230,11 +232,13 @@ const t = useTranslations(locale as any);
 
           qContainer?.classList.add("hidden");
           errorBox?.classList.add("hidden");
+          errorBox?.classList.remove("flex");
           sContainer?.classList.remove("hidden");
         } else {
           // Incorrect!
           soundFx.playQuizError();
           errorBox?.classList.remove("hidden");
+          errorBox?.classList.add("flex");
           btn.classList.add("border-red-500", "bg-red-500/10");
         }
       });
@@ -264,3 +268,12 @@ const t = useTranslations(locale as any);
   initQuizModal();
   document.addEventListener("astro:page-load", initQuizModal);
 </script>
+
+<style>
+  .quiz-modal-overlay {
+    display: flex;
+  }
+  .quiz-modal-overlay.hidden {
+    display: none !important;
+  }
+</style>

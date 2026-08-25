@@ -21,7 +21,7 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const isEs = locale === "es";
 
 const MODES = [

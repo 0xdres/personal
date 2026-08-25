@@ -17,7 +17,7 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 
 const PAD_COLORS = [
   "#38bdf8", "#818cf8", "#c084fc", "#f472b6",
@@ -57,7 +57,7 @@ const PAD_COLORS = [
 
   <!-- Intermediate Balanced 4x4 Grid of Launchpad Pads -->
   <div class="launchpad-grid-wrapper flex-1 flex items-center justify-center my-1">
-    <div class="grid grid-cols-4 gap-2 w-full max-w-[315px] sm:max-w-[340px] p-2 rounded-xl border border-border/15 bg-transparent">
+    <div class="grid grid-cols-4 gap-2 w-full max-w-78.75 sm:max-w-85 p-2 rounded-xl border border-border/15 bg-transparent">
       {
         Array.from({ length: 16 }).map((_, i) => (
           <button

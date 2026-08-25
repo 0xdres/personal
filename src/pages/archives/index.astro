@@ -16,7 +16,7 @@ if (!SITE.showArchives) {
 
 import { useTranslations } from "@/i18n/utils";
 const locale = Astro.currentLocale || "en";
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 
 const [blogPosts, galleryPosts] = await Promise.all([
   getCollection(

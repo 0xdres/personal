@@ -17,7 +17,7 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 ---
 
 <div id="life-widget-root" class="game-of-life-widget flex flex-col justify-between px-3.5 pb-3.5 pt-1 h-full select-none">
@@ -60,7 +60,7 @@ const t = useTranslations(locale as any);
 
   <!-- Cellular Automaton Canvas Grid -->
   <div class="relative flex-1 my-1.5 rounded-xl border border-border/15 bg-transparent overflow-hidden cursor-crosshair">
-    <canvas id="life-canvas" class="w-full h-full min-h-[110px]"></canvas>
+    <canvas id="life-canvas" class="w-full h-full min-h-27.5"></canvas>
   </div>
 
   <!-- Footer Generation Counter & Evolution Pulse -->

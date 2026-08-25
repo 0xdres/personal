@@ -18,7 +18,7 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const isEs = locale === "es";
 
 const TECH_STACK = [
@@ -96,7 +96,7 @@ const TECH_STACK = [
   <!-- Middle Row: Interactive Tech Stack Matrix with Full-Width Inspector -->
   <div class="bento-card flex flex-col p-2.5 rounded-xl border border-border/15 bg-accent/5">
     <!-- Dynamic Tech Inspector Line (Full width, zero truncation ellipsis) -->
-    <div class="flex items-center gap-1.5 mb-1.5 pb-1 border-b border-border/15 min-h-[24px]">
+    <div class="flex items-center gap-1.5 mb-1.5 pb-1 border-b border-border/15 min-h-6">
       <span id="bento-inspector-icon" class="text-xs shrink-0">⚡</span>
       <span id="bento-inspector-text" class="text-[10px] sm:text-[10.5px] font-medium text-foreground/85 font-firacode leading-tight line-clamp-2">
         <strong class="text-accent">Tech Matrix</strong>: {isEs ? "Pasa el cursor sobre un módulo" : "Hover a module to inspect"}
@@ -210,7 +210,7 @@ const TECH_STACK = [
           hourCycle: "h23",
         });
         clockEl.textContent = formatter.format(now);
-      } catch (_) {
+      } catch {
         const now = new Date();
         clockEl.textContent = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
       }

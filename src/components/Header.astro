@@ -13,7 +13,7 @@ import { useTranslations, getTargetLanguageUrl } from "@/i18n/utils";
 const { pathname } = Astro.url;
 
 const locale = Astro.currentLocale || "en";
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const targetLocale = locale === "es" ? "en" : "es";
 const targetLanguageUrl = getTargetLanguageUrl(pathname, targetLocale);
 const langToggleTitle =
@@ -41,7 +41,7 @@ const isActive = (path: string) => {
 <a
   id="skip-to-content"
   href="#main-content"
-  class="absolute start-16 -top-full z-50 rounded-b-lg bg-accent px-4 py-2 font-medium text-background transition-all focus:top-0"
+  class="absolute inset-s-16 -top-full z-50 rounded-b-lg bg-accent px-4 py-2 font-medium text-background transition-all focus:top-0"
 >
   {t("nav.skip")}
 </a>
@@ -90,7 +90,7 @@ const isActive = (path: string) => {
           <!-- Mobile language switcher chip (visible only on screens < 1024px) -->
           <a
             href={targetLanguageUrl}
-            class="nav-lang-chip lg:!hidden"
+            class="nav-lang-chip lg:hidden!"
             title={langToggleTitle}
             aria-label={langToggleLabel}
             data-lang-toggle={targetLocale}
@@ -116,7 +116,7 @@ const isActive = (path: string) => {
           <!-- Mobile search button (visible only on screens < 1024px) -->
           <button
             data-search-trigger
-            class="nav-icon-btn lg:!hidden"
+            class="nav-icon-btn lg:hidden!"
             title={locale === "es" ? "Buscar" : "Search"}
             aria-label={t("nav.openSearch")}
           >
@@ -1239,7 +1239,11 @@ const isActive = (path: string) => {
       e => {
         e.stopPropagation();
         const isExpanded = moreBtn.getAttribute("aria-expanded") === "true";
-        isExpanded ? closePopover() : openPopover();
+        if (isExpanded) {
+          closePopover();
+        } else {
+          openPopover();
+        }
       },
       { signal }
     );

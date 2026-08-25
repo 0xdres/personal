@@ -20,7 +20,7 @@ interface Props {
 }
 
 const { locale = "en" } = Astro.props;
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const isEs = locale === "es";
 
 const SNIPPETS = [
@@ -141,7 +141,7 @@ const SNIPPETS = [
     <!-- Execution Output Drawer -->
     <div
       id="sandbox-output-drawer"
-      class="hidden absolute inset-x-0 bottom-0 p-3 border-t border-accent/40 bg-background/95 backdrop-blur-xl shadow-2xl transition-all duration-300 z-20 max-h-[140px] overflow-hidden"
+      class="hidden absolute inset-x-0 bottom-0 p-3 border-t border-accent/40 bg-background/95 backdrop-blur-xl shadow-2xl transition-all duration-300 z-20 max-h-35 overflow-hidden"
     >
       <div class="flex items-center justify-between text-[10px] uppercase font-bold text-accent mb-1 sticky top-0 bg-background/90 py-0.5">
         <div class="flex items-center gap-1.5">

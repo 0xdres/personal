@@ -14,7 +14,7 @@ interface Props {
 const { currentPath } = Astro.props;
 
 const locale = Astro.currentLocale || "en";
-const t = useTranslations(locale as any);
+const t = useTranslations(locale);
 const targetLocale = locale === "es" ? "en" : "es";
 const targetLanguageUrl = getTargetLanguageUrl(
   Astro.url.pathname,
