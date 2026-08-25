@@ -318,10 +318,10 @@ const showGrain = SITE.backdropEffects.grain;
       })();
     </script>
 
-    <!-- Service Worker Cleanup / Unregistration (deferred to idle time so it doesn't block parsing) -->
+    <!-- Immediate Service Worker & Legacy Cache Purge -->
     <script is:inline>
-      window.addEventListener('load', function() {
-        const cleanup = function() {
+      (function() {
+        try {
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(function(regs) {
               for (let i = 0; i < regs.length; i++) regs[i].unregister();
@@ -332,13 +332,35 @@ const showGrain = SITE.backdropEffects.grain;
               for (let i = 0; i < keys.length; i++) caches.delete(keys[i]);
             }).catch(function() {});
           }
-        };
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(cleanup);
-        } else {
-          setTimeout(cleanup, 1000);
-        }
-      });
+        } catch {}
+      })();
+    </script>
+
+    <!-- Self-healing deployment asset sync: auto-reloads if a stale chunk/stylesheet 404s after a new deploy -->
+    <script is:inline>
+      (function() {
+        window.addEventListener('error', function(e) {
+          const target = e.target;
+          if (!target) return;
+          const isStylesheet = target.tagName === 'LINK' && target.rel === 'stylesheet';
+          const isScript = target.tagName === 'SCRIPT';
+          if (isStylesheet || isScript) {
+            const url = target.href || target.src || '';
+            if (url.includes('/_astro/')) {
+              const reloadKey = 'astro_chunk_reload_' + encodeURIComponent(window.location.pathname);
+              if (!sessionStorage.getItem(reloadKey)) {
+                sessionStorage.setItem(reloadKey, '1');
+                window.location.reload();
+              }
+            }
+          }
+        }, true);
+
+        document.addEventListener('astro:page-load', function() {
+          const reloadKey = 'astro_chunk_reload_' + encodeURIComponent(window.location.pathname);
+          sessionStorage.removeItem(reloadKey);
+        });
+      })();
     </script>
   </head>
   <body>
