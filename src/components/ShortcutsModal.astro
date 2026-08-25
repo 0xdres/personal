@@ -1,5 +1,5 @@
 ---
-import { getLangFromUrl, useTranslations } from "@/i18n/utils";
+import { useTranslations } from "@/i18n/utils";
 
 const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
@@ -259,8 +259,6 @@ const t = useTranslations(locale as any);
 
     const toastOpened =
       modal.getAttribute("data-toast-opened") || "Shortcuts panel opened";
-    const toastClosed =
-      modal.getAttribute("data-toast-closed") || "Shortcuts panel closed";
     const toastSearchClosed =
       modal.getAttribute("data-toast-search-closed") || "Search modal closed";
     const toastGotoHome =
@@ -281,9 +279,6 @@ const t = useTranslations(locale as any);
       modal.getAttribute("data-toast-sound-enabled") || "Sound effects enabled 🔊";
     const toastSoundMuted =
       modal.getAttribute("data-toast-sound-muted") || "Sound effects muted 🔇";
-    const toastKonami =
-      modal.getAttribute("data-toast-konami") ||
-      "🎮 30 LIVES UNLOCKED! Konami Code Activated!";
 
     const card = modal.querySelector("[data-modal-card]") as HTMLElement;
     const glow = modal.querySelector("[data-modal-glow]") as HTMLElement;
