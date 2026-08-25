@@ -31,9 +31,44 @@ interface Props {
 const { class: className = "", featuredPost } = Astro.props;
 const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
+const isEs = locale === "es";
+
+// Compute server-side day (0 = Sunday .. 6 = Saturday) for 0-latency zero-blink SSR
+const serverDay = new Date().getDay();
+
+const DAY_NAMES_SSR: Record<number, string> = {
+  1: isEs ? "Lunes • Bento Deck" : "Monday • Bento Deck",
+  2: isEs ? "Martes • Code Sandbox" : "Tuesday • Code Sandbox",
+  3: isEs ? "Miércoles • Laboratorio de Física" : "Wednesday • Physics Lab",
+  4: isEs ? "Jueves • Game of Life" : "Thursday • Game of Life",
+  5: isEs ? "Viernes • Spotlight Card" : "Friday • Spotlight Card",
+  6: isEs ? "Sábado • Launchpad" : "Saturday • Launchpad",
+  0: isEs ? "Domingo • Dev Radar" : "Sunday • Dev Radar",
+};
 ---
 
 <div class:list={["hero-daily-widget-wrapper relative w-full flex flex-col justify-center", className]}>
+  <!-- Synchronous Inline Guard to prevent FOUC when a dev override day is persisted -->
+  <script is:inline>
+    (function () {
+      try {
+        var saved = localStorage.getItem("hero-dev-selected-day");
+        if (saved !== null) {
+          var targetDay = Number(saved);
+          var panels = document.querySelectorAll(".widget-panel");
+          panels.forEach(function (p) {
+            var pDay = Number(p.getAttribute("data-panel-day"));
+            if (pDay === targetDay) {
+              p.classList.remove("hidden", "opacity-0");
+            } else {
+              p.classList.add("hidden", "opacity-0");
+            }
+          });
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- Main 3D Glassmorphism Frame -->
   <div class="hero-widget-card relative flex flex-col w-full h-[360px] sm:h-[380px] rounded-2xl border border-border/60 bg-background/85 text-foreground shadow-2xl backdrop-blur-xl transition-all duration-300 overflow-hidden">
     <!-- Top Header Bar -->
@@ -42,7 +77,7 @@ const t = useTranslations(locale as any);
       <div class="flex items-center gap-2">
         <span class="size-2 rounded-full bg-accent animate-pulse"></span>
         <span id="hero-widget-day-label" class="font-firacode text-xs font-bold text-foreground">
-          {t("heroWidget.badgeToday")}
+          {DAY_NAMES_SSR[serverDay] || t("heroWidget.badgeToday")}
         </span>
       </div>
 
@@ -63,37 +98,37 @@ const t = useTranslations(locale as any);
     <!-- Widgets Panels Container -->
     <div class="relative flex-1 w-full overflow-hidden">
       <!-- 1: Monday (Bento Dev Deck) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300" data-panel-day="1">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 1 !== serverDay && "hidden opacity-0"]} data-panel-day="1">
         <WidgetBento locale={locale} />
       </div>
 
       <!-- 2: Tuesday (Live Code Sandbox) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="2">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 2 !== serverDay && "hidden opacity-0"]} data-panel-day="2">
         <WidgetCodeSandbox locale={locale} />
       </div>
 
       <!-- 3: Wednesday (Quantum Physics & Gravity Lab) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="3">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 3 !== serverDay && "hidden opacity-0"]} data-panel-day="3">
         <WidgetPhysicsLab locale={locale} />
       </div>
 
       <!-- 4: Thursday (Game of Life) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="4">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 4 !== serverDay && "hidden opacity-0"]} data-panel-day="4">
         <WidgetGameOfLife locale={locale} />
       </div>
 
       <!-- 5: Friday (3D Spotlight Card) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="5">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 5 !== serverDay && "hidden opacity-0"]} data-panel-day="5">
         <WidgetSpotlightCard locale={locale} featuredPost={featuredPost} />
       </div>
 
       <!-- 6: Saturday (Mini Launchpad) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="6">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 6 !== serverDay && "hidden opacity-0"]} data-panel-day="6">
         <WidgetLaunchpad locale={locale} />
       </div>
 
       <!-- 0: Sunday (Dev Radar) -->
-      <div class="widget-panel absolute inset-0 transition-opacity duration-300 hidden opacity-0" data-panel-day="0">
+      <div class:list={["widget-panel absolute inset-0 transition-opacity duration-300", 0 !== serverDay && "hidden opacity-0"]} data-panel-day="0">
         <WidgetDevRadar locale={locale} />
       </div>
     </div>
@@ -132,39 +167,43 @@ const t = useTranslations(locale as any);
     const explorerIcon = document.getElementById("hero-explorer-icon");
     const explorerText = document.getElementById("hero-explorer-text");
 
+    const isEs = document.documentElement.lang === "es";
+
     const DAY_NAMES: Record<number, string> = {
-      1: "Monday • Bento Deck",
-      2: "Tuesday • Code Sandbox",
-      3: "Wednesday • Cyber Lo-Fi",
-      4: "Thursday • Game of Life",
-      5: "Friday • Spotlight Card",
-      6: "Saturday • Launchpad",
-      0: "Sunday • Dev Radar",
+      1: isEs ? "Lunes • Bento Deck" : "Monday • Bento Deck",
+      2: isEs ? "Martes • Code Sandbox" : "Tuesday • Code Sandbox",
+      3: isEs ? "Miércoles • Laboratorio de Física" : "Wednesday • Physics Lab",
+      4: isEs ? "Jueves • Game of Life" : "Thursday • Game of Life",
+      5: isEs ? "Viernes • Spotlight Card" : "Friday • Spotlight Card",
+      6: isEs ? "Sábado • Launchpad" : "Saturday • Launchpad",
+      0: isEs ? "Domingo • Dev Radar" : "Sunday • Dev Radar",
     };
 
     // Determine initial day (current day of week: 0 to 6)
     const today = new Date().getDay();
     let currentDay = today;
 
-    function activatePanel(day: number) {
+    function activatePanel(day: number, notify = true) {
       currentDay = day;
       panels.forEach(panel => {
         const pDay = Number(panel.getAttribute("data-panel-day"));
         if (pDay === day) {
           panel.classList.remove("hidden");
-          setTimeout(() => {
-            panel.classList.remove("opacity-0");
-          }, 10);
+          panel.classList.remove("opacity-0");
+          panel.classList.add("active");
         } else {
+          panel.classList.add("hidden");
           panel.classList.add("opacity-0");
-          setTimeout(() => {
-            panel.classList.add("hidden");
-          }, 250);
+          panel.classList.remove("active");
         }
       });
 
       if (dayLabel) {
         dayLabel.textContent = DAY_NAMES[day] || "Daily Widget";
+      }
+
+      if (notify) {
+        window.dispatchEvent(new CustomEvent("herowidget:change", { detail: { day } }));
       }
     }
 
@@ -187,15 +226,15 @@ const t = useTranslations(locale as any);
         // Shuffle to next day
         soundFx.playPop();
         const nextDay = (currentDay + 1) % 7;
-        activatePanel(nextDay);
+        activatePanel(nextDay, true);
       }
     });
 
     // Listen for custom change events (from dev toolbar or terminal shell)
     window.addEventListener("herowidget:change", (e: Event) => {
       const detail = (e as CustomEvent).detail;
-      if (detail && typeof detail.day === "number") {
-        activatePanel(detail.day);
+      if (detail && typeof detail.day === "number" && detail.day !== currentDay) {
+        activatePanel(detail.day, false);
       }
     });
 
@@ -207,7 +246,7 @@ const t = useTranslations(locale as any);
     // Initialize with persisted dev day or today's default widget
     const savedDevDay = localStorage.getItem("hero-dev-selected-day");
     const initialDay = savedDevDay !== null ? Number(savedDevDay) : today;
-    activatePanel(initialDay);
+    activatePanel(initialDay, true);
     checkExplorerUnlock();
   }
 

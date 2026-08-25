@@ -122,16 +122,36 @@ const MODES = [
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let width = (canvas.width = container.clientWidth || 320);
-    let height = (canvas.height = container.clientHeight || 180);
+    let width = canvas.width = container.clientWidth || 320;
+    let height = canvas.height = container.clientHeight || 180;
 
     function resize() {
       if (!canvas || !container) return;
-      width = canvas.width = container.clientWidth || 320;
-      height = canvas.height = container.clientHeight || 180;
+      const newW = container.clientWidth;
+      const newH = container.clientHeight;
+      if (newW > 0 && newH > 0) {
+        width = canvas.width = newW;
+        height = canvas.height = newH;
+        // Ensure particles are distributed inside the valid canvas viewport
+        particles.forEach(p => {
+          if (p.x <= 0 || p.x > width || p.y <= 0 || p.y > height) {
+            p.x = Math.random() * width;
+            p.y = Math.random() * height;
+          }
+        });
+      }
     }
     resize();
     window.addEventListener("resize", resize);
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          resize();
+        }
+      }
+    });
+    resizeObserver.observe(container);
 
     // Particle Structure
     interface Particle {
@@ -285,6 +305,12 @@ const MODES = [
     }
 
     function evaluateExecution() {
+      if (isPanelActive && !isInViewport && rootEl) {
+        const rect = rootEl.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          isInViewport = true;
+        }
+      }
       const shouldRun = isInViewport && isPanelActive && document.visibilityState === "visible";
       if (shouldRun && !isRunning) {
         isRunning = true;
@@ -317,7 +343,10 @@ const MODES = [
     window.addEventListener("herowidget:change", (e: Event) => {
       const day = (e as CustomEvent).detail?.day;
       isPanelActive = day === 3;
-      if (isPanelActive) setTimeout(resize, 60);
+      if (isPanelActive) {
+        resize();
+        requestAnimationFrame(resize);
+      }
       evaluateExecution();
     });
 

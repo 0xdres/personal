@@ -103,16 +103,40 @@ const t = useTranslations(locale as any);
 
     function resize() {
       if (!canvas) return;
-      canvas.width = canvas.parentElement?.clientWidth || 300;
-      canvas.height = canvas.parentElement?.clientHeight || 120;
-      cols = Math.floor(canvas.width / cellSize);
-      rows = Math.floor(canvas.height / cellSize);
-      grid = new Uint8Array(cols * rows);
-      nextGrid = new Uint8Array(cols * rows);
-      seedRandom();
+      const parent = canvas.parentElement;
+      const w = parent?.clientWidth || 0;
+      const h = parent?.clientHeight || 0;
+      if (w > 0 && h > 0) {
+        canvas.width = w;
+        canvas.height = h;
+        const newCols = Math.floor(w / cellSize);
+        const newRows = Math.floor(h / cellSize);
+        if (newCols !== cols || newRows !== rows || !grid || grid.length === 0) {
+          cols = newCols;
+          rows = newRows;
+          grid = new Uint8Array(cols * rows);
+          nextGrid = new Uint8Array(cols * rows);
+          seedRandom();
+        }
+      }
     }
 
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          resize();
+        }
+      }
+    });
+    if (canvas.parentElement) resizeObserver.observe(canvas.parentElement);
+
     function evaluateExecution() {
+      if (isPanelActive && !isInViewport && rootEl) {
+        const rect = rootEl.getBoundingClientRect();
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+          isInViewport = true;
+        }
+      }
       const shouldRun = isInViewport && isPanelActive && document.visibilityState === "visible";
       if (shouldRun && !isRunning) {
         isRunning = true;
@@ -145,7 +169,10 @@ const t = useTranslations(locale as any);
     window.addEventListener("herowidget:change", (e: Event) => {
       const day = (e as CustomEvent).detail?.day;
       isPanelActive = day === 4;
-      if (isPanelActive) setTimeout(resize, 60);
+      if (isPanelActive) {
+        resize();
+        requestAnimationFrame(resize);
+      }
       evaluateExecution();
     });
 

@@ -561,6 +561,28 @@ const SNIPPETS = [
       soundFx.playTap(900);
       outputDrawer?.classList.add("hidden");
     });
+
+    const resizeObserver = new ResizeObserver(entries => {
+      for (const entry of entries) {
+        if (entry.contentRect.width > 0 && entry.contentRect.height > 0) {
+          resizeCanvas();
+        }
+      }
+    });
+    if (particleCanvas) resizeObserver.observe(particleCanvas);
+
+    window.addEventListener("herowidget:change", (e: Event) => {
+      const day = (e as CustomEvent).detail?.day;
+      if (day === 2) {
+        resizeCanvas();
+        requestAnimationFrame(resizeCanvas);
+      }
+    });
+
+    document.addEventListener("astro:before-swap", () => {
+      resizeObserver.disconnect();
+      if (particleAnimId) cancelAnimationFrame(particleAnimId);
+    }, { once: true });
   }
 
   initCodeSandbox();
