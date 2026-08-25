@@ -40,8 +40,6 @@ const { page, tagName } = Astro.props;
 const locale = Astro.currentLocale || "en";
 const t = useTranslations(locale as any);
 
-const tagOgImage = `/tags/${tag}/og.png`;
-
 // Prevent duplicate metadata in tag pagination pages
 const metaTitle =
   page.currentPage > 1
@@ -68,7 +66,6 @@ const nextURL = page.url.next
 <Layout
   title={metaTitle}
   description={tagDescription}
-  ogImage={tagOgImage}
   prev={prevURL}
   next={nextURL}
 >
