@@ -5,13 +5,13 @@
 
 :root,
 html[data-theme="light"] {
-  --background: #f2f5ec;
-  --foreground: #353538;
-  --accent: #1158d1;
-  --muted: #bbc789;
+  --background: #fdfdfd;
+  --foreground: #282728;
+  --accent: #006cac;
+  --muted: #d8dfbe;
   --border: #7cadff;
   --featured-color: #b56007;
-  --gallery-color: #6d28d9;
+  --gallery-color: #2837d9;
 }
 
 html[data-theme="dark"] {
@@ -25,11 +25,17 @@ html[data-theme="dark"] {
 }
 
 /* Accent presets — Light mode & fallback */
-html[data-accent="blue"] {
+/*html[data-accent="blue"] {
   --accent: #1158d1;
   --border: #7cadff;
+  --featured-color: #b56007;
+  --gallery-color: #6d28d9;
+}*/
+html[data-accent="blue"] {
+  --accent: #006cac;
+  --border: #7cadff;
   --featured-color: #b56007; /* Amber */
-  --gallery-color: #6d28d9; /* Purple */
+  --gallery-color: #2860d9; /* Blue */
 }
 html[data-accent="green"] {
   --accent: #0d7a5f;
